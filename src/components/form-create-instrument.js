@@ -4,7 +4,8 @@ import { useEffect, useState, useImperativeHandle, forwardRef  } from "react"
 
 
 const FormCreateInstrument = forwardRef((props, ref) =>{
-   
+    
+    const {setDataSource} = props
     const [form] = useForm()
     const [loading, setLoading] = useState(false)
     const [tipos, setTipos]= useState([])
@@ -73,7 +74,9 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
             
                 if (response.ok){
                     const data = await response.json()
-                    console.log(data)
+                    const updateData = await fetch('http://localhost:5000/api/instrumentos');
+                    const json = await updateData.json()
+                    setDataSource(json)
                     message.success(`Nuevo instrumento creado con éxito: ${data.instrumento}`);
                     //resetear todos los campos del formulario
                     form.resetFields()
@@ -165,7 +168,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
                     <Input/>
                 </Form.Item>
                 
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" loading={loading} >
                     Crear Instrumento
                 </Button>
             </Form>

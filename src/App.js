@@ -18,13 +18,14 @@ function App (){
     });
   }
   const dataType = "todos"
-  const outProperties = ["obs_estado", "aplica_verif", "aplica_calib", "nombre_responsable", "ubicacion"]
+  const outProperties = ["obs_estado", "aplica_verif", "aplica_calib", "nombre_responsable", "ubicacion", "cargo", "seccion"]
   const link = `http://localhost:5000/api/instrumentos`//`https://dummyjson.com/${dataType}`
   useEffect(()=>{
     fetch(link)
     .then(res => res.json())
     .then(result=>{ 
       const list = result//[dataType]
+      
       const firstObject = list[0]
       deleteProperties(firstObject,outProperties )
       const cols=[]
@@ -91,10 +92,17 @@ function App (){
         
         
   return (
-    <div>
-      <Button onClick={()=>setIsFormModalOpen(true)} type='primary'>Agregar un instrumento</Button>
+    <div style={{
+      margin:10
+    }}>
+      <div style={{
+      textAlign: 'center',
+      marginBottom:20
+    }}>
+        <Button onClick={()=>setIsFormModalOpen(true)} type='primary'>Agregar un instrumento</Button>
+      </div>
       <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
-        <FormCreateInstrument ref={formRef}></FormCreateInstrument>
+        <FormCreateInstrument  ref={formRef} setDataSource={setDataSource}></FormCreateInstrument>
       </Modal>
       <Table size='small' columns={columns} dataSource={dataSource}>
 
