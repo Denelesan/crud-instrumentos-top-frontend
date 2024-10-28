@@ -1,16 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
-import { Button, Modal, Table, Tag } from 'antd';
-import { useDebugValue, useEffect, useState, useRef } from 'react';
+import { Button, Modal, Table, Tag, message } from 'antd';
+import { useEffect, useState, useRef } from 'react';
+import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
 
 //Componentes
 import FormCreateInstrument from './components/form-create-instrument';
+import DetailViewInstrument from './components/detail-view-instrument';
 
 function App (){
   const formRef = useRef(null);
   const [columns, setColumns]= useState([])
   const [dataSource, setDataSource]=useState([])
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+
   
   function deleteProperties (obj, properties){
     properties.forEach(prop => {
@@ -72,7 +76,19 @@ function App (){
       }
       cols.push({
         title: "Action",
-        dataIndex: "action"
+        render: (record)=>{
+          
+          return (<>
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between",
+            width:"80%"}}>
+            <EditOutlined/>
+            <EyeOutlined onClick={()=>showModalDetailView(record)}/>
+            <DeleteOutlined onClick={()=>showModalConfirm(onDeleteInstrumento, record)} style={{color:"red"}}/>
+          </div>
+          </>)
+        }
       })
       setColumns(cols)
       setDataSource(list)
@@ -82,6 +98,56 @@ function App (){
 
   },[])
 
+  const showModalDetailView = (record)=>{
+    Modal.info({
+      content:<DetailViewInstrument record={record}></DetailViewInstrument>,
+      icon: null,
+      okText: "Aceptar"
+
+    })
+
+  }
+  const showModalConfirm = (onDelete, record)=>{
+    Modal.confirm({
+      title: '¿Estás seguro que deseas eliminar este instrumento?',
+      content: 'Esta acción no se puede deshacer',
+      okText: 'Eliminar',
+      okType: 'danger',
+      cancelText: 'Cancelar',
+      onOk() {
+        onDelete(record);
+      },
+    })
+  }
+  const onDeleteInstrumento = async (record)=>{
+    
+    const {id} = record
+    console.log(id)
+    try {
+        const response = await fetch(`http://localhost:5000/api/instrumentos/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            //body: JSON.stringify(values),
+        })
+        
+            if (response.ok){
+                const data = await response.json()
+                const updateData = await fetch('http://localhost:5000/api/instrumentos');
+                const json = await updateData.json()
+                setDataSource(json)
+                message.success(`El instrumento se ha eliminado con éxito: ${data.instrumento}`);
+                
+                
+            } else{
+                console.error("Error al eliminar el instrumento")
+            }
+        
+    } catch (error) {
+        console.log("Error en la solicitud", error)
+    } 
+}
   const handleCancel = ()=>{
     setIsFormModalOpen(false)
     if (formRef.current) {
@@ -103,6 +169,9 @@ function App (){
       </div>
       <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
         <FormCreateInstrument  ref={formRef} setDataSource={setDataSource}></FormCreateInstrument>
+      </Modal>
+      <Modal open={isViewModalOpen} onCancel={()=>setIsViewModalOpen(false)}>
+        <DetailViewInstrument></DetailViewInstrument>
       </Modal>
       <Table size='small' columns={columns} dataSource={dataSource}>
 
