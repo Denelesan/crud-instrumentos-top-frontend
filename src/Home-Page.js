@@ -15,7 +15,7 @@ function HomePage (){
   const [dataSource, setDataSource]=useState([])
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-  const Navigate = useNavigate()
+  const navigate = useNavigate()
 
   
   function deleteProperties (obj, properties){
@@ -85,8 +85,13 @@ function HomePage (){
             display:"flex",
             justifyContent:"space-between",
             width:"80%"}}>
-            <EditOutlined/>
-            <EyeOutlined onClick={()=>Navigate(`/detail/${record.id}`)}/>
+            <EditOutlined onClick={()=>{
+              navigate(`/edit/${record.id}`)
+            }}/>
+            <EyeOutlined onClick={()=>{
+              console.log(record.id)
+              navigate(`/detail/${record.id}`)
+              }}/>
             <DeleteOutlined onClick={()=>showModalConfirm(onDeleteInstrumento, record)} style={{color:"red"}}/>
           </div>
           </>)
@@ -171,9 +176,6 @@ function HomePage (){
       </div>
       <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
         <FormCreateInstrument  ref={formRef} setDataSource={setDataSource}></FormCreateInstrument>
-      </Modal>
-      <Modal open={isViewModalOpen} onCancel={()=>setIsViewModalOpen(false)}>
-        <DetailViewInstrument></DetailViewInstrument>
       </Modal>
       <Table size='small' columns={columns} dataSource={dataSource}>
 
