@@ -168,6 +168,7 @@ function HomePage (){
     <div style={{
       margin:10
     }}>
+      <h1>Instrumento y Accesorios Topográfico</h1>
       <div style={{
       textAlign: 'center',
       marginBottom:20

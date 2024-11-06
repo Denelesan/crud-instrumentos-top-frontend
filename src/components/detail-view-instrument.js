@@ -95,11 +95,11 @@ const DetailViewInstrument = ()=>{
   </div>
      <div style={{
             display: 'flex',
-            justifyContent: "flex-end",
+            justifyContent: "center",
             marginTop: "20px"
             
         }}>
-      <Button type="primary" onClick={()=>navigate("/")}>Volver</Button>
+      <Button type="primary" style={{width: "10rem"}} onClick={()=>navigate("/")}>Volver</Button>
      </div>
             
             
