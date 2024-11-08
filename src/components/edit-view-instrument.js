@@ -19,6 +19,9 @@ const EditViewInstrument = ()=>{
 
     }, [id])
     console.log(dataDetailInstrument)
+    const styleInput = {
+        width: 'auto'
+    }
     return (
         <div style={{
             margin: '50px'
@@ -33,7 +36,10 @@ const EditViewInstrument = ()=>{
             marginTop: "20px"
             
         }}>
-        <Collapse accordion>
+        <Collapse 
+            accordion
+            defaultActiveKey={['1']}
+            >
             <Panel header="Información General" key="1">
             {dataDetailInstrument ? (
             <Form 
@@ -41,20 +47,70 @@ const EditViewInstrument = ()=>{
                 name="form_item_path" 
                 layout="vertical"
                 onFinish={()=>console.log()}
-                disabled= "false"
+                
+                //disabled= "false"
                 >
+                <div style={{ 
+                    display: 'grid', 
+                    //flexWrap: 'wrap', 
+                    justifyContent: 'center',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    width: 'auto',
+                    gap: '25px', 
+                    marginLeft: '5em',
+                    //marginRight: '5em'
+                  }}>
+                <Form.Item 
+                    label="Id de Instrumento"
+                    name="id" 
+                >
+                    <Input disabled= "false" placeholder={dataDetailInstrument.id} style={styleInput}/>
+                </Form.Item>
                 <Form.Item 
                     label="Nombre de Instrumento"
                     name="instrumento" 
-                    
-                    rules={[
-                    {
-                    required: true,
-                    message: 'Porfavor ingrese el nombre del instrumento',
-                    },
-                ]}>
-                    <Input placeholder={dataDetailInstrument.instrumento}/>
+                    initialValue={dataDetailInstrument.instrumento}
+                >
+                    <Input style={styleInput}/>
                 </Form.Item>
+                <Form.Item 
+                    label="Tipo de Instrumento"
+                    name="tipo" 
+                    initialValue={dataDetailInstrument.tipo}
+                >
+                    <Input style={styleInput}/>
+                </Form.Item>
+                <Form.Item 
+                    label="Tipo de Instrumento"
+                    name="tipo" 
+                    initialValue={dataDetailInstrument.tipo}
+                >
+                    <Input style={styleInput}/>
+                </Form.Item>
+                <Form.Item 
+                    label="Tipo de Instrumento"
+                    name="tipo" 
+                    initialValue={dataDetailInstrument.tipo}
+                >
+                    <Input style={styleInput}/>
+                </Form.Item>
+                <Form.Item 
+                    label="Tipo de Instrumento"
+                    name="tipo" 
+                    initialValue={dataDetailInstrument.tipo}
+                >
+                    <Input style={styleInput}/>
+                </Form.Item> </div>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: "center",
+                    marginTop: "20px"
+                    
+                }}>
+                    <Button type="primary" style={{width: "10rem"}} htmlType="submit">Guardar</Button>
+                </div>
+                
+                
                 </Form>) : 
                 <p>Cargando detalles...</p>}
             </Panel>
