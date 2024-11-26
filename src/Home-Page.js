@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { Button, Modal, Table, Tag, message } from 'antd';
+import { Button, Modal, Table, Tabs, Tag, message } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
@@ -178,9 +178,26 @@ function HomePage (){
       <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
         <FormCreateInstrument  ref={formRef} setDataSource={setDataSource}></FormCreateInstrument>
       </Modal>
-      <Table size='small' columns={columns} dataSource={dataSource}>
-
-      </Table>
+      <Tabs
+        type='card'
+        items={[
+          {
+            label: 'Tabla de Instrumentos',
+            key: '1',
+            children: <Table size='small' columns={columns} dataSource={dataSource}>
+            </Table>
+          },
+          {
+            label:'Hitos de Calibración',
+            key: '2'
+          },
+          {
+            label:"Hitos de Verificación",
+            key: '3'
+          } 
+        ]}
+      />
+      
     </div>
   )
 }
