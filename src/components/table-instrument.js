@@ -1,18 +1,29 @@
-import { Button, Modal, Table, Tabs, Tag, message } from "antd"
+import { Button, Modal, Table, Tag, message } from "antd"
 import { useEffect, useState, useRef } from 'react';
 import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
 
+//Componentes
+import FormCreateInstrument from './form-create-instrument';
 
 
-const TableInstrumentComponent = ({setDataSource, dataSource})=>{
 
+const TableInstrumentComponent = ()=>{
+    const formRef = useRef(null);
+    const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+    const [dataSource, setDataSource]=useState([])
     const [columns, setColumns]= useState([])
     
     
     
     const navigate = useNavigate()
-
+    const handleCancel = ()=>{
+        setIsFormModalOpen(false)
+        if (formRef.current) {
+          formRef.current.resetFormFields();  // Llamar al método desde la referencia
+      }
+        
+      }
   
   function deleteProperties (obj, properties){
     properties.forEach(prop => {
@@ -144,6 +155,15 @@ const TableInstrumentComponent = ({setDataSource, dataSource})=>{
 
     return (
         <div>
+            <div style={{
+                textAlign: 'center',
+                marginBottom:20
+                }}>
+                <Button onClick={()=>setIsFormModalOpen(true)} type='primary'>Agregar un instrumento</Button>
+            </div>
+            <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
+                <FormCreateInstrument  ref={formRef} setDataSource={setDataSource}></FormCreateInstrument>
+            </Modal>
             <Table size='small' columns={columns} dataSource={dataSource}>
             </Table>
         </div>

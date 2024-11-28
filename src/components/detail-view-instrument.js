@@ -39,18 +39,7 @@ const DetailViewInstrument = ()=>{
           display: "flex",
           justifyContent: "flex-end"
         }}>
-        <p>
-          <b>Estado: </b>{
-          instrumentDetail.estado === "Operativo" ? (
-          <CheckCircleTwoTone twoToneColor="#52c41a" 
-        style={{ 
-          fontSize:fontSizeEstado 
-          }}/>):
-          <CloseCircleTwoTone twoToneColor="red" 
-          style={{ 
-            fontSize:fontSizeEstado,
-            
-            }}/>}</p>
+        
           
         </div>
         <div style={{ 
