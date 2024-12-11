@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button, Modal, Table, Tag, message } from "antd"
 import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
-
+import FormCreateHitoCalibration from "./form-create-hito-calibration";
 
 
 
 const CalibrationHitoInstrument = ()=>{
-
+    const formRef = useRef(null)
     const [hitoCalibrationSource, setHitoCalibrationSource] = useState([])
     const [columnsHitoCalibration, setColumnsHitoCalibration] = useState([])
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
@@ -93,7 +93,14 @@ const CalibrationHitoInstrument = ()=>{
 
 
     }, [])
-
+    
+    const handleCancel = ()=>{
+        setIsFormModalOpen(false)
+        if (formRef.current) {
+          formRef.current.resetFormFields();  // Llamar al método desde la referencia
+      }
+        
+      }
     const showModalConfirm = (onDelete, record)=>{
         Modal.confirm({
           title: '¿Estás seguro que deseas eliminar este instrumento?',
@@ -115,6 +122,9 @@ const CalibrationHitoInstrument = ()=>{
                 }}>
                 <Button onClick={()=>setIsFormModalOpen(true)} type='primary'>Agregar un Hito de Calibración</Button>
             </div>
+            <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
+                <FormCreateHitoCalibration  ref={formRef} setHitoCalibrationSource={setHitoCalibrationSource}></FormCreateHitoCalibration>
+            </Modal>
             <Table size='small' columns={columnsHitoCalibration} dataSource={hitoCalibrationSource}>
             </Table>
         </div>
