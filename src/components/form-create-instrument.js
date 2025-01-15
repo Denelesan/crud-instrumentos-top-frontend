@@ -11,6 +11,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
     const [tipos, setTipos]= useState([])
     const [marcas, setMarcas] = useState([])
     const [modelos, setModelos]= useState([])
+    const [selectMarca, setSelectMarca] = useState(null)
 
     useImperativeHandle(ref, () => ({
         resetFormFields: () => {
@@ -42,12 +43,14 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
                 label: marca.marca,
             }))
             setMarcas(optionsMarcas)
+            
         }).
         catch(error=>console.error("Error al obtener dato de marca", error))
     }, [])
 
      // Solicitar modelos de instrumentos
      useEffect(()=>{
+        
         fetch('http://localhost:5000/api/instrumentos/modelo')
         .then(response => response.json())
         .then(data=>{
@@ -59,6 +62,23 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
         }).
         catch(error=>console.error("Error al obtener dato de marca", error))
     }, [])
+
+    const handleChangeMarca = (e)=>{
+        console.log(e)
+        const id_marca = e
+        setSelectMarca(id_marca)
+        fetch(`http://localhost:5000/api/instrumentos/modelo?id_marca=${id_marca}`)
+        .then(response => response.json())
+        .then(data=>{
+            console.log(data)
+            const optionsModelos = data.map(modelo=>({
+                value: modelo.id_modelo,
+                label: modelo.modelo,
+            }))
+            setModelos(optionsModelos)
+        }).
+        catch(error=>console.error("Error al obtener dato de marca", error))
+    }
 
     const onFinish = async (values)=>{
         setLoading(true)
@@ -148,6 +168,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
                     },
                 ]}>
                 <Select style={{width:200}}
+                    onChange={handleChangeMarca}
                     options={marcas}/>
                 </Form.Item>
                 <Form.Item label="Modelo" name="id_modelo"
@@ -158,6 +179,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
                     },
                 ]}>
                 <Select style={{width:200}}
+                    disabled={!selectMarca} //Desactivado si no se selecciona una marca
                     options={modelos}
                       />
                 </Form.Item>
