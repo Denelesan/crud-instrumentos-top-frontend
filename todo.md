@@ -39,6 +39,31 @@
 - [ ] Agregar categoría de instrumentos, si son accesorios, instrumentos u otros.
 
 # Notes
+- (20-02-2025) Lo relativo a tipo y categoría de instrumentos, se está analizando de la siguiente manera; con el fin de permitir un detalle, quizás, exagerado de los instrumentos y accesorios que se cuentan en la sección, se está postulando mantener el tipo de instrumentos (ver diccionario) en la tabla principal, relacionar la tabla tipos a su categoría (si es un instrumento, accesorio, cable, etc). Y se complementará con una tabla `Kit` que englobará, en caso de ser necesario, los conjuntos en razón de su "categoría" (**por definir**). Esto permitirá detallar los estados de cada elemento, además de englobarlos tal cómo se hace en la práctica y en la compra de estos instrumentos, que muchas veces vienen asociados a Kit (Antena GNSS, libreta, bases tribash, cables, etc).
+
+- Diccionario de datos:
+
+<table>
+    <thead>
+        <tr>
+            <th>Tabla</th>
+            <th> Campo</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center">tipo</td>
+            <td align="center">tipo</td>
+            <td align="center">Tipo de instrumento o accesorio topográfico. Siempre hará referencia literalmente al tipo de elemento que define, por ejemplo, el tipo Estación Total, se refiere al instrumento como tal, no a sus accesorios como cables, baterías, bases tribash, etc. Para englobar todo el conjunto, existe la tabla kit. </td>
+        </tr>
+          <tr>
+            <td align="center">categoría</td>
+            <td align="center">categoria</td>
+            <td align="center">Categoría del tipo de instrumento asociado. Las categorías son las siguientes: instrumento, accesorio, cable, maleta, etc.  </td>
+        </tr>
+    </tbody>
+</table>
 
 ## Diseño
 
