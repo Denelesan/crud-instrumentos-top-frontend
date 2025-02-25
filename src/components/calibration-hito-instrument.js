@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import { Button, Modal, Table, Tag, message } from "antd"
-import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
+import { Button, Modal, Table, Tag, message, Tooltip } from "antd"
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
+
 
 
 
@@ -73,6 +74,11 @@ const CalibrationHitoInstrument = ()=>{
                 display:"flex",
                 justifyContent:"space-between",
                 width:"80%"}}>
+                <Tooltip title="Agregar Instrumento" >
+                  <PlusCircleTwoTone onClick={()=>{
+                  }}/>
+                </Tooltip>
+                
                 <EditOutlined onClick={()=>{
                   navigate(`/edit/${record.id}`)
                 }}/>
