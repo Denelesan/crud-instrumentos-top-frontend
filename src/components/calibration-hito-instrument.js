@@ -3,6 +3,7 @@ import { Button, Modal, Table, Tag, message, Tooltip } from "antd"
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
+import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 
 
 
@@ -12,6 +13,7 @@ const CalibrationHitoInstrument = ()=>{
     const [hitoCalibrationSource, setHitoCalibrationSource] = useState([])
     const [columnsHitoCalibration, setColumnsHitoCalibration] = useState([])
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+    const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
     
     const navigate = useNavigate()
     
@@ -76,6 +78,7 @@ const CalibrationHitoInstrument = ()=>{
                 width:"80%"}}>
                 <Tooltip title="Agregar Instrumento" >
                   <PlusCircleTwoTone onClick={()=>{
+                    setIsAddInstrumentModalOpen(true)
                   }}/>
                 </Tooltip>
                 
@@ -102,6 +105,7 @@ const CalibrationHitoInstrument = ()=>{
     
     const handleCancel = ()=>{
         setIsFormModalOpen(false)
+        setIsAddInstrumentModalOpen(false)
         if (formRef.current) {
           formRef.current.resetFormFields();  // Llamar al método desde la referencia
       }
@@ -133,6 +137,9 @@ const CalibrationHitoInstrument = ()=>{
             </Modal>
             <Table size='small' columns={columnsHitoCalibration} dataSource={hitoCalibrationSource}>
             </Table>
+            <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
+                <AddInstrumentToHitoCalibration></AddInstrumentToHitoCalibration>
+            </Modal>
         </div>
     )
 }
