@@ -14,6 +14,7 @@ const CalibrationHitoInstrument = ()=>{
     const [columnsHitoCalibration, setColumnsHitoCalibration] = useState([])
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
     const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
+    const [hitoCalibrationSelected, setHitoCalibrationSelected] = useState([])
     
     const navigate = useNavigate()
     
@@ -78,6 +79,9 @@ const CalibrationHitoInstrument = ()=>{
                 width:"80%"}}>
                 <Tooltip title="Agregar Instrumento" >
                   <PlusCircleTwoTone onClick={()=>{
+                    let idHito = record["Id Hito"]
+                    console.log(idHito)
+                    setHitoCalibrationSelected(idHito)
                     setIsAddInstrumentModalOpen(true)
                   }}/>
                 </Tooltip>
@@ -138,7 +142,7 @@ const CalibrationHitoInstrument = ()=>{
             <Table size='small' columns={columnsHitoCalibration} dataSource={hitoCalibrationSource}>
             </Table>
             <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
-                <AddInstrumentToHitoCalibration></AddInstrumentToHitoCalibration>
+                <AddInstrumentToHitoCalibration hitoSelected={hitoCalibrationSelected}/>
             </Modal>
         </div>
     )

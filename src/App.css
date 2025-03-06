@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+.ant-table-thead {
+  font-size: 13px;
+  text-align: center;
+}
+.ant-table-tbody{
+  font-size: 12px;
+  text-align: center;
+}
+
