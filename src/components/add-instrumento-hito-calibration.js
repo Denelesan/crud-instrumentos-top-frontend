@@ -7,6 +7,7 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
     console.log("HITO",hitoSelected)
     const [dataSource, setDataSource]= useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState([])
+    const [changeState, setChangeState] = useState(false)
 
     const columns = [{
             title: 'Id',
@@ -55,9 +56,10 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
             })
 
 
-        },[hitoSelected,selectedRowKeys])
+        },[hitoSelected, changeState])
 
         const addInstrument = async(selectedRowKeys)=>{
+            setChangeState(false)
             let instrumentsSelected = selectedRowKeys.map((item)=>({
                 
                 id_calibration:hitoSelected,
@@ -82,6 +84,7 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
                     
                     if (allSuccessful){
                         setSelectedRowKeys([])
+                        setChangeState(true)
                         message.success("Todos los Instrumentos fueron agregados con éxito")
                 }
                 else {

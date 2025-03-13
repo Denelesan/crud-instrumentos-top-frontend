@@ -93,7 +93,7 @@ const CalibrationHitoInstrument = ()=>{
                   console.log(record.id)
                   navigate(`/detail/${record.id}`)
                   }}/>
-                <DeleteOutlined onClick={()=>showModalConfirm(/*onDeleteInstrumento, */record)} style={{color:"red"}}/>
+                <DeleteOutlined onClick={()=>showModalConfirm(onDeleteHitoCalibration, record["Id Hito"])} style={{color:"red"}}/>
               </div>
               </>)
             }
@@ -105,7 +105,7 @@ const CalibrationHitoInstrument = ()=>{
 
 
 
-    }, [])
+    },[])
     
     const handleCancel = ()=>{
         setIsFormModalOpen(false)
@@ -117,7 +117,7 @@ const CalibrationHitoInstrument = ()=>{
       }
     const showModalConfirm = (onDelete, record)=>{
         Modal.confirm({
-          title: '¿Estás seguro que deseas eliminar este instrumento?',
+          title: '¿Estás seguro que deseas eliminar este Hito de Calibración y todos sus instrumentos asociados?',
           content: 'Esta acción no se puede deshacer',
           okText: 'Eliminar',
           okType: 'danger',
@@ -127,6 +127,35 @@ const CalibrationHitoInstrument = ()=>{
           },
         })
       }
+      const onDeleteHitoCalibration = async (record)=>{
+    
+        const {id} = record
+        console.log(record)
+        try {
+            const response = await fetch(`http://localhost:5000/api/calibration/delete/${record}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                //body: JSON.stringify(values),
+            })
+            
+                if (response.ok){
+                    const data = await response.json()
+                    const updateData = await fetch('http://localhost:5000/api/calibration');
+                    const json = await updateData.json()
+                    setHitoCalibrationSource(json)
+                    message.success(`El Hito de calibración Nº: ${record} se ha eliminado con éxito`);
+                    
+                    
+                } else{
+                    console.error("Error al eliminar el Hito de Calibración")
+                }
+            
+        } catch (error) {
+            console.log("Error en la solicitud", error)
+        } 
+    }
 
     return (
         <div>
