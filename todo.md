@@ -8,12 +8,14 @@
 - [ ] Como usuario quiero acceder a visualizar todos los detalles de los accesorios e instrumentos.
 - [X] Como usuario quiero poder agregar nuevos accesorios/instrumentos.
 - [ ] Como usuario quiero poder imprimir y/o exportar en pdf los detalles de los accesorio/instrumentos.
-- [ ] Como administrador quiero poder eliminar accesorios/instrumentos.
+- [X] Como administrador quiero poder eliminar accesorios/instrumentos.
 - [ ] Como administrador quiero poder crear un Hito de verificación
 - [X] Como administrador quiero poder crear un Hito de calibración.
-- [ ] Como administrador quiero poder eliminar un Hito de calibración.
-- [ ] Como usuario quiero poder agregar información a un hito de verificación vigente.
-- [ ] Como usuario quiero poder agregar información a un hito de calibración vigente.
+- [X] Como administrador quiero poder eliminar un Hito de calibración.
+- [ ] Como usuario quiero poder editar información a un hito de verificación vigente.
+- [ ] Como usuario quiero poder editar información a un hito de calibración vigente.
+- [ ] Como usuario quiero poder agregar instrumentos a un hito de verificación vigente.
+- [X] Como usuario quiero poder agregar instrumentos a un hito de calibración vigente.
 - [ ] Como usuario quiero poder agregar y visualizar reportes e informes de verificación en pdf.
 - [ ] Como usuario quiero poder agregar y visualizar certificados de calibración.
 

@@ -87,7 +87,7 @@ const CalibrationHitoInstrument = ()=>{
                 </Tooltip>
                 
                 <EditOutlined onClick={()=>{
-                  navigate(`/edit/${record.id}`)
+                  navigate(`/calibration/edit/${record.id}`)
                 }}/>
                 <EyeOutlined onClick={()=>{
                   console.log(record.id)
@@ -99,12 +99,8 @@ const CalibrationHitoInstrument = ()=>{
             }
           })
           setColumnsHitoCalibration(cols)
-          setHitoCalibrationSource(list)
-    
+          setHitoCalibrationSource(list)   
         });
-
-
-
     },[])
     
     const handleCancel = ()=>{
