@@ -1,7 +1,11 @@
 import { Collapse, Button} from "antd"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import CalibrationInstrumentAsociation from "./calibration-instrumento-asociation";
 
 const EditViewHitoCalibration = ()=>{
+    const {id} = useParams()
+    console.log(id)
+    
     const navigate = useNavigate();
     const {Panel}= Collapse
 
@@ -33,7 +37,7 @@ const EditViewHitoCalibration = ()=>{
                     
                 }}>
 
-                    <Button type="primary" style={{width: "10rem"}} htmlType="submit">Guardar</Button>
+                    <Button type="primary" style={{width: "auto"}} htmlType="submit">Guardar</Button>
                 </div>
             
             </Panel>
@@ -55,6 +59,7 @@ const EditViewHitoCalibration = ()=>{
                     marginTop: "20px"
                     
                 }}>
+                    <CalibrationInstrumentAsociation idHito={id}/>
                     <Button type="primary" style={{width: "auto"}} htmlType="submit">Guardar</Button>
                 </div>
             </Panel>

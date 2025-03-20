@@ -87,7 +87,8 @@ const CalibrationHitoInstrument = ()=>{
                 </Tooltip>
                 
                 <EditOutlined onClick={()=>{
-                  navigate(`/calibration/edit/${record.id}`)
+                  console.log(record["Id Hito"])
+                  navigate(`/calibration/edit/${record["Id Hito"]}`)
                 }}/>
                 <EyeOutlined onClick={()=>{
                   console.log(record.id)
