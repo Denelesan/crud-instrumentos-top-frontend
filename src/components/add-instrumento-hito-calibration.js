@@ -4,7 +4,6 @@ import {Table, Button, message} from "antd"
 
 
 const AddInstrumentToHitoCalibration =({hitoSelected})=>{
-    console.log("HITO",hitoSelected)
     const [dataSource, setDataSource]= useState([])
     const [selectedRowKeys, setSelectedRowKeys] = useState([])
     const [changeState, setChangeState] = useState(false)
@@ -39,6 +38,24 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
             dataIndex: 'modelo'
         
         }]
+
+       /* useEffect(()=>{
+            fetch(`http://localhost:5000/api/calibration/aplica_instrumentos/${hitoSelected}`)
+            .then(res => res.json())
+            .then(result =>{
+                const list = result
+                console.log(result)
+                const listWithKeys = list.map((item)=>({
+                    key: item.id,
+                    ...item
+                    
+                }))
+                setDataSource(listWithKeys)
+                //console.log("Clave del primer elemento:", Object.keys(listKeys[0]))
+            })
+
+
+        },[])*/
 
         useEffect(()=>{
             fetch(`http://localhost:5000/api/calibration/aplica_instrumentos/${hitoSelected}`)

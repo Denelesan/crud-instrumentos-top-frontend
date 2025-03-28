@@ -14,7 +14,7 @@ const EditViewHitoCalibration = ()=>{
         <div style={{
             margin: '50px'
         }}>
-            <h1>Edición de Hito de Calibración Nº</h1>
+            <h1>Edición de Hito de Calibración Nº{id}</h1>
             
 
             <div style={{
@@ -60,7 +60,7 @@ const EditViewHitoCalibration = ()=>{
                     
                 }}>
                     <CalibrationInstrumentAsociation idHito={id}/>
-                    <Button type="primary" style={{width: "auto"}} htmlType="submit">Guardar</Button>
+                    
                 </div>
             </Panel>
             
