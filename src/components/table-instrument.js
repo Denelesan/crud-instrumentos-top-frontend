@@ -2,6 +2,7 @@ import { Button, Modal, Table, Tag, message } from "antd"
 import { useEffect, useState, useRef } from 'react';
 import {DeleteOutlined, EditOutlined, EyeOutlined} from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom';
+import dayjs from "dayjs";
 
 //Componentes
 import FormCreateInstrument from './form-create-instrument';

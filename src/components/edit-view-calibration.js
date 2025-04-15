@@ -1,6 +1,7 @@
 import { Collapse, Button} from "antd"
 import { useNavigate, useParams } from "react-router-dom"
 import CalibrationInstrumentAsociation from "./calibration-instrumento-asociation";
+import EditGeneralViewCalibration from "./edit-view-general-calibration";
 
 const EditViewHitoCalibration = ()=>{
     const {id} = useParams()
@@ -36,8 +37,9 @@ const EditViewHitoCalibration = ()=>{
                     marginTop: "20px"
                     
                 }}>
+                    <EditGeneralViewCalibration idHito={id} />
 
-                    <Button type="primary" style={{width: "auto"}} htmlType="submit">Guardar</Button>
+                    
                 </div>
             
             </Panel>

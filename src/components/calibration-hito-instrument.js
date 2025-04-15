@@ -4,6 +4,9 @@ import {DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone} from '@ant
 import { useNavigate } from 'react-router-dom';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
 import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
+import dayjs from "dayjs";
+import 'dayjs/locale/es' // para español
+dayjs.locale('es')
 
 
 
@@ -15,6 +18,7 @@ const CalibrationHitoInstrument = ()=>{
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
     const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
     const [hitoCalibrationSelected, setHitoCalibrationSelected] = useState([])
+    const [loading, setLoading] = useState(false)
     
     const navigate = useNavigate()
     
@@ -25,17 +29,30 @@ const CalibrationHitoInstrument = ()=>{
           const list = result//[dataType]
           
           const firstObject = list[0]
+          
           //deleteProperties(firstObject,outProperties )
           const cols=[]
           for (const key in firstObject){
             let render = (valor) => {
+              //console.log(firstObject[key])
               // Si el valor es nulo o indefinido, renderiza un mensaje predeterminado
               if (valor === null || valor === undefined) {
                 return <span>No data</span>;
               }
+              if (typeof valor === 'string') {
+                const isoDateMatch = valor.match(/^\d{4}-\d{2}-\d{2}/); // detecta fechas tipo "2020-06-17"
+                if (isoDateMatch) {
+                  const date =dayjs(valor);
+                  //console.log("DATE",date)
+                  if (date.isValid()) {
+                    return <span>{date.format("D [de] MMMM [del] YYYY")}</span>;
+                  }
+                }
+              }
               return <span>{String(valor)}</span>;
-            };
-           
+            };           
+
+            
             
             if (typeof firstObject[key] === "object" && firstObject[key] !== null){
               
@@ -154,13 +171,59 @@ const CalibrationHitoInstrument = ()=>{
         } 
     }
 
+    const showModalCreateHitoCalibration = (createHito)=>{
+      Modal.confirm({
+        title: '¿Estás seguro que deseas crear un nuevo Hito de Calibración',
+          content: 'Luego de crear el hito de calibración, deberás indexar los instrumentos asociados',
+          okText: 'Crear',
+          okType: 'primary',
+          cancelText: 'Cancelar',
+          onOk() {
+            createHito();
+          },
+      })
+    }
+
+    const createHitoCalibration= async ()=>{
+      setLoading(true)
+      
+      try {
+          const response = await fetch('http://localhost:5000/api/calibration', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(),
+          })
+          
+              if (response.ok){
+                  const data = await response.json()
+                  const updateData = await fetch('http://localhost:5000/api/calibration');
+                  const json = await updateData.json()
+                  setHitoCalibrationSource(json)
+                  console.log("data",json)
+                  message.success(`Nuevo Hito de Calibración creado con éxito`);
+                  //resetear todos los campos del formulario
+                  //form.resetFields()
+                  
+              } else{
+                  message.error("Error al crear el Hito de Calibración")
+              }
+          
+      } catch (error) {
+          console.log("Error en la solicitud", error)
+      } finally{
+          setLoading(false)
+      }
+  }
+
     return (
         <div>
             <div style={{
                 textAlign: 'center',
                 marginBottom:20
                 }}>
-                <Button onClick={()=>setIsFormModalOpen(true)} type='primary'>Agregar un Hito de Calibración</Button>
+                <Button onClick={()=>showModalCreateHitoCalibration(createHitoCalibration)} type='primary'>Agregar un Hito de Calibración</Button>
             </div>
             <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
                 <FormCreateHitoCalibration  ref={formRef} setHitoCalibrationSource={setHitoCalibrationSource}></FormCreateHitoCalibration>

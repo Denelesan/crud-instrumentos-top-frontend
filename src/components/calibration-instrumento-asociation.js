@@ -74,15 +74,12 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
           </>)
         }
     }]
-    
-        
-      
 
     useEffect(()=>{
         fetch(`http://localhost:5000/api/calibration/instrumentos/${idHito}`)
             .then(res=> res.json())
             .then(data=> {  
-                console.log("...Cargando Data")
+                //console.log("...Cargando Data")
             setDataSource(data)
             setDataSourceTemporal(data)
             setUpdateFetch(false)
@@ -173,8 +170,16 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
 
     }
     return (
-        <div>
-            <Button type="primary" style={{width: "auto"}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
+        <div >
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                width: "auto"}}>
+ 
+            <Button type="primary" style={{
+                marginBottom: "20px",
+                width: "auto"}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
+            </div>
             <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
                 <AddInstrumentToHitoCalibrationFromEditView hitoSelected={idHito} dataSourceOriginal={dataSource} dataTemporal={dataSourceTemporal} setDataSourceTemporal={setDataSourceTemporal}/>
             </Modal>
