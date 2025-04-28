@@ -17,7 +17,7 @@ const FormCreateHitoCalibration = forwardRef((props, ref) =>{
             form.resetFields();
         }
     }));
-
+    //Para obtener el listado de empresas
     useEffect(()=>{
         fetch('http://localhost:5000/api/calibration/empresas')
         .then(response => response.json())

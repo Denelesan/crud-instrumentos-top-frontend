@@ -1,50 +1,133 @@
-import { Button, Collapse, DatePicker, Form, Input, Select } from "antd"
+import { Button, Collapse, DatePicker, Form, Input, Select, message } from "antd"
 import { useForm } from "antd/es/form/Form"
 import { useEffect, useState } from "react"
 import dayjs from "dayjs"
 
+// Estilo CSS para el Select cuando ha sido modificado
+const modifiedSelectStyle = `
+    .modified-select .ant-select-selector {
+        border-color: #1890ff !important;
+    }
+`;
 
+/**
+ * Componente para editar la información general de un hito de calibración
+ * @param {string} idHito - ID del hito de calibración a editar
+ */
 const EditGeneralViewCalibration = ({idHito})=>{
-    const [dataHitoCalibration, setDataHitoCalibration] = useState()
-    const [form] = useForm()
-    const [empresas, setEmpresas]= useState()
+    // Estados para manejar los datos y el estado del formulario
+    const [dataHitoCalibration, setDataHitoCalibration] = useState() // Datos del hito de calibración
+    const [form] = useForm() // Instancia del formulario de Ant Design
+    const [empresas, setEmpresas]= useState() // Lista de empresas calibradoras
+    const [loading, setLoading] = useState(false) // Estado de carga durante el envío del formulario
+    const [touchedFields, setTouchedFields] = useState({}) // Campos que han sido modificados
 
+    // Función para manejar cambios en los campos del formulario
+    const handleValuesChange = (changedValues, allValues) => {
+        const newTouchedFields = { ...touchedFields };
+        console.log("changedValues", changedValues)
+        Object.keys(changedValues).forEach(field => {
+            newTouchedFields[field] = true;
+        });
+        setTouchedFields(newTouchedFields);
+    };
+
+    // Cargar datos del hito de calibración
     useEffect(()=>{
-            fetch(`http://localhost:5000/api/calibration/${idHito}`)
-            .then(resp=>resp.json())
-            .then(data => setDataHitoCalibration(data[0]))
-            .catch(error=> console.log("Error al traer la data", error))
-        }, [idHito])
+        fetch(`http://localhost:5000/api/calibration/${idHito}`)
+        .then(resp=>resp.json())
+        .then(data => {setDataHitoCalibration(data[0]) 
+            console.log("data", data)})
+        .catch(error=> console.log("Error al traer la data", error))
+    }, [idHito])
 
+    // Cargar lista de empresas calibradoras
     useEffect(()=>{
-            fetch('http://localhost:5000/api/calibration_empresas')
-            .then(response => response.json())
-            .then(data=>{
-                console.log("data", data)
-                const optionsEmpresas = data.map(empresa=>({
-                    value: empresa.id_empresa,
-                    label: empresa.empresa
-                }))
-                console.log(optionsEmpresas)
-                setEmpresas(optionsEmpresas)
-            }).catch(error=> console.error("Error al obtener las empresas calibradoras", error))
-        },[])
+        fetch('http://localhost:5000/api/calibration_empresas')
+        .then(response => response.json())
+        .then(data=>{
+            //<console.log("data", data)
+            const optionsEmpresas = data.map(empresa=>({
+                value: empresa.id_empresa,
+                label: empresa.empresa
+            }))
+            console.log(optionsEmpresas)
+            setEmpresas(optionsEmpresas)
+        }).catch(error=> console.error("Error al obtener las empresas calibradoras", error))
+    },[])
 
-        console.log(dataHitoCalibration)
-        const styleInput = {
-            width: 'auto'
+    //console.log(dataHitoCalibration)
+    const styleInput = {
+        width: 'auto'
+    }
+
+    // Función que se ejecuta al enviar el formulario
+    const onFinish= async (values)=>{
+        setLoading(true)
+        
+        const {IdHito,...newValues} = values
+        
+        // Manejo de fecha nula
+        if (newValues.fecha_solicitud === "" || newValues.fecha_solicitud === undefined){
+            newValues.fecha_solicitud = null;
         }
+
+        // Conversión de nombre de empresa a ID
+        if (newValues.id_empresa && typeof newValues.id_empresa === 'string') {
+            const empresaSeleccionada = empresas.find(emp => emp.label === newValues.id_empresa);
+            if (empresaSeleccionada) {
+                newValues.id_empresa = empresaSeleccionada.value;
+            }
+        }
+        
+        // Conversión de precio a número si es string
+        if (typeof newValues.precio_oc === "string"){
+            newValues.precio_oc = parseFloat(newValues.precio_oc);
+        }
+        console.log("NewValues", newValues)
+        try {
+            // Enviar datos actualizados al servidor
+            const response = await fetch(`http://localhost:5000/api/calibration/${idHito}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newValues),
+            })
+            
+            if (response.ok){
+                const data = await response.json()
+                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const json = await updateData.json()
+                //setHitoCalibrationSource(json)
+                console.log("data",json)
+                message.success(`Hito Nº ${idHito} actualizado con éxito`);
+                setTouchedFields({}) // Resetear campos modificados
+                //resetear todos los campos del formulario
+                //form.resetFields()
+            } else{
+                message.error("Error al actualizar el Hito de Calibración")
+            }
+            
+        } catch (error) {
+            console.log("Error en la solicitud", error)
+        } finally{
+            setLoading(false)
+        }
+    }
+
     return (
         <div style={{
             width: "100%"
         }}>
-            
+            <style>{modifiedSelectStyle}</style>
             {dataHitoCalibration ? (
             <Form 
             form={form}
             name="form_item_path" 
                 layout="vertical"
-                onFinish={()=>console.log()}
+                onFinish={onFinish}
+                onValuesChange={handleValuesChange}
                 
                 //disabled= "false"
                 >
@@ -71,7 +154,9 @@ const EditGeneralViewCalibration = ({idHito})=>{
                     name="fecha_solicitud" 
                     initialValue={dataHitoCalibration["Fecha Solicitud"]?dayjs(dataHitoCalibration["Fecha Solicitud"], "YYYY-MM-DD"):""}
                 >
-                    <DatePicker disabled={!dayjs(dataHitoCalibration["Fecha Solicitud"]).isValid()} style={styleInput}/>
+                    <DatePicker disabled={true}
+                        //{!dayjs(dataHitoCalibration["Fecha Solicitud"]).isValid()} 
+                        style={styleInput}/>
                     
                 </Form.Item>
                 <Form.Item 
@@ -91,23 +176,48 @@ const EditGeneralViewCalibration = ({idHito})=>{
                     name="orden_de_compra" 
                     initialValue={dataHitoCalibration["Orden de Compra"]}
                 >
-                    <Input style={styleInput}/>
+                    <Input 
+                        style={{
+                            ...styleInput,
+                            borderColor: touchedFields.orden_de_compra ? '#1890ff' : undefined,
+                            boxShadow: touchedFields.orden_de_compra ? '0 0 0 2px rgba(24, 144, 255, 0.2)' : undefined
+                        }}
+                    />
                 </Form.Item>
                 <Form.Item 
                     label="Precio"
-                    name="precio" 
+                    name="precio_oc" 
                     initialValue={Math.round(dataHitoCalibration["Precio Orden de Compra"],9)}
                 >
-                    <Input prefix="$" suffix="CLP" style={styleInput}/>
+                    <Input 
+                        prefix="$" 
+                        suffix="CLP" 
+                        style={{
+                            ...styleInput,
+                            borderColor: touchedFields.precio_oc ? '#1890ff' : undefined,
+                            boxShadow: touchedFields.precio_oc ? '0 0 0 2px rgba(24, 144, 255, 0.2)' : undefined
+                        }}
+                    />
                 </Form.Item> 
                 <Form.Item 
                     label="Empresa"
-                    name="empresa" 
-                    initialValue={dataHitoCalibration.empresa}
+                    name="id_empresa" 
+                    //initialValue={dataHitoCalibration.empresa}
                 >
                     <Select 
-                    style={{width:'200px'}}
-                    options={empresas}/>
+                        className={touchedFields.id_empresa ? 'modified-select' : ''}
+                        style={{
+                            width:'200px',
+                            boxShadow: touchedFields.id_empresa ? '0 0 0 2px rgba(24, 144, 255, 0.2)' : undefined
+                        }}
+                        defaultValue={dataHitoCalibration.empresa}
+                        options={empresas}
+                        optionLabelProp="label"
+                        fieldNames={{
+                            label: 'label',
+                            value: 'value'
+                        }}
+                    />
                 </Form.Item>
                 </div>
                 <div style={{
@@ -116,7 +226,7 @@ const EditGeneralViewCalibration = ({idHito})=>{
                     marginTop: "20px"
                     
                 }}>
-                    <Button type="primary" style={{width: "10rem"}} htmlType="submit">Guardar</Button>
+                    <Button type="primary" style={{width: "10rem"}} loading={loading} htmlType="submit">Guardar</Button>
                 </div>
                 
                 

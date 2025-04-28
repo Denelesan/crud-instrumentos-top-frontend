@@ -2,7 +2,7 @@ import { Collapse, Button} from "antd"
 import { useNavigate, useParams } from "react-router-dom"
 import CalibrationInstrumentAsociation from "./calibration-instrumento-asociation";
 import EditGeneralViewCalibration from "./edit-view-general-calibration";
-
+import AvancesHitoCalibration from "./avances_hito_calibration";
 const EditViewHitoCalibration = ()=>{
     const {id} = useParams()
     console.log(id)
@@ -50,7 +50,7 @@ const EditViewHitoCalibration = ()=>{
                     marginTop: "20px"
                     
                 }}>
-                    <Button type="primary" style={{width: "auto"}} htmlType="submit">Agregar avances</Button>
+                    <AvancesHitoCalibration idHito={id}/>
                 </div>
             </Panel>
 
