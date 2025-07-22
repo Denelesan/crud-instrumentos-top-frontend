@@ -3,94 +3,49 @@ import { useNavigate, useParams } from "react-router-dom"
 import CalibrationInstrumentAsociation from "./calibration-instrumento-asociation";
 import EditGeneralViewCalibration from "./edit-view-general-calibration";
 import AvancesHitoCalibration from "./avances_hito_calibration";
+import { useState } from "react";
+import { CollapseLayout } from '../layouts';
+
 const EditViewHitoCalibration = ()=>{
     const {id} = useParams()
-    console.log(id)
     
     const navigate = useNavigate();
     const {Panel}= Collapse
+    const [updateTrigger, setUpdateTrigger] = useState(0)
 
+    // Función para manejar los cambios en los avances
+    const handleLogUpdate = ()=>{
+        setUpdateTrigger(prev=>prev+1)
+    }
+
+    const panels = [
+        {
+            header: "Información general",
+            content: <EditGeneralViewCalibration 
+                idHito={id} 
+                updateTrigger={updateTrigger} 
+            />
+        },
+        {
+            header: "Avances del hito de calibración",
+            content: <AvancesHitoCalibration idHito={id} onLogUpdate={handleLogUpdate}/>
+        },
+        {
+            header: "Instrumentos asociados",
+            content: <CalibrationInstrumentAsociation idHito={id}/>
+        }
+    ];
 
     return (
-        <div style={{
-            margin: '50px'
-        }}>
-            <h1>Edición de Hito de Calibración Nº{id}</h1>
-            
-
-            <div style={{
-            display: 'flex',
-            flexDirection: 'Column',
-            justifyContent: "center",
-            marginTop: "20px"
-            
-        }}>
-        <Collapse 
-            accordion = {false}
+        <CollapseLayout
+            title={`Edición de Hito de Calibración Nº${id}`}
+            panels={panels}
             defaultActiveKey={['1','2','3']}
-            
-            >
-            <Panel header="Información general" key="1">
-                <div style={{
-                    display: 'flex',
-                    justifyContent: "center",
-                    marginTop: "20px"
-                    
-                }}>
-                    <EditGeneralViewCalibration idHito={id} />
-
-                    
-                </div>
-            
-            </Panel>
-            <Panel header="Avances del hito de calibración" key="2">
-            <div style={{
-                    display: 'flex',
-                    justifyContent: "center",
-                    marginTop: "20px"
-                    
-                }}>
-                    <AvancesHitoCalibration idHito={id}/>
-                </div>
-            </Panel>
-
-            <Panel header="Instrumentos asociados" key="3">
-            <div style={{
-                    display: 'flex',
-                    justifyContent: "center",
-                    marginTop: "20px"
-                    
-                }}>
-                    <CalibrationInstrumentAsociation idHito={id}/>
-                    
-                </div>
-            </Panel>
-            
-            <Panel header="Fin del hito de calibración" key="4">
-            <div style={{
-                    display: 'flex',
-                    justifyContent: "center",
-                    marginTop: "20px"
-                    
-                }}>
-                    <Button type="primary" style={{width: "auto"}} htmlType="submit">Guardar</Button>
-                </div>
-            </Panel>
-            
-     </Collapse>
-      <div style={{
-            display: 'flex',
-            justifyContent: "center",
-            marginTop: "40px"
-            
-        }}>
-      <Button type="primary" style={{width: "15rem"}} onClick={()=>navigate("/")}>Volver a la bandeja de entrada</Button>
-     </div>
-     </div>
-        </div>
-
-
-    )
+            accordion={false}
+            backButtonText="Volver a la bandeja de entrada"
+            backButtonWidth="15rem"
+        />
+    );
 }
 
 export default EditViewHitoCalibration

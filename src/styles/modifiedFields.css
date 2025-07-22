@@ -1,0 +1,10 @@
+/* Estilos para campos modificados */
+.modified-select .ant-select-selector {
+    border-color: var(--ant-color-primary, #1890ff) !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.modified-select input {
+    border-color: var(--ant-color-primary, #1890ff) !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+} 

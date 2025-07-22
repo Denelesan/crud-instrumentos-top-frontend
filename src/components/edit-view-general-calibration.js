@@ -14,13 +14,16 @@ const modifiedSelectStyle = `
  * Componente para editar la información general de un hito de calibración
  * @param {string} idHito - ID del hito de calibración a editar
  */
-const EditGeneralViewCalibration = ({idHito})=>{
+const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
+
     // Estados para manejar los datos y el estado del formulario
     const [dataHitoCalibration, setDataHitoCalibration] = useState() // Datos del hito de calibración
     const [form] = useForm() // Instancia del formulario de Ant Design
-    const [empresas, setEmpresas]= useState() // Lista de empresas calibradoras
+    const [empresas, setEmpresas] = useState() // Lista de empresas calibradoras
+    const [modelos, setModelos]= useState([])
     const [loading, setLoading] = useState(false) // Estado de carga durante el envío del formulario
     const [touchedFields, setTouchedFields] = useState({}) // Campos que han sido modificados
+   
 
     // Función para manejar cambios en los campos del formulario
     const handleValuesChange = (changedValues, allValues) => {
@@ -33,13 +36,34 @@ const EditGeneralViewCalibration = ({idHito})=>{
     };
 
     // Cargar datos del hito de calibración
-    useEffect(()=>{
-        fetch(`http://localhost:5000/api/calibration/${idHito}`)
-        .then(resp=>resp.json())
-        .then(data => {setDataHitoCalibration(data[0]) 
-            console.log("data", data)})
-        .catch(error=> console.log("Error al traer la data", error))
-    }, [idHito])
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/api/calibration/${idHito}`);
+                const data = await response.json();
+                setDataHitoCalibration(data[0]);
+                console.log("Data actualizada:", data[0]);
+            } catch (error) {
+                console.error("Error al traer la data:", error);
+            }
+        };
+
+        fetchData();
+    }, [idHito, updateTrigger]); // Se ejecutará cuando cambie updateTrigger
+
+    // Actualizar el formulario cuando cambien los datos
+    useEffect(() => {
+        if (dataHitoCalibration) {
+            form.setFieldsValue({
+                IdHito: dataHitoCalibration["Id Hito"],
+                fecha_solicitud: dataHitoCalibration["Fecha Solicitud"] ? dayjs(dataHitoCalibration["Fecha Solicitud"], "YYYY-MM-DD") : "",
+                estado: dataHitoCalibration["Estado Hito"],
+                orden_de_compra: dataHitoCalibration["Orden de Compra"],
+                precio_oc: Math.round(dataHitoCalibration["Precio Orden de Compra"], 9),
+                id_empresa: dataHitoCalibration.empresa
+            });
+        }
+    }, [dataHitoCalibration, form]);
 
     // Cargar lista de empresas calibradoras
     useEffect(()=>{
@@ -55,6 +79,20 @@ const EditGeneralViewCalibration = ({idHito})=>{
             setEmpresas(optionsEmpresas)
         }).catch(error=> console.error("Error al obtener las empresas calibradoras", error))
     },[])
+    // Solicitar modelos de instrumentos
+    useEffect(()=>{
+        
+        fetch('http://localhost:5000/api/instrumentos/modelo')
+        .then(response => response.json())
+        .then(data=>{
+            const optionsModelos = data.map(modelo=>({
+                value: modelo.id_modelo,
+                label: modelo.modelo,
+            }))
+            setModelos(optionsModelos)
+        }).
+        catch(error=>console.error("Error al obtener dato de marca", error))
+    }, [])
 
     //console.log(dataHitoCalibration)
     const styleInput = {
@@ -64,7 +102,7 @@ const EditGeneralViewCalibration = ({idHito})=>{
     // Función que se ejecuta al enviar el formulario
     const onFinish= async (values)=>{
         setLoading(true)
-        
+        console.log("values", values)
         const {IdHito,...newValues} = values
         
         // Manejo de fecha nula
@@ -100,7 +138,7 @@ const EditGeneralViewCalibration = ({idHito})=>{
                 const updateData = await fetch('http://localhost:5000/api/calibration');
                 const json = await updateData.json()
                 //setHitoCalibrationSource(json)
-                console.log("data",json)
+                //console.log("data",json)
                 message.success(`Hito Nº ${idHito} actualizado con éxito`);
                 setTouchedFields({}) // Resetear campos modificados
                 //resetear todos los campos del formulario
@@ -177,6 +215,7 @@ const EditGeneralViewCalibration = ({idHito})=>{
                     initialValue={dataHitoCalibration["Orden de Compra"]}
                 >
                     <Input 
+                        disabled={dataHitoCalibration["Estado Hito"]==="Finalizado"?true:false}
                         style={{
                             ...styleInput,
                             borderColor: touchedFields.orden_de_compra ? '#1890ff' : undefined,
@@ -190,6 +229,7 @@ const EditGeneralViewCalibration = ({idHito})=>{
                     initialValue={Math.round(dataHitoCalibration["Precio Orden de Compra"],9)}
                 >
                     <Input 
+                        disabled={dataHitoCalibration["Estado Hito"]==="Finalizado"?true:false}
                         prefix="$" 
                         suffix="CLP" 
                         style={{
@@ -202,21 +242,22 @@ const EditGeneralViewCalibration = ({idHito})=>{
                 <Form.Item 
                     label="Empresa"
                     name="id_empresa" 
-                    //initialValue={dataHitoCalibration.empresa}
+                    initialValue={dataHitoCalibration.empresa}
                 >
                     <Select 
+                        disabled={dataHitoCalibration["Estado Hito"]==="Finalizado"?true:false}
                         className={touchedFields.id_empresa ? 'modified-select' : ''}
                         style={{
                             width:'200px',
                             boxShadow: touchedFields.id_empresa ? '0 0 0 2px rgba(24, 144, 255, 0.2)' : undefined
                         }}
-                        defaultValue={dataHitoCalibration.empresa}
+                        initialValue={dataHitoCalibration.empresa}
                         options={empresas}
                         optionLabelProp="label"
-                        fieldNames={{
+                        /*fieldNames={{
                             label: 'label',
                             value: 'value'
-                        }}
+                        }}*/
                     />
                 </Form.Item>
                 </div>

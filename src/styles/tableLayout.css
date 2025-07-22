@@ -1,0 +1,142 @@
+.table-layout-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
+  padding: 32px 32px 24px 32px;
+  margin: 12px auto;
+  max-width: 1300px;
+}
+
+.table-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.table-layout-search {
+  background: #f5f6fa;
+  border-radius: 12px;
+  border: 1px solid #e5e6eb;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  width: 320px;
+  font-size: 16px;
+}
+
+.table-layout-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+}
+
+.table-layout-add-btn {
+  border-radius: 8px !important;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 0 20px;
+  height: 40px;
+}
+
+.table-instrument .ant-table {
+  background: transparent;
+  border-radius: 12px;
+}
+
+.table-instrument .ant-table-thead > tr > th {
+  background: #f5f6fa !important;
+  color: #222;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.table-instrument .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+}
+
+.table-instrument .ant-table-tbody > tr.robado-row > td {
+  background: #ffeaea !important;
+}
+
+.table-instrument .ant-table-tbody > tr > td .ant-tag {
+  border-radius: 16px;
+  font-size: 14px;
+  padding: 0 12px;
+}
+
+.table-instrument .ant-table-tbody > tr > td .anticon {
+  font-size: 18px;
+  margin: 0 6px;
+  cursor: pointer;
+}
+
+.table-instrument .ant-pagination {
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .table-layout-container {
+    padding: 12px 4px;
+  }
+  .table-layout-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+}
+
+/* Banner superior */
+.table-layout-banner {
+  width: 100vw;
+  background: #5b4fff;
+  color: #fff;
+  padding: 32px 0 18px 0;
+  margin-bottom: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+.table-layout-banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+}
+.table-layout-banner-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.table-layout-banner-subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-top: 4px;
+  opacity: 0.95;
+}
+.table-layout-banner-actions {
+  display: flex;
+  gap: 16px;
+}
+.table-layout-banner-actions button {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.table-layout-banner-actions button:hover {
+  background: rgba(255,255,255,0.22);
+} 

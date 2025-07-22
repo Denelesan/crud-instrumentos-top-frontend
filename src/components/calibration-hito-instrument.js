@@ -1,240 +1,169 @@
-import { useEffect, useRef, useState } from "react"
-import { Button, Modal, Table, Tag, message, Tooltip } from "antd"
-import {DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone} from '@ant-design/icons'
+import { useEffect, useState } from "react"
+import { Modal, message } from "antd"
 import { useNavigate } from 'react-router-dom';
+import { TableLayout } from '../layouts';
+import { generateColumns, createDateRenderer } from '../utils/tableUtils';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
 import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 import dayjs from "dayjs";
 import 'dayjs/locale/es' // para español
+import Item from "antd/es/list/Item";
 dayjs.locale('es')
 
-
-
-
-const CalibrationHitoInstrument = ()=>{
-    const formRef = useRef(null)
-    const [hitoCalibrationSource, setHitoCalibrationSource] = useState([])
-    const [columnsHitoCalibration, setColumnsHitoCalibration] = useState([])
-    const [isFormModalOpen, setIsFormModalOpen] = useState(false)
-    const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
-    const [hitoCalibrationSelected, setHitoCalibrationSelected] = useState([])
-    const [loading, setLoading] = useState(false)
+const CalibrationHitoInstrument = () => {
+    const [hitoCalibrationSource, setHitoCalibrationSource] = useState([]);
+    const [columnsHitoCalibration, setColumnsHitoCalibration] = useState([]);
+    const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false);
+    const [hitoCalibrationSelected, setHitoCalibrationSelected] = useState([]);
+    const [searchValue, setSearchValue]= useState("")
+    const [loading, setLoading] = useState(false);
     
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const onSearchChange = (e)=>{
+      setSearchValue(e.target.value)
+    }
     
-    useEffect(()=>{
+    const dataFiltered = hitoCalibrationSource.filter((item)=>{
+        //console.log(item)
+        const search = searchValue.toLowerCase()
+    return (
+      String(item['Id Hito']).toLowerCase().includes(search.toLowerCase()) ||
+      item.empresa?.toLowerCase().includes(search.toLowerCase()) ||
+      item['Orden de Compra']?.toLowerCase().includes(search.toLowerCase()) ||
+      item['Estado Hito']?.toLowerCase().includes(search.toLowerCase())
+    )
+    }
+    )
+    useEffect(() => {
         fetch(`http://localhost:5000/api/calibration`)
         .then(res => res.json())
-        .then(result=>{ 
-          const list = result//[dataType]
-          
-          const firstObject = list[0]
-          
-          //deleteProperties(firstObject,outProperties )
-          const cols=[]
-          for (const key in firstObject){
-            let render = (valor) => {
-              //console.log(firstObject[key])
-              // Si el valor es nulo o indefinido, renderiza un mensaje predeterminado
-              if (valor === null || valor === undefined) {
-                return <span>No data</span>;
-              }
-              if (typeof valor === 'string') {
-                const isoDateMatch = valor.match(/^\d{4}-\d{2}-\d{2}/); // detecta fechas tipo "2020-06-17"
-                if (isoDateMatch) {
-                  const date =dayjs(valor);
-                  //console.log("DATE",date)
-                  if (date.isValid()) {
-                    return <span>{date.format("D [de] MMMM [del] YYYY")}</span>;
-                  }
-                }
-              }
-              return <span>{String(valor)}</span>;
-            };           
-
+        .then(result => { 
+            const list = result;
             
+            const customRenderers = {
+                // Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
+                // Puedes especificar columnas específicas si es necesario
+            };
             
-            if (typeof firstObject[key] === "object" && firstObject[key] !== null){
-              
-              if(Array.isArray(firstObject[key])){
-                render = ()=>Object.values(firstObject[key]).map(tag=>{
-                  return (
-                    <div>
-                      <Tag>{tag}</Tag>
-                    </div>
-                    
-                  )
-                })
-              }else{
-                render = (valor)=>
-                valor && Object.keys(firstObject[key]).map(key=>{
-                  return (
-                    <span>
-                      {key}:{valor[key] !== null && valor[key] !== undefined ? valor[key] : "No data"}<br/>
-                    </span>
-                    
-                  )
-                })
-              }
-            }
-            let col = {
-              title: String(key).charAt(0).toUpperCase()+String(key).slice(1) ,
-              dataIndex: key,
-              render:render
-            }
-            cols.push(col)
+            const actionColumns = {
+                onEdit: (id) => navigate(`/calibration/edit/${id}`),
+                onView: (id) => navigate(`/detail/${id}`),
+                onDelete: (id) => onDeleteHitoCalibration(id),
+                onAdd: (id) => {
+                    setHitoCalibrationSelected(id);
+                    setIsAddInstrumentModalOpen(true);
+                },
+                editKey: "Id Hito",
+                viewKey: "id",
+                deleteKey: "Id Hito",
+                addKey: "Id Hito",
+                showAdd: true,
+                showEdit: true,
+                showView: true,
+                showDelete: true
+            };
             
-          }
-          cols.push({
-            title: "Action",
-            render: (record)=>{
-              
-              return (<>
-              <div style={{
-                display:"flex",
-                justifyContent:"space-between",
-                width:"80%"}}>
-                <Tooltip title="Agregar Instrumento" >
-                  <PlusCircleTwoTone onClick={()=>{
-                    let idHito = record["Id Hito"]
-                    console.log(idHito)
-                    setHitoCalibrationSelected(idHito)
-                    setIsAddInstrumentModalOpen(true)
-                  }}/>
-                </Tooltip>
-                
-                <EditOutlined onClick={()=>{
-                  console.log(record["Id Hito"])
-                  navigate(`/calibration/edit/${record["Id Hito"]}`)
-                }}/>
-                <EyeOutlined onClick={()=>{
-                  console.log(record.id)
-                  navigate(`/detail/${record.id}`)
-                  }}/>
-                <DeleteOutlined onClick={()=>showModalConfirm(onDeleteHitoCalibration, record["Id Hito"])} style={{color:"red"}}/>
-              </div>
-              </>)
-            }
-          })
-          setColumnsHitoCalibration(cols)
-          setHitoCalibrationSource(list)   
+            const cols = generateColumns(list, {
+                customRenderers,
+                actionColumns
+            });
+            console.log(list)
+            setColumnsHitoCalibration(cols);
+            setHitoCalibrationSource(list);
         });
-    },[])
+    }, [navigate]);
     
-    const handleCancel = ()=>{
-        setIsFormModalOpen(false)
-        setIsAddInstrumentModalOpen(false)
-        if (formRef.current) {
-          formRef.current.resetFormFields();  // Llamar al método desde la referencia
-      }
-        
-      }
-    const showModalConfirm = (onDelete, record)=>{
-        Modal.confirm({
-          title: '¿Estás seguro que deseas eliminar este Hito de Calibración y todos sus instrumentos asociados?',
-          content: 'Esta acción no se puede deshacer',
-          okText: 'Eliminar',
-          okType: 'danger',
-          cancelText: 'Cancelar',
-          onOk() {
-            onDelete(record);
-          },
-        })
-      }
-      const onDeleteHitoCalibration = async (record)=>{
-    
-        const {id} = record
-        console.log(record)
+    const handleCancel = () => {
+        setIsAddInstrumentModalOpen(false);
+    };
+
+    const onDeleteHitoCalibration = async (record) => {
+        console.log(record);
         try {
             const response = await fetch(`http://localhost:5000/api/calibration/delete/${record}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                //body: JSON.stringify(values),
-            })
+            });
             
-                if (response.ok){
-                    const data = await response.json()
-                    const updateData = await fetch('http://localhost:5000/api/calibration');
-                    const json = await updateData.json()
-                    setHitoCalibrationSource(json)
-                    message.success(`El Hito de calibración Nº: ${record} se ha eliminado con éxito`);
-                    
-                    
-                } else{
-                    console.error("Error al eliminar el Hito de Calibración")
-                }
-            
+            if (response.ok) {
+                const data = await response.json();
+                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const json = await updateData.json();
+                setHitoCalibrationSource(json);
+                message.success(`El Hito de calibración Nº: ${record} se ha eliminado con éxito`);
+            } else {
+                console.error("Error al eliminar el Hito de Calibración");
+            }
         } catch (error) {
-            console.log("Error en la solicitud", error)
+            console.log("Error en la solicitud", error);
         } 
-    }
+    };
 
-    const showModalCreateHitoCalibration = (createHito)=>{
-      Modal.confirm({
-        title: '¿Estás seguro que deseas crear un nuevo Hito de Calibración',
-          content: 'Luego de crear el hito de calibración, deberás indexar los instrumentos asociados',
-          okText: 'Crear',
-          okType: 'primary',
-          cancelText: 'Cancelar',
-          onOk() {
-            createHito();
-          },
-      })
-    }
+    const showModalCreateHitoCalibration = (createHito) => {
+        Modal.confirm({
+            title: '¿Estás seguro que deseas crear un nuevo Hito de Calibración',
+            content: 'Luego de crear el hito de calibración, deberás indexar los instrumentos asociados',
+            okText: 'Crear',
+            okType: 'primary',
+            cancelText: 'Cancelar',
+            onOk() {
+                createHito();
+            },
+        });
+    };
 
-    const createHitoCalibration= async ()=>{
-      setLoading(true)
-      
-      try {
-          const response = await fetch('http://localhost:5000/api/calibration', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(),
-          })
-          
-              if (response.ok){
-                  const data = await response.json()
-                  const updateData = await fetch('http://localhost:5000/api/calibration');
-                  const json = await updateData.json()
-                  setHitoCalibrationSource(json)
-                  console.log("data",json)
-                  message.success(`Nuevo Hito de Calibración creado con éxito`);
-                  //resetear todos los campos del formulario
-                  //form.resetFields()
-                  
-              } else{
-                  message.error("Error al crear el Hito de Calibración")
-              }
-          
-      } catch (error) {
-          console.log("Error en la solicitud", error)
-      } finally{
-          setLoading(false)
-      }
-  }
+    const createHitoCalibration = async () => {
+        setLoading(true);
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/calibration', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(),
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const json = await updateData.json();
+                setHitoCalibrationSource(json);
+                console.log("data", json);
+                message.success(`Nuevo Hito de Calibración creado con éxito`);
+            } else {
+                message.error("Error al crear el Hito de Calibración");
+            }
+        } catch (error) {
+            console.log("Error en la solicitud", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div>
-            <div style={{
-                textAlign: 'center',
-                marginBottom:20
-                }}>
-                <Button onClick={()=>showModalCreateHitoCalibration(createHitoCalibration)} type='primary'>Agregar un Hito de Calibración</Button>
-            </div>
-            <Modal open={isFormModalOpen} onCancel={handleCancel} footer={null}>
-                <FormCreateHitoCalibration  ref={formRef} setHitoCalibrationSource={setHitoCalibrationSource}></FormCreateHitoCalibration>
-            </Modal>
-            <Table size='small' columns={columnsHitoCalibration} dataSource={hitoCalibrationSource}>
-            </Table>
+            <TableLayout
+                addButtonText="Agregar un Hito de Calibración"
+                columns={columnsHitoCalibration}
+                dataSource={dataFiltered}
+                onSearchChange={onSearchChange}
+                searchValue={searchValue}
+                onDelete={onDeleteHitoCalibration}
+                deleteConfirmTitle="¿Estás seguro que deseas eliminar este Hito de Calibración y todos sus instrumentos asociados?"
+                onAdd={showModalCreateHitoCalibration}
+                loading={loading}
+                searchPlaceholder = 'Buscar hito de calibración...'
+            />
+            
             <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
-                <AddInstrumentToHitoCalibration hitoSelected={hitoCalibrationSelected}/>
+                <AddInstrumentToHitoCalibration hitoSelected={hitoCalibrationSelected} />
             </Modal>
         </div>
-    )
-}
+    );
+};
 
-export default CalibrationHitoInstrument
+export default CalibrationHitoInstrument;

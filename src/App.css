@@ -22,6 +22,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  font-family: 'Inter', sans-serif;
 }
 
 .App-link {
@@ -37,11 +38,14 @@
   }
 }
 .ant-table-thead {
-  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--heroui-font-size-small);
   text-align: center;
+  
 }
 .ant-table-tbody{
-  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px ;
   text-align: center;
 }
 

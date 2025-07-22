@@ -38,8 +38,9 @@
 - [ ] Fecha de compra de instrumentos.
 - [ ] Fecha de garantía en caso de ser necesario.
 - [ ] Agregar num ofpa a tabla solic_calibration.
-- [ ] Modificar estado_solic para se defina en razón de la solicitud no de la acción a realizar (no calibrado).
+- [X] Modificar estado_solic para se defina en razón de la solicitud no de la acción a realizar (no calibrado).
   - **Action**: Se crea tablas de log de calibración para crear un trigger que actualice el estado del hito de calibración.
+  - **Action**: Se crea triger que desde el log de calibraciones actualiza el estado y la fecha de inicio de solicitud.
 - [ ] Modificar tabla de instrumentos, para agregar lógica que permita organizar instrumentos y accesorios por "Kit", cómo Kit GNSS 1.
 - [X] Se debe agregar lo necesario en base de datos, para generar un log de acciones, o detalles.
   - **Action**: Se crea la tabla de log_calibracion y etapas_calibr para generar lógica de creación de log en estado.
