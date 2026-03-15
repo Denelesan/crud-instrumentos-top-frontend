@@ -81,7 +81,7 @@ const TableInstrumentComponent = () => {
             setColumns(cols);
             setDataSource(list);
         });
-    }, [navigate]);
+    }, [navigate, link, outProperties]);
 
     const onDeleteInstrumento = async (record) => {
         const { id } = record;
