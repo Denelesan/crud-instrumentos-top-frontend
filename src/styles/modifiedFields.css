@@ -7,4 +7,17 @@
 .modified-select input {
     border-color: var(--ant-color-primary, #1890ff) !important;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-} 
+}
+
+/* Estilos para labels en negrita 
+.ant-form-item-label > label {
+    font-weight: bold;
+} */
+
+input{
+    font-weight: bold;
+}
+.css-dev-only-do-not-override-s5v12y .ant-select .ant-select-selection-item {
+    
+    font-weight: bold;
+}

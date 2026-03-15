@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 const PageLayout = ({
     titleBanner,
-    subtitle,
+    subtitleBanner,
     bannerActions = null, 
     title, 
+    subtitle,
     children, 
     showBackButton = true, 
     backButtonText = "Volver",
@@ -30,7 +31,7 @@ const PageLayout = ({
             <div className="table-layout-banner-content">
                 <div>
                     <div className="table-layout-banner-title">{titleBanner}</div>
-                    {subtitle && <div className="table-layout-banner-subtitle">{subtitle}</div>}
+                    {subtitleBanner && <div className="table-layout-banner-subtitle">{subtitleBanner}</div>}
                 </div>
                 {bannerActions && (
                     <div className="table-layout-banner-actions">{bannerActions}</div>
@@ -38,13 +39,18 @@ const PageLayout = ({
             </div>
         </div>
         <div style={{ margin }}>
-            <h1>{title}</h1>
+            <h3>{title}</h3>
             <div style={{
                 display: 'flex',
                 flexDirection: 'Column',
                 justifyContent: "center",
-                marginTop: "20px"
+                marginTop: "0px"
             }}>
+            <p style={
+                {color:"grey"}
+                }>
+                {subtitle}
+            </p>
                 {children}
                 
                 {showBackButton && (

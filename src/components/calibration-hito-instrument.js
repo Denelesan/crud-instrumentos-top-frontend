@@ -110,7 +110,7 @@ const CalibrationHitoInstrument = () => {
             okType: 'primary',
             cancelText: 'Cancelar',
             onOk() {
-                createHito();
+                createHitoCalibration();
             },
         });
     };

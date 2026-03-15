@@ -4,6 +4,10 @@ import PageLayout from './PageLayout';
 const { Panel } = Collapse;
 
 const CollapseLayout = ({ 
+    titleBanner,
+    subtitleBanner,
+    subtitle,
+    bannerActions = null, 
     title, 
     panels = [], 
     defaultActiveKey = ['1'],
@@ -16,6 +20,9 @@ const CollapseLayout = ({
 }) => {
     return (
         <PageLayout
+            titleBanner={titleBanner}
+            subtitleBanner={subtitleBanner}
+            subtitle={subtitle}
             title={title}
             showBackButton={showBackButton}
             backButtonText={backButtonText}

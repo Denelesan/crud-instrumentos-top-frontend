@@ -180,7 +180,7 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
                 marginBottom: "20px",
                 width: "auto"}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
             </div>
-            <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
+            <Modal width={600} open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
                 <AddInstrumentToHitoCalibrationFromEditView hitoSelected={idHito} dataSourceOriginal={dataSource} dataTemporal={dataSourceTemporal} setDataSourceTemporal={setDataSourceTemporal}/>
             </Modal>
             <Table columns={columns} dataSource={dataSourceTemporal}/>

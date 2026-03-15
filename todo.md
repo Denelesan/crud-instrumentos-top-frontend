@@ -50,7 +50,7 @@
 - (20-02-2025) Lo relativo a tipo y categoría de instrumentos, se está analizando de la siguiente manera; con el fin de permitir un detalle, quizás, exagerado de los instrumentos y accesorios que se cuentan en la sección, se está postulando mantener el tipo de instrumentos (ver diccionario) en la tabla principal, relacionar la tabla tipos a su categoría (si es un instrumento, accesorio, cable, etc). Y se complementará con una tabla `Kit` que englobará, en caso de ser necesario, los conjuntos en razón de su "categoría" (**por definir**). Esto permitirá detallar los estados de cada elemento, además de englobarlos tal cómo se hace en la práctica y en la compra de estos instrumentos, que muchas veces vienen asociados a Kit (Antena GNSS, libreta, bases tribash, cables, etc).
 - (21-02-2025) Se decide mantener la relación de materialidad sólo en la tabla de instrumentos principal, no cambiarla al modelo del instrumento.
 
-- Diccionario de datos:
+# Diccionario de datos:
 
 <table>
     <thead>
@@ -73,6 +73,16 @@
         </tr>
     </tbody>
 </table>
+
+# TO-DOs próximos
+
+### S-19/10/2025
+
+**Sección de Calibración-Detalle de Instrumento**
+- [X] Mejorar función de generación de columnas, para considerar factores de modificación de nombres de columnas de forma rápida (cómo la de no considerar ciertas columnas).
+- [X] Crear columna de acción
+- [ ] Comenzar con modal para flujo que agrega certificados de calibración.
+
 
 ## Diseño
 

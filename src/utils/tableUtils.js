@@ -1,5 +1,5 @@
 import { Tag } from "antd";
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone,DownloadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
 
 // Función para eliminar propiedades de un objeto
@@ -7,6 +7,17 @@ export function deleteProperties(obj, properties) {
     properties.forEach(prop => {
         delete obj[prop];
     });
+}
+
+// Función para cambiar nombres de un objeto
+
+export function changeNameProperties(obj, names){
+    return Object.keys(obj).reduce((acum, key)=>{
+        const keyNew = names[key] || key
+        acum[keyNew] = obj[key]
+        
+        return acum;
+    },{})
 }
 
 // Función para generar renderizador de estado con colores
@@ -75,15 +86,18 @@ export function createActionColumns({
     onView, 
     onDelete, 
     onAdd,
+    onDownload,
     showModalConfirm, // función para mostrar el modal, pasada desde el layout
     editKey = "id",
     viewKey = "id",
     deleteKey = "id",
     addKey = "Id Hito",
+    downloadKey = "id",
     showAdd = false,
     showEdit = true,
     showView = true,
-    showDelete = true
+    showDelete = true,
+    showDownload = true,
 }) {
     const actions = [];
     
@@ -102,7 +116,7 @@ export function createActionColumns({
         });
     }*/
     
-    if (showEdit || showView || showDelete || (showAdd && onAdd)) {
+    if (showEdit || showView || showDelete || showDownload || (showAdd && onAdd)) {
         actions.push({
             title: "Action",
             render: (record) => (
@@ -119,6 +133,9 @@ export function createActionColumns({
                     )}
                     {showView && onView && (
                         <EyeOutlined onClick={() => onView(record[viewKey])} />
+                    )}
+                    {showDownload && onDownload && (
+                        <DownloadOutlined onClick={() => onDownload(record[downloadKey])} />
                     )}
                     {showDelete && onDelete && (
                         <DeleteOutlined 
@@ -143,17 +160,24 @@ export function createActionColumns({
 // Función para generar columnas dinámicas
 export function generateColumns(data, options = {}) {
     if (!data || data.length === 0) return [];
-    
-    const firstObject = data[0];
+
     const { 
-        excludeProperties = [], 
+        excludeProperties = [],
+        changeNameKeys = {}, 
         customRenderers = {},
         actionColumns = null
     } = options;
+
+
+    
+    
+    const firstObject = data[0];
+    
     
     // Eliminar propiedades excluidas
     const cleanObject = { ...firstObject };
     deleteProperties(cleanObject, excludeProperties);
+
     
     const columns = [];
     
@@ -161,19 +185,38 @@ export function generateColumns(data, options = {}) {
     for (const key in cleanObject) {
         let render = customRenderers[key] || createGenericRenderer(cleanObject, key);
         
+        // Cambiar nombre de clave según lo indicado por el usuario
+        let keyNew = changeNameKeys[key] || key
+            
         const col = {
-            title: String(key).charAt(0).toUpperCase() + String(key).slice(1),
+            title: String(keyNew).charAt(0).toUpperCase() + String(keyNew).slice(1).replace("_"," "),
             dataIndex: key,
             render: render
         };
         
         columns.push(col);
     }
-    
-    // Agregar columnas de acciones si se especifican
+      // Agregar columnas de acciones si se especifican
     if (actionColumns) {
         columns.push(...createActionColumns(actionColumns));
     }
     
-    return columns;
+    return columns;  
+    
+    
 } 
+
+//función para obtener el id desde el value o el label según corresponda.
+
+export function getIdFromValueOrLabel(value, options) {
+    console.log(value, options)
+    // Si el value ya es un id (número), lo devolvemos
+    if (typeof value === 'number') return value;
+    // Si es string, buscamos el id correspondiente al label
+    else {
+        const found = options.find(opt => opt.label === value);
+        console.log(found)
+        return found ? found.value: value;
+    }
+    
+}

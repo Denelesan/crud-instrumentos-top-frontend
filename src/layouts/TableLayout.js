@@ -18,6 +18,9 @@ export function showModalConfirm(onDelete, record, deleteConfirmTitle = "¿Está
 
 const TableLayout = ({ 
     addButtonText = "Agregar elemento",
+    fontSizeButton = '', //16px
+    heightButton = '', //40px
+    paddingButton = '', //0 20px
     columns = [],
     dataSource = [],
     onAdd,
@@ -26,6 +29,7 @@ const TableLayout = ({
     deleteConfirmContent = "Esta acción no se puede deshacer",
     FormComponent,
     formProps = {},
+    widthModal = 520,
     tableProps = {},
     showAddButton = true,
     customStyles = "",
@@ -73,6 +77,10 @@ const TableLayout = ({
                         className="table-layout-add-btn"
                         onClick={onAdd ? onAdd : () => setIsFormModalOpen(true)} 
                         type='primary'
+                        style={{ fontSize: fontSizeButton,
+                            padding: paddingButton,
+                            height: heightButton,
+                         }}
                         loading={loading}
                     >
                         <PlusOutlined />{addButtonText}
@@ -85,6 +93,7 @@ const TableLayout = ({
                     open={isFormModalOpen} 
                     onCancel={handleCancel} 
                     footer={null}
+                    width={widthModal}
                 >
                     <FormComponent 
                         ref={formRef} 

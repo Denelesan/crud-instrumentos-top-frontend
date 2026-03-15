@@ -3,7 +3,7 @@ import PageLayout from './PageLayout';
 
 const TabLayout = ({ 
     titleBanner,
-    subtitle,
+    subtitleBanner,
     bannerActions = null, 
     title, 
     tabs = [], 
@@ -21,7 +21,7 @@ const TabLayout = ({
     return (
         <PageLayout
             titleBanner={titleBanner}
-            subtitle={subtitle}
+            subtitleBanner={subtitleBanner}
             bannerActions = {bannerActions}
             title={title}
             showBackButton={showBackButton}

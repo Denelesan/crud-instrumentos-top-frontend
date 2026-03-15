@@ -4,8 +4,9 @@ const ModifiedInput = ({
     name, 
     label, 
     initialValue, 
-    touchedFields, 
-    style = { width: 'auto' },
+    touchedFields,
+    rules, 
+    style = {width:"200px"},
     disabled = false,
     placeholder,
     ...rest 
@@ -16,6 +17,7 @@ const ModifiedInput = ({
             name={name}
             initialValue={initialValue}
             className={touchedFields[name] ? "modified-select" : ""}
+            rules={rules}
         >
             <Input 
                 style={style}

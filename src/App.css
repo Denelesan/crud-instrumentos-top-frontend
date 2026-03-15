@@ -49,3 +49,7 @@
   text-align: center;
 }
 
+.ant-modal{
+  width: "600px" !important ;
+}
+
