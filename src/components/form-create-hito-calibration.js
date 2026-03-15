@@ -1,7 +1,7 @@
 import { Button, DatePicker, Form, Input, Select, message} from "antd"
 import { useForm } from "antd/es/form/Form"
 import { useEffect, useState,forwardRef,useImperativeHandle } from "react"
-
+import API_URL from "../config/api";
 
 
 
@@ -34,7 +34,7 @@ const FormCreateHitoCalibration = forwardRef((props, ref) =>{
         setLoading(true)
         
         try {
-            const response = await fetch('http://localhost:5000/api/calibration', {
+            const response = await fetch(`${API_URL}/calibration`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const FormCreateHitoCalibration = forwardRef((props, ref) =>{
             
                 if (response.ok){
                     const data = await response.json()
-                    const updateData = await fetch('http://localhost:5000/api/calibration');
+                    const updateData = await fetch(`${API_URL}calibration`);
                     const json = await updateData.json()
                     setHitoCalibrationSource(json)
                     console.log("data",json)

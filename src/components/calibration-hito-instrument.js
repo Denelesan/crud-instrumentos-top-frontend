@@ -8,7 +8,10 @@ import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 import dayjs from "dayjs";
 import 'dayjs/locale/es' // para español
 import Item from "antd/es/list/Item";
+import API_URL from "../config/api";
 dayjs.locale('es')
+
+
 
 const CalibrationHitoInstrument = () => {
     const [hitoCalibrationSource, setHitoCalibrationSource] = useState([]);
@@ -36,7 +39,7 @@ const CalibrationHitoInstrument = () => {
     }
     )
     useEffect(() => {
-        fetch(`http://localhost:5000/api/calibration`)
+        fetch(`${API_URL}/calibration`)
         .then(res => res.json())
         .then(result => { 
             const list = result;
@@ -81,7 +84,7 @@ const CalibrationHitoInstrument = () => {
     const onDeleteHitoCalibration = async (record) => {
         console.log(record);
         try {
-            const response = await fetch(`http://localhost:5000/api/calibration/delete/${record}`, {
+            const response = await fetch(`${API_URL}/calibration/delete/${record}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +93,7 @@ const CalibrationHitoInstrument = () => {
             
             if (response.ok) {
                 const data = await response.json();
-                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const updateData = await fetch(`${API_URL}/calibration`);
                 const json = await updateData.json();
                 setHitoCalibrationSource(json);
                 message.success(`El Hito de calibración Nº: ${record} se ha eliminado con éxito`);
@@ -119,7 +122,7 @@ const CalibrationHitoInstrument = () => {
         setLoading(true);
         
         try {
-            const response = await fetch('http://localhost:5000/api/calibration', {
+            const response = await fetch(`${API_URL}/calibration`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -129,7 +132,7 @@ const CalibrationHitoInstrument = () => {
             
             if (response.ok) {
                 const data = await response.json();
-                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const updateData = await fetch(`${API_URL}/api/calibration`);
                 const json = await updateData.json();
                 setHitoCalibrationSource(json);
                 console.log("data", json);

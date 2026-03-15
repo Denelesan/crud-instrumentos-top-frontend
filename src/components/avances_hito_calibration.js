@@ -2,6 +2,7 @@ import { Form, Input, Button, DatePicker, Select, Table, Flex } from "antd";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import 'dayjs/locale/es' // para español
+import API_URL from "../config/api";
 dayjs.locale('es')
 
 // Estilos globales para el DatePicker
@@ -63,7 +64,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
     
     // Cargar lista de empresas calibradoras
     useEffect(()=>{
-        fetch('http://localhost:5000/api/calibration_etapas')
+        fetch(`${API_URL}/calibration_etapas`)
         .then(response => response.json())
         .then(data=>{
             const optionsEtapas = data.map(empresa=>({
@@ -82,7 +83,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
 
      // Cargar lista de medio para log 
      useEffect(()=>{
-        fetch('http://localhost:5000/api/calibration_medio')
+        fetch(`${API_URL}/calibration_medio`)
         .then(response => response.json())
         .then(data=>{
             //<console.log("data", data)
@@ -98,7 +99,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
     // Cargar datos iniciales del registro
     useEffect(() => {
         if (idHito) {
-            fetch(`http://localhost:5000/api/calibration/${idHito}`)
+            fetch(`${API_URL}/calibration/${idHito}`)
                 .then(response => response.json())
                 .then(data => {
                     setInitialData(data);
@@ -115,7 +116,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
                 .catch(error => console.error("Error al obtener los datos del hito:", error));
                 
                 //Cargar datos de log
-                fetch(`http://localhost:5000/api/calibration/log/${idHito}`)
+                fetch(`${API_URL}/calibration/log/${idHito}`)
                     .then(res => res.json())
                     .then(data_log=>{  
                         setDataSource(data_log);
@@ -134,7 +135,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
                 fecha_log: values.fecha_log.format('YYYY-MM-DD')
             };
             
-            const response = await fetch('http://localhost:5000/api/calibration/agregar_log',{
+            const response = await fetch(`${API_URL}/calibration/agregar_log`,{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,7 +151,7 @@ const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
                 form.resetFields(['id_etapa', 'id_medio', 'detalle_log']);
                 
                 // Actualizar la tabla con los nuevos datos
-                const updatedData = await fetch(`http://localhost:5000/api/calibration/log/${idHito}`)
+                const updatedData = await fetch(`${API_URL}/calibration/log/${idHito}`)
                     .then(res => res.json());
                 setDataSource(updatedData);
                 //Notificamos al componente padre que hubo una actualización exitosa. En esta notificación se ejecuta la función que gatilla el cambio del estado para ejecutar el useEffect de actualización de la vista general.

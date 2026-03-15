@@ -1,7 +1,7 @@
 import { Form, Input, Button, Select, message } from "antd"
 import { useForm } from "antd/es/form/Form"
 import { useEffect, useState, useImperativeHandle, forwardRef  } from "react"
-
+import API_URL from "../config/api";
 
 const FormCreateInstrument = forwardRef((props, ref) =>{
     
@@ -20,7 +20,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
     }));
     // Solicitar tipos de instrumentos
     useEffect(()=>{
-        fetch('http://localhost:5000/api/instrumentos/tipo')
+        fetch(`${API_URL}/instrumentos/tipo`)
         .then(response => response.json())
         .then(data=>{
             
@@ -35,7 +35,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
 
      // Solicitar marcas de instrumentos
      useEffect(()=>{
-        fetch('http://localhost:5000/api/instrumentos/marca')
+        fetch(`${API_URL}/instrumentos/marca`)
         .then(response => response.json())
         .then(data=>{
             const optionsMarcas = data.map(marca=>({
@@ -51,7 +51,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
      // Solicitar modelos de instrumentos
      useEffect(()=>{
         
-        fetch('http://localhost:5000/api/instrumentos/modelo')
+        fetch(`${API_URL}/instrumentos/modelo`)
         .then(response => response.json())
         .then(data=>{
             const optionsModelos = data.map(modelo=>({
@@ -67,7 +67,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
         console.log(e)
         const id_marca = e
         setSelectMarca(id_marca)
-        fetch(`http://localhost:5000/api/instrumentos/modelo?id_marca=${id_marca}`)
+        fetch(`${API_URL}/instrumentos/modelo?id_marca=${id_marca}`)
         .then(response => response.json())
         .then(data=>{
             console.log(data)
@@ -84,7 +84,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
         setLoading(true)
         
         try {
-            const response = await fetch('http://localhost:5000/api/instrumentos', {
+            const response = await fetch(`${API_URL}/instrumentos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
             
                 if (response.ok){
                     const data = await response.json()
-                    const updateData = await fetch('http://localhost:5000/api/instrumentos');
+                    const updateData = await fetch(`${API_URL}/instrumentos`);
                     const json = await updateData.json()
                     setDataSource(json)
                     message.success(`Nuevo instrumento creado con éxito: ${data.instrumento}`);

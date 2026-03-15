@@ -2,7 +2,7 @@ import { Button, Collapse, DatePicker, Form, Input, Select, message } from "antd
 import { useForm } from "antd/es/form/Form"
 import { useEffect, useState } from "react"
 import dayjs from "dayjs"
-
+import API_URL from "../config/api";
 // Estilo CSS para el Select cuando ha sido modificado
 const modifiedSelectStyle = `
     .modified-select .ant-select-selector {
@@ -39,7 +39,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/calibration/${idHito}`);
+                const response = await fetch(`${API_URL}/calibration/${idHito}`);
                 const data = await response.json();
                 setDataHitoCalibration(data[0]);
                 console.log("Data actualizada:", data[0]);
@@ -67,7 +67,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
 
     // Cargar lista de empresas calibradoras
     useEffect(()=>{
-        fetch('http://localhost:5000/api/calibration_empresas')
+        fetch(`${API_URL}/calibration_empresas`)
         .then(response => response.json())
         .then(data=>{
             //<console.log("data", data)
@@ -82,7 +82,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
     // Solicitar modelos de instrumentos
     useEffect(()=>{
         
-        fetch('http://localhost:5000/api/instrumentos/modelo')
+        fetch(`${API_URL}/instrumentos/modelo`)
         .then(response => response.json())
         .then(data=>{
             const optionsModelos = data.map(modelo=>({
@@ -125,7 +125,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
         console.log("NewValues", newValues)
         try {
             // Enviar datos actualizados al servidor
-            const response = await fetch(`http://localhost:5000/api/calibration/${idHito}`, {
+            const response = await fetch(`${API_URL}/calibration/${idHito}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
             
             if (response.ok){
                 const data = await response.json()
-                const updateData = await fetch('http://localhost:5000/api/calibration');
+                const updateData = await fetch(`${API_URL}/calibration`);
                 const json = await updateData.json()
                 //setHitoCalibrationSource(json)
                 //console.log("data",json)

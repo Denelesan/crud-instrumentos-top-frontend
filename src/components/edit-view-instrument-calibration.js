@@ -2,27 +2,7 @@ import { useEffect, useState } from "react";
 import { TableLayout } from "../layouts";
 import { createDateRenderer, generateColumns, excludeProperties, createGenericRenderer, changeNameProperties } from "../utils/tableUtils";
 import FormCreateCalibrationCertificated from "./form-create-calibration-certificated";
-// Estilos para la tabla
-/*
-const tableStyles = `
-    .table-instrument .ant-table {
-        background: transparent;
-    }
-    .table-instrument .ant-table-thead > tr > th {
-        background: #f5f5f5;
-        border-bottom: 2px solid rgb(255, 254, 254);
-    }
-    .table-instrument .ant-table-tbody > tr > td {
-        border-bottom: 1px solid rgb(255, 254, 254);
-    }
-    .table-instrument .ant-table-tbody > tr:hover > td {
-        background: #fafafa;
-        border-color: #fafafa;
-    }
-    .table-instrument .ant-table-cell {
-        padding: 12px 16px;
-    }
-`;*/
+import API_URL from "../config/api";
 
 const tableStyles = `
     .table-layout-header {
@@ -47,7 +27,7 @@ const EditViewInstrumentCalibration = ({id})=>{
     }
 
     useEffect(()=>{
-        fetch(`http://localhost:5000/api/instrumento/calibraciones/${id}`)
+        fetch(`${API_URL}/instrumento/calibraciones/${id}`)
         .then(res => res.json())
         .then(respuesta => {
             const datosFiltrados = respuesta.filter(

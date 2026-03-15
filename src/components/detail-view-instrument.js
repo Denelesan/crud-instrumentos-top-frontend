@@ -2,7 +2,7 @@ import {CheckCircleFilled, CheckCircleTwoTone,CloseCircleTwoTone} from "@ant-des
 import { Button, Card, Collapse, Tabs, Descriptions } from "antd"
 import { useEffect, useState } from "react"
 import { useParams,useNavigate } from "react-router-dom"
-
+import API_URL from "../config/api";
 
 
 
@@ -13,7 +13,7 @@ const DetailViewInstrument = ()=>{
     const { TabPane } = Tabs;
     const [instrumentDetail, setInstrumentDetail] = useState(null)
     useEffect(()=>{
-        fetch(`http://localhost:5000/api/instrumentos/${id}`)
+        fetch(`${API_URL}/instrumentos/${id}`)
         .then(resp=>resp.json())
         .then(data=> setInstrumentDetail(data))
         .catch(error=> console.log("Error en la solicitud", error))

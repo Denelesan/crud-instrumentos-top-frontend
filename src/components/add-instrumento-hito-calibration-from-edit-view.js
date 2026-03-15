@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import {Table, Button, message} from "antd"
 
+import API_URL from "../config/api";
 
 const AddInstrumentToHitoCalibrationFromEditView =({hitoSelected, dataSourceOriginal, dataTemporal,setDataSourceTemporal})=>{
     console.log("Data Temporal",dataTemporal)
@@ -52,7 +53,7 @@ const AddInstrumentToHitoCalibrationFromEditView =({hitoSelected, dataSourceOrig
             }))
 
         useEffect(()=>{
-            fetch(`http://localhost:5000/api/calibration/aplica_instrumentos/${hitoSelected}`)
+            fetch(`${API_URL}/calibration/aplica_instrumentos/${hitoSelected}`)
             .then(res => res.json())
             .then(result =>{
                 const list = result

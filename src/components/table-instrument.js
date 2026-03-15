@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { TableLayout, showModalConfirm } from '../layouts';
 import { generateColumns, createStatusRenderer } from '../utils/tableUtils';
 import FormCreateInstrument from './form-create-instrument';
+import API_URL from "../config/api";
 
 // Estilos para la tabla
 const tableStyles = `
@@ -33,7 +34,6 @@ const TableInstrumentComponent = () => {
     const navigate = useNavigate();
 
     const outProperties = ["obs_estado", "aplica_verif", "aplica_calib", "nombre_responsable", "ubicacion", "cargo", "seccion"];
-    const link = `http://localhost:5000/api/instrumentos`;
 
     const onSearchChange = (e)=>{
       setSearchValue(e.target.value)
@@ -53,7 +53,7 @@ const TableInstrumentComponent = () => {
     })
 
     useEffect(() => {
-        fetch(link)
+        fetch(`${API_URL}/instrumentos`)
         .then(res => res.json())
         .then(result => { 
             const list = result;
@@ -87,7 +87,7 @@ const TableInstrumentComponent = () => {
         const { id } = record;
         console.log(id);
         try {
-            const response = await fetch(`http://localhost:5000/api/instrumentos/delete/${id}`, {
+            const response = await fetch(`${API_URL}/instrumentos/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const TableInstrumentComponent = () => {
             
             if (response.ok) {
                 const data = await response.json();
-                const updateData = await fetch('http://localhost:5000/api/instrumentos');
+                const updateData = await fetch(`${API_URL}/instrumentos`);
                 const json = await updateData.json();
                 setDataSource(json);
                 message.success(`El instrumento se ha eliminado con éxito: ${data.instrumento}`);

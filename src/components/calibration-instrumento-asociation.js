@@ -2,7 +2,7 @@ import { Table, Tooltip, Button, Modal, message, Alert, Badge } from "antd"
 import { useEffect, useState } from "react"
 import {DeleteTwoTone, EditOutlined, EyeOutlined, PlusCircleTwoTone} from '@ant-design/icons'
 import AddInstrumentToHitoCalibrationFromEditView from "./add-instrumento-hito-calibration-from-edit-view";
-
+import API_URL from "../config/api";
 
 
 const CalibrationInstrumentAsociation = ({idHito}) =>{
@@ -76,7 +76,7 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
     }]
 
     useEffect(()=>{
-        fetch(`http://localhost:5000/api/calibration/instrumentos/${idHito}`)
+        fetch(`${API_URL}/calibration/instrumentos/${idHito}`)
             .then(res=> res.json())
             .then(data=> {  
                 //console.log("...Cargando Data")
@@ -121,7 +121,7 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
         if (changeDeleteInstrument.length>0 || changeAddInstrument.length > 0 ){
             try{
                 if (changeDeleteInstrument.length>0){
-                await fetch(`http://localhost:5000/api/calibration/instrumentasociate/delete/${idHito}`,{
+                await fetch(`${API_URL}/calibration/instrumentasociate/delete/${idHito}`,{
                     method:'DELETE',
                     headers:{ "Content-Type": "application/json" },
                     body:JSON.stringify( { instrumentosAEliminar: instrumentosEliminados })
@@ -130,7 +130,7 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
                 if (changeAddInstrument.length > 0){
                     await Promise.all(
                         changeAddInstrument.map(async(instrument)=>{
-                            return fetch('http://localhost:5000/api/calibration/addInstrument', {
+                            return fetch(`${API_URL}/calibration/addInstrument`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

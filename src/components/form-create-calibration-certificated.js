@@ -7,6 +7,8 @@ import { json } from "react-router-dom";
 import { data } from "@remix-run/router";
 import {getIdFromValueOrLabel} from "../utils/tableUtils";
 
+import API_URL from "../config/api";
+
 const styleInput = {
     width: '100%'
 }
@@ -25,7 +27,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState()
 
     useEffect(()=>{
-        fetch(`http://localhost:5000/api/certificado_estado`)
+        fetch(`${API_URL}/certificado_estado`)
         .then(response => response.json())
         .then(data =>{
             const certificadoEstado = data.map(estado=>({
@@ -42,7 +44,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     },[])
 
     useEffect(()=>{
-        fetch(`http://localhost:5000/api/instrumento/calibraciones/${id_instrumento}`)
+        fetch(`${API_URL}/instrumento/calibraciones/${id_instrumento}`)
         .then(res => res.json())
         .then(response=>{
             const dataRowFiltered = response.filter(
@@ -109,7 +111,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
         console.log("NewValues:", newValues)
 
         try {
-            const createCertificado = await fetch(`http://localhost:5000/api/calibration/agregar_certificado/`, {
+            const createCertificado = await fetch(`${API_URL}/calibration/agregar_certificado/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
             })
             
             if (createCertificado.ok){
-                const updateSolicitud = await fetch(`http://localhost:5000/api/calibration/solicitud/${newValues.id_instru_calibr}`,{
+                const updateSolicitud = await fetch(`${API_URL}/calibration/solicitud/${newValues.id_instru_calibr}`,{
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

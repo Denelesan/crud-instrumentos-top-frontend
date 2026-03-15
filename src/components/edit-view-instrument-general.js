@@ -2,7 +2,7 @@ import FormGeneralPanelLayout from "../layouts/FormGeneralPanelLayout";
 import { useState, useEffect} from "react";
 import { useForm } from "antd/es/form/Form"
 import Modal from "antd/es/modal/Modal";
-
+import API_URL from "../config/api";
 
 const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
@@ -33,7 +33,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     useEffect(() => {
         if (id){
-            fetch(`http://localhost:5000/api/instrumentos/${id}`)
+            fetch(`${API_URL}/instrumentos/${id}`)
             .then(resp => resp.json())
             .then(data => {
                 setDataDetailInstrument(data)
@@ -44,7 +44,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar tipos de instrumentos
     useEffect(() => {
-        fetch('http://localhost:5000/api/instrumentos/tipo')
+        fetch(`${API_URL}/instrumentos/tipo`)
             .then(response => response.json())
             .then(data => {
 
@@ -62,7 +62,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
         console.log(e)
         const id_marca = e
         setSelectMarca(id_marca)
-        fetch(`http://localhost:5000/api/instrumentos/modelo?id_marca=${id_marca}`)
+        fetch(`${API_URL}/instrumentos/modelo?id_marca=${id_marca}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -77,7 +77,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
     }
     // Solicitar marcas de instrumentos
     useEffect(() => {
-        fetch('http://localhost:5000/api/instrumentos/marca')
+        fetch(`${API_URL}/instrumentos/marca`)
             .then(response => response.json())
             .then(data => {
                 const optionsMarcas = data.map(marca => ({
@@ -91,7 +91,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar modelos de instrumentos
     useEffect(() => {
-        fetch(`http://localhost:5000/api/instrumentos/modelos`)
+        fetch(`${API_URL}/instrumentos/modelos`)
             .then(response => response.json())
             .then(data => {
                 const optionsModelos = data.map(modelo => ({
@@ -106,7 +106,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar personal cargo
     useEffect(() => {
-        fetch('http://localhost:5000/api/personalcargo')
+        fetch(`${API_URL}/personalcargo`)
             .then(response => response.json())
             .then(data => {
                 const optionsPersonal = data.map(personal => ({
@@ -120,7 +120,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar Sección cargo
     useEffect(() => {
-        fetch('http://localhost:5000/api/seccioncargo')
+        fetch(`${API_URL}/seccioncargo`)
             .then(response => response.json())
             .then(data => {
                 const optionsSeccion = data.map(seccion => ({
@@ -134,7 +134,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar Materialidades
     useEffect(() => {
-        fetch('http://localhost:5000/api/materialidades')
+        fetch(`${API_URL}/materialidades`)
             .then(response => response.json())
             .then(data => {
                 const optionsMaterialidad = data.map(materialidad => ({
@@ -148,7 +148,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
     // Solicitar Estados de Instrumentos
     useEffect(() => {
-        fetch('http://localhost:5000/api/estados_instrumento')
+        fetch(`${API_URL}/estados_instrumento`)
             .then(response => response.json())
             .then(data => {
                 const optionsEstadoInstrumento = data.map(estadoInstrumento => ({
@@ -192,7 +192,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
         console.log("NewValues", newValues)
         try {
             // Enviar datos actualizados al servidor
-            const response = await fetch(`http://localhost:5000/api/instrumento/${id}`, {
+            const response = await fetch(`${API_URL}/instrumento/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
             if (response.ok) {
                 const data = await response.json()
-                const updateData = await fetch(`http://localhost:5000/api/instrumentos/${id}`);
+                const updateData = await fetch(`${API_URL}/instrumentos/${id}`);
                 const json = await updateData.json()
                 //setHitoCalibrationSource(json)
                 //console.log("data",json)

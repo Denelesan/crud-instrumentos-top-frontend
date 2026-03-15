@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import {Table, Button, message} from "antd"
-
+import API_URL from "../config/api";
 
 
 const AddInstrumentToHitoCalibration =({hitoSelected})=>{
@@ -58,7 +58,7 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
         },[])*/
 
         useEffect(()=>{
-            fetch(`http://localhost:5000/api/calibration/aplica_instrumentos/${hitoSelected}`)
+            fetch(`${API_URL}/api/calibration/aplica_instrumentos/${hitoSelected}`)
             .then(res => res.json())
             .then(result =>{
                 const list = result
@@ -86,7 +86,7 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
                 console.log("Entra: ",instrumentsSelected)
                 const responses = await Promise.all(
                     instrumentsSelected.map(async(instrument)=>{
-                        return fetch('http://localhost:5000/api/calibration/addInstrument', {
+                        return fetch(`${API_URL}/calibration/addInstrument`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
