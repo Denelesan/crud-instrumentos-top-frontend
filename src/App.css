@@ -53,3 +53,6 @@
   width: "600px" !important ;
 }
 
+.table-layout-banner-title, .table-layout-banner-subtitle {
+  cursor: pointer;
+}

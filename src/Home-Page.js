@@ -27,7 +27,7 @@ function HomePage (){
         <TabLayout
             titleBanner="Sistema de Gestión"
             subtitleBanner="Instrumentos y Accesorios Topográficos"
-            bannerActions = {null}
+            bannerActions = {(null)}
             //title="Instrumento y Accesorios Topográfico"
             tabs={tabs}
             type="card"

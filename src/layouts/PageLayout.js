@@ -30,8 +30,8 @@ const PageLayout = ({
         <div className="table-layout-banner">
             <div className="table-layout-banner-content">
                 <div>
-                    <div className="table-layout-banner-title">{titleBanner}</div>
-                    {subtitleBanner && <div className="table-layout-banner-subtitle">{subtitleBanner}</div>}
+                    <div className="table-layout-banner-title" onClick={()=>handleBack()}>{titleBanner}</div>
+                    {subtitleBanner && <div className="table-layout-banner-subtitle" onClick={()=>handleBack()}>{subtitleBanner}</div>}
                 </div>
                 {bannerActions && (
                     <div className="table-layout-banner-actions">{bannerActions}</div>
