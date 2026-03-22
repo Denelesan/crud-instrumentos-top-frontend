@@ -1,8 +1,6 @@
-import { Modal, Form, message } from "antd";
+import { Modal, Form, message, Input, Select } from "antd";
 import { useState, useEffect } from "react";
-import FormGeneralPanelLayout from "../layouts/FormGeneralPanelLayout";
 import API_URL from "../config/api";
-import '../styles/style.css';
 
 const DetailCertificateInstrument = ({
   isModalVisible,
@@ -342,9 +340,9 @@ const DetailCertificateInstrument = ({
       className="certificate-detail-modal"
       bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
     >
-      <FormGeneralPanelLayout
+      <Form
         form={form}
-        loading={loading}
+        layout="vertical"
         style={{
           display: 'grid',
           justifyContent: 'center',
@@ -352,12 +350,30 @@ const DetailCertificateInstrument = ({
           width: '100%',
           gap: '16px',
           padding: '16px 0',
-          maxWidth: '100%',
-          margin: '0 auto',
         }}
-        fields={getAllFields()}
-        onFinish={() => {}} // El submit se maneja en handleOk
-      />
+      >
+        {getAllFields().map((field, index) => (
+          <Form.Item
+            key={index}
+            name={field.name}
+            label={field.label}
+            rules={field.rules}
+            initialValue={field.initialValue}
+          >
+            {field.type === 'select' ? (
+              <Select
+                placeholder={field.placeholder}
+                options={field.options}
+              />
+            ) : (
+              <Input
+                placeholder={field.placeholder}
+                type={field.inputType || 'text'}
+              />
+            )}
+          </Form.Item>
+        ))}
+      </Form>
     </Modal>
   );
 };
