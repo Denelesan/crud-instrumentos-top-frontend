@@ -318,9 +318,9 @@ const DetailCertificateInstrument = ({
   const getTipoInstrumentoLabel = () => {
     switch (tipoInstrumento) {
       case 1:
-        return "Estación Total";
-      case 2:
         return "Antena GNSS";
+      case 2:
+        return "Estación Total";
       case 3:
         return "Nivel";
       default:
