@@ -6,6 +6,7 @@ import Modal from "antd/es/modal/Modal";
 import { json } from "react-router-dom";
 import { data } from "@remix-run/router";
 import {getIdFromValueOrLabel} from "../utils/tableUtils";
+import DetailCertificateInstrument from "./detail-certificate-instrument";
 
 import API_URL from "../config/api";
 
@@ -25,6 +26,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     const [dataSelected, setDataSelected] = useState()
     const [optionsCalibration, setOptionsCalibration] = useState()
     const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState()
+    const [certificateModalVisible, setCertificateModalVisible] = useState(false)
 
     useEffect(()=>{
         fetch(`${API_URL}/certificado_estado`)
@@ -130,10 +132,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                 console.log("updateSolicitud:", updateSolicitud)
 
                 if (updateSolicitud.ok){
-                    Modal.success({
-                        title:'¿Quieres ingresar los datos del certificado de calibración?'
-                        
-                    })
+                    setCertificateModalVisible(true);
                     form2.resetFields();
                 }
 
@@ -290,7 +289,24 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                     onFinish={onFinishCertificado}
                     //onValuesChange={"handleValuesChange"}
                 />
-                )}      
+                )}
+      
+      <DetailCertificateInstrument
+        isModalVisible={certificateModalVisible}
+        onCancel={() => setCertificateModalVisible(false)}
+        onSuccess={(certificateData) => {
+          console.log("[v0] Datos del certificado a guardar:", certificateData);
+          // Aquí puedes hacer la lógica de guardado adicional si es necesaria
+          // O simplemente cerrar el modal tras guardar exitosamente
+          Modal.success({
+            title: 'Éxito',
+            content: 'Datos del certificado guardados correctamente',
+            onOk: () => setCertificateModalVisible(false)
+          });
+        }}
+        dataSelected={dataSelected}
+        loading={loading}
+      />      
         </div>
     )
 })

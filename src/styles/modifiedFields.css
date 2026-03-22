@@ -21,3 +21,58 @@ input{
     
     font-weight: bold;
 }
+
+/* ========================================
+   CERTIFICATE MODAL STYLES
+   ======================================== */
+
+.certificate-detail-modal .ant-modal-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.certificate-detail-modal .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.certificate-detail-modal .ant-modal-content {
+  padding: 24px;
+  background: #fafafa;
+}
+
+.certificate-detail-modal .ant-modal-footer {
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 16px;
+  background: #fff;
+  text-align: right;
+}
+
+.certificate-detail-modal .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.certificate-detail-modal .ant-form-item-label > label {
+  font-weight: 500;
+  color: #262626;
+  font-size: 14px;
+  padding-bottom: 8px;
+}
+
+.certificate-detail-modal .ant-input,
+.certificate-detail-modal .ant-input-number,
+.certificate-detail-modal .ant-select-selector {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+}
+
+.certificate-detail-modal .ant-input:focus,
+.certificate-detail-modal .ant-input-number:focus,
+.certificate-detail-modal .ant-select-focused .ant-select-selector {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
