@@ -283,9 +283,9 @@ const DetailCertificateInstrument = ({
   const getSpecificFields = () => {
     switch (tipoInstrumento) {
       case 1:
-        return getFieldsEstacionTotal();
-      case 2:
         return getFieldsAntenaGNSS();
+      case 2:
+        return getFieldsEstacionTotal();
       case 3:
         return getFieldsNivel();
       default:
