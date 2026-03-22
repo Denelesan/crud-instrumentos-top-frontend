@@ -1,0 +1,161 @@
+/* ========================================
+   CERTIFICATE DETAIL MODAL STYLES
+   ======================================== */
+
+.certificate-detail-modal .ant-modal-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.certificate-detail-modal .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.certificate-detail-modal .ant-modal-content {
+  padding: 24px;
+  background: #fafafa;
+}
+
+.certificate-detail-modal .ant-modal-footer {
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 16px;
+  background: #fff;
+  text-align: right;
+}
+
+/* ========================================
+   FORM FIELDS STYLES
+   ======================================== */
+
+.certificate-detail-modal .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.certificate-detail-modal .ant-form-item-label > label {
+  font-weight: 500;
+  color: #262626;
+  font-size: 14px;
+  padding-bottom: 8px;
+}
+
+.certificate-detail-modal .ant-input,
+.certificate-detail-modal .ant-input-number,
+.certificate-detail-modal .ant-select-selector,
+.certificate-detail-modal .ant-picker {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+}
+
+.certificate-detail-modal .ant-input:focus,
+.certificate-detail-modal .ant-input-number:focus,
+.certificate-detail-modal .ant-select-focused .ant-select-selector,
+.certificate-detail-modal .ant-picker-focused .ant-picker-input {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.certificate-detail-modal .ant-input::placeholder {
+  color: #bfbfbf;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.certificate-detail-modal .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 8px 24px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.certificate-detail-modal .ant-btn-primary:hover {
+  background-color: #0050b3;
+  border-color: #0050b3;
+}
+
+.certificate-detail-modal .ant-btn-default {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 8px 24px;
+  height: 40px;
+  font-size: 14px;
+}
+
+/* ========================================
+   MODAL RESPONSIVENESS
+   ======================================== */
+
+@media (max-width: 768px) {
+  .certificate-detail-modal .ant-modal {
+    max-width: 90vw !important;
+    width: 90vw !important;
+  }
+
+  .certificate-detail-modal {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .certificate-detail-modal .ant-modal {
+    max-width: 95vw !important;
+    width: 95vw !important;
+  }
+
+  .certificate-detail-modal .ant-form-item-label > label {
+    font-size: 12px;
+  }
+
+  .certificate-detail-modal .ant-input,
+  .certificate-detail-modal .ant-select-selector,
+  .certificate-detail-modal .ant-picker {
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   VALIDATION STYLES
+   ======================================== */
+
+.certificate-detail-modal .ant-form-item-has-error .ant-input,
+.certificate-detail-modal .ant-form-item-has-error .ant-select-selector,
+.certificate-detail-modal .ant-form-item-has-error .ant-picker {
+  border-color: #ff4d4f;
+}
+
+.certificate-detail-modal .ant-form-item-explain-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ========================================
+   GRID LAYOUT FOR FORM FIELDS
+   ======================================== */
+
+.certificate-detail-modal .ant-form {
+  width: 100%;
+}
+
+/* Estilo para campos en grid de 2 columnas en desktop */
+@media (min-width: 900px) {
+  .certificate-detail-modal .ant-form-item {
+    grid-column: span 1;
+  }
+}
+
+/* Estilo para campos en 1 columna en móvil */
+@media (max-width: 600px) {
+  .certificate-detail-modal .ant-form-item {
+    grid-column: span 1 !important;
+  }
+}
