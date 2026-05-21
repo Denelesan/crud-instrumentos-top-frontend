@@ -43,8 +43,12 @@ const TableLayout = ({
 
     const handleCancel = () => {
         setIsFormModalOpen(false);
-        if (formRef.current && formRef.current.resetFormFields) {
-            formRef.current.resetFormFields();
+       
+        
+        if (formRef.current) {
+            formRef.current?.resetFormFields();
+            formRef.current?.resetCertificadoFields()
+            
         }
     };
 
@@ -91,6 +95,7 @@ const TableLayout = ({
             {FormComponent && (
                 <Modal 
                     open={isFormModalOpen} 
+                    //destroyOnClose
                     onCancel={handleCancel} 
                     footer={null}
                     width={widthModal}

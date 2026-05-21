@@ -1,5 +1,5 @@
 import { forwardRef, useState,useImperativeHandle, useEffect  } from "react";
-import { Form, Select} from "antd";
+import { Button, Form, Select} from "antd";
 //import { useForm} from "antd/es/form/Form";
 import FormGeneralPanelLayout from "../layouts/FormGeneralPanelLayout";
 import Modal from "antd/es/modal/Modal";
@@ -18,7 +18,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     const [form1] = Form.useForm();
     const [form2] = Form.useForm();
     //console.log(props)
-    const {id_instrumento} = props
+    const {id_instrumento, handleUpdateInput, inputNewData} = props
     //console.log(id_instrumento)
     const [hitoSelected, setHitoSelected] = useState()
     const [loading, setLoading] = useState(false)
@@ -26,7 +26,8 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     const [dataSelected, setDataSelected] = useState()
     const [optionsCalibration, setOptionsCalibration] = useState()
     const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState()
-    const [certificateModalVisible, setCertificateModalVisible] = useState(false)
+    const [detailCertificateModalVisible, setDetailCertificateModalVisible] = useState(false)
+    const [modalConfirmVisible, setIsModalConfirmVisible] = useState(false)
 
     useEffect(()=>{
         fetch(`${API_URL}/certificado_estado`)
@@ -57,7 +58,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
             return dataRowFiltered
         })
         .then(result =>{
-            console.log(result)
+            //console.log(result)
             const options = result.map(option=>({
                 value: option.id_instru_calibr,
                 label: `Id Hito: ${option.id_solic_calibr}`,
@@ -67,7 +68,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
         })
 
 
-    },[])
+    },[inputNewData])
 
     useEffect(()=>{
         if (dataFiltered) {
@@ -82,7 +83,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     }, [hitoSelected])
     
     useImperativeHandle(ref, () => ({
-        
+
         resetFormFields: () => {
             form1.resetFields();
             setHitoSelected()
@@ -121,7 +122,9 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                 body: JSON.stringify(newValues),
             })
             
+           
             if (createCertificado.ok){
+                
                 const updateSolicitud = await fetch(`${API_URL}/calibration/solicitud/${newValues.id_instru_calibr}`,{
                     method: 'PUT',
                     headers: {
@@ -132,27 +135,40 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                 console.log("updateSolicitud:", updateSolicitud)
 
                 if (updateSolicitud.ok){
-                    setCertificateModalVisible(true);
+                    setIsModalConfirmVisible(true)
+                    if(handleUpdateInput){
+                        handleUpdateInput()
+                    }
+                    form1.resetFields();
                     form2.resetFields();
                 }
+                
+                else {
+                    Modal.error({
+                        title: 'Error',
+                        content: 'Error al ingresar el certificado de calibración',
+                    });
+                    }
 
+            } if (!createCertificado.ok) {
 
-            } else {
+                const errorData = await createCertificado.json();
+
                 Modal.error({
                     title: 'Error',
-                    content: 'Error al ingresar el certificado de calibración',
+                    content: errorData.message || 'Error al ingresar el certificado de calibración',
                 });
+
+                return;
             }
 
         } catch (error) {
             console.log("Error en la solicitud", error)
         } finally {
+            console.log("Se termina de ejecutar")
             setLoading(false)
-        }
-
-
-        
-        
+            
+        }      
     }
 
 
@@ -214,6 +230,10 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                                 initialValue:null,
                                 touchedFields:"touchedFields",
                                 disabled:false,
+                                rules:[{
+                                    required:true,
+                                    message:'Porfavor ingrese la fecha del ingreso del instrumento',
+                                }]
                                 //placeholder:"dataDetailInstrument.id"
                             },
                             {
@@ -245,6 +265,10 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                                 initialValue:null,
                                 touchedFields:"touchedFields",
                                 disabled:false,
+                                rules:[{
+                                    required:true,
+                                    message:'Porfavor ingrese la fecha del certificado',
+                                }]
                                 //placeholder:"dataDetailInstrument.id"
                             },
                             {
@@ -290,10 +314,26 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                     //onValuesChange={"handleValuesChange"}
                 />
                 )}
+               <Modal
+                    open={modalConfirmVisible}
+                    title="Datos guardados correctamente"
+                    content="¿Quiéres agregar los detalles del certificado?"
+                    onOk={()=>{setDetailCertificateModalVisible(true)
+                            setIsModalConfirmVisible(false)}}
+                    onCancel={()=>setIsModalConfirmVisible(false)}
+                    footer={(_, { OkBtn, CancelBtn }) => (
+                    <>
+                        <p>¿Quiéres agregar los detalles del certificado?</p>
+                        <CancelBtn />
+                        <OkBtn />
+                    </>
+                    )}
+                >
+                </Modal>
       
       <DetailCertificateInstrument
-        isModalVisible={certificateModalVisible}
-        onCancel={() => setCertificateModalVisible(false)}
+        isModalVisible={detailCertificateModalVisible}
+        onCancel={() => setDetailCertificateModalVisible(false)}
         onSuccess={(certificateData) => {
           console.log("[v0] Datos del certificado a guardar:", certificateData);
           // Aquí puedes hacer la lógica de guardado adicional si es necesaria
@@ -301,7 +341,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
           Modal.success({
             title: 'Éxito',
             content: 'Datos del certificado guardados correctamente',
-            onOk: () => setCertificateModalVisible(false)
+            onOk: () => setDetailCertificateModalVisible(false)
           });
         }}
         dataSelected={dataSelected}

@@ -5,6 +5,7 @@ const ModifiedDate = ({
     name, 
     label, 
     initialValue, 
+    rules,
     touchedFields, 
     //options = [],
     style = { width: "200px" },
@@ -17,6 +18,7 @@ const ModifiedDate = ({
             label={label}
             name={name}
             initialValue={initialValue}
+            rules={rules}
         >
             <DatePicker
                 style={style}

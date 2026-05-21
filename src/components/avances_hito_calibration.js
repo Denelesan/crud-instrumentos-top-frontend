@@ -18,7 +18,7 @@ const datePickerStyles = `
  */
 
 const AvancesHitoCalibration = ({idHito, onLogUpdate}) => {
-    console.log(onLogUpdate)
+    //console.log(onLogUpdate)
     const [form] = Form.useForm();
     const {TextArea} = Input;
     const [dataSource, setDataSource] = useState()

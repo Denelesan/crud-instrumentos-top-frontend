@@ -4,10 +4,10 @@
 - [X] Como usuario quiero visualizar una tabla con todos los instrumentos y accesorios.
 - [ ] Como usuario quiero visualizar una tabla con todos los hitos de verificación.
 - [X] Como usuario quiero visualizar una tabla con todos los hitos de calibración.
-- [ ] Como usuario quiero acceder a editar todos los detalles de los accesorios e instrumentos.
-- [ ] Como usuario quiero acceder a visualizar todos los detalles de los accesorios e instrumentos.
+- [X] Como usuario quiero acceder a editar todos los detalles de los accesorios e instrumentos.
+- [X] Como usuario quiero acceder a visualizar todos los detalles de los accesorios e instrumentos.
 - [X] Como usuario quiero poder agregar nuevos accesorios/instrumentos.
-- [ ] Como usuario quiero poder imprimir y/o exportar en pdf los detalles de los accesorio/instrumentos.
+- [X] Como usuario quiero poder imprimir y/o exportar en pdf los detalles de los accesorio/instrumentos.
 - [X] Como administrador quiero poder eliminar accesorios/instrumentos.
 - [ ] Como administrador quiero poder crear un Hito de verificación
 - [X] Como administrador quiero poder crear un Hito de calibración.
@@ -17,13 +17,13 @@
 - [ ] Como usuario quiero poder agregar instrumentos a un hito de verificación vigente.
 - [X] Como usuario quiero poder agregar instrumentos a un hito de calibración vigente.
 - [ ] Como usuario quiero poder agregar y visualizar reportes e informes de verificación en pdf.
-- [ ] Como usuario quiero poder agregar y visualizar certificados de calibración.
+- [ ] Como usuario quiero poder agregar, descargar y visualizar certificados de calibración.
 
 
-# Bugs
+## Bugs
 
 
-# Misc
+## Misc
 
 - [X] Se hace necesario realizar un diagrama de flujo para ordenar distribución de componentes y páginas.
 ![Diagrama de Flujo de Aplicación Web de instrumentos](image.png)
@@ -46,11 +46,12 @@
   - **Action**: Se crea la tabla de log_calibracion y etapas_calibr para generar lógica de creación de log en estado.
 
 
-# Notes
+## Notes
+
 - (20-02-2025) Lo relativo a tipo y categoría de instrumentos, se está analizando de la siguiente manera; con el fin de permitir un detalle, quizás, exagerado de los instrumentos y accesorios que se cuentan en la sección, se está postulando mantener el tipo de instrumentos (ver diccionario) en la tabla principal, relacionar la tabla tipos a su categoría (si es un instrumento, accesorio, cable, etc). Y se complementará con una tabla `Kit` que englobará, en caso de ser necesario, los conjuntos en razón de su "categoría" (**por definir**). Esto permitirá detallar los estados de cada elemento, además de englobarlos tal cómo se hace en la práctica y en la compra de estos instrumentos, que muchas veces vienen asociados a Kit (Antena GNSS, libreta, bases tribash, cables, etc).
 - (21-02-2025) Se decide mantener la relación de materialidad sólo en la tabla de instrumentos principal, no cambiarla al modelo del instrumento.
 
-# Diccionario de datos:
+## Diccionario de datos:
 
 <table>
     <thead>
@@ -74,16 +75,65 @@
     </tbody>
 </table>
 
-# TO-DOs próximos
+## TO-DOs próximos
 
 ### S-19/10/2025
 
-**Sección de Calibración-Detalle de Instrumento**
+#### Sección de Calibración-Detalle de Instrumento
+
 - [X] Mejorar función de generación de columnas, para considerar factores de modificación de nombres de columnas de forma rápida (cómo la de no considerar ciertas columnas).
 - [X] Crear columna de acción
-- [ ] Comenzar con modal para flujo que agrega certificados de calibración.
+- [X] Comenzar con modal para flujo que agrega certificados de calibración.
 
+### 28/03/2026
 
+#### Formulario de Ingreso de certificado**
+
+- [X] Resolver reglas para campos obligatorios tipo date y select.
+
+### 29/03/2026
+
+#### Formulario de Ingreso de certificado
+
+- [X] Resetear formulario al salir del modal.
+- [X] Crear modal de consulta para ir o no a formulario de ingreso de detalles de certificado
+
+### 11/04/2026
+
+#### Formulario de Ingreso de certificado
+
+- [X] Permitir que cuando se cree un certificado, se actualice la vista de la tabla. //Se crea estado para traspasar entre componentes.
+- [X] El modal de error sólo funciona una vez, al haber un error, si el usuario presiona por segunda vez queda colgado//Se corrige el manejo de errores de los useEffect y de las APIs.
+
+### 18-04-2026
+
+#### Formulario de Ingreso de certificado
+
+- [X] Selección de hitos queda sin renderizar al tener éxito de carga de su información.
+- [X] Se corrige en BD longitud de número de certificado tabla -> instrumento_calibr:: 10 -> 50
+
+### 25-04-2026
+
+**Formulario sobre detalles de certificado**
+- [X] Cambiar a campos correctos según db.
+
+### 10-05-2026
+- [X] Crear consulta y vista en bd para traer los detalles de certificado y calibraciones
+- [X] Crear API de petición a consulta/vista realizada
+- [X] Crear useEffect para traer información a formulario
+- [X] Se rellena campo n_certificado desde API.
+
+### 16-05-2026
+**Formulario sobre detalles de certificado**
+- [X] Rellenar campos del formulario que cuenten con información desde la tabla de "Certificado"
+- [X] Rellenar campos del formulario que cuenten con información desde la tabla de "Certificado_instrumento" según el tipo"
+- [X] Crear route PUT para guardar información desde módulo de detalle de certificado y calibración
+
+**Por organizar**
+**Formulario sobre detalles de certificado**
+- [ ] Generar useEffect para guardar campos en base de datos desde route creado.
+
+- [ ] Agregar botón y lógica para guardar *.pdf* de certificado.
 ## Diseño
 
 - https://flowbite.com/docs/getting-started/quickstart/

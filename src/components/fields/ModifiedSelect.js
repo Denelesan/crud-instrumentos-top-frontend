@@ -4,6 +4,7 @@ const ModifiedSelect = ({
     name, 
     label, 
     initialValue, 
+    rules,
     touchedFields, 
     options = [],
     style = { width: "200px" },
@@ -16,6 +17,7 @@ const ModifiedSelect = ({
             label={label}
             name={name}
             initialValue={initialValue}
+            rules={rules}
         >
             <Select
                 style={style}

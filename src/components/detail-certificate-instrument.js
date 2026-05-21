@@ -1,18 +1,72 @@
-import { Modal, Form, message, Input, Select } from "antd";
+import { Modal, Form, message, Input, Select, DatePicker } from "antd";
+import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import API_URL from "../config/api";
+import { data } from "@remix-run/router";
 
 const DetailCertificateInstrument = ({
   isModalVisible,
   onCancel,
-  onSuccess,
+  //onSuccess,
   dataSelected,
+  setCertificateModalVisible,
   loading: initialLoading
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(initialLoading || false);
   const [tipoInstrumento, setTipoInstrumento] = useState(null);
   const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState([]);
+  const [dataDetailCertificate, setDataDetailCertificate] = useState([])
+  
+  //console.log(dataSelected)
+
+  //Obtener el detalle de los certificados del instrumento ingresado a calibración
+  useEffect(()=>{
+    if (!isModalVisible) return;
+
+    if (!dataSelected?.id_instrumento || !dataSelected?.n_certificado) {
+      setDataDetailCertificate(null);
+      return;
+    }
+  
+    setDataDetailCertificate(null); // limpia datos viejos mientras carga nuevo
+   
+    fetch(`${API_URL}/instrumento/calibraciones/detalle/${dataSelected.id_instrumento}/${dataSelected.n_certificado}`)
+    .then(response=> response.json())
+    .then(data=>{ 
+
+      const dataDetail = data[0] || null
+      setDataDetailCertificate(dataDetail)
+
+      if (dataDetail) {
+        form.setFieldsValue({
+          n_certificado: dataDetail.n_certificado,
+          fecha_certif: dataDetail.fecha_certif ? dayjs(dataDetail.fecha_certif) : null,
+          responsable_calibr: dataDetail.responsable_calibr,
+          responsable_certif: dataDetail.responsable_certif,
+          fecha_calibr: dataDetail.fecha_calibr ? dayjs(dataDetail.fecha_calibr) : null,          
+          id_estado_calibr:dataDetail.id_estado_calibr,
+          id_estado_certif:dataDetail.id_estado_certif,
+          id_instru_calibr:dataDetail.id_instru_calibr,
+          id_instrumento:dataDetail.id_instrumento,
+          id_tipo:dataDetail.id_tipo,          
+          prec_alt_gps:dataDetail.prec_alt_gps,
+          prec_dist_cp_et:dataDetail.prec_dist_cp_et,
+          prec_ang_hz_et:dataDetail.prec_ang_hz_et,
+          prec_ang_vert_et:dataDetail.prec_ang_vert_et,
+          prec_dist_gps:dataDetail.prec_dist_gps,
+          prec_dist_sp_et:dataDetail.prec_dist_sp_et,
+          prec_nivel:dataDetail.prec_nivel,
+
+        });
+      }
+      console.log("DataDetail",data[0])
+     
+    })
+    .catch(error => console.log("Error en la solicitud:", error))
+    
+    
+  },[isModalVisible])
 
   // Cargar opciones de estado certificado al montar el componente
   useEffect(() => {
@@ -25,7 +79,7 @@ const DetailCertificateInstrument = ({
         }));
         setoptionsEstadoCertificado(certificadoEstado);
       })
-      .catch(error => console.log("[v0] Error en la solicitud", error));
+      .catch(error => console.log("Error en la solicitud", error));
   }, []);
 
   // Obtener el tipo de instrumento del dataSelected
@@ -35,139 +89,139 @@ const DetailCertificateInstrument = ({
     }
   }, [dataSelected]);
 
-  // Campos específicos para Estación Total (id_tipo = 1)
-  const getFieldsEstacionTotal = () => [
-    {
-      type: "input",
-      name: "precision_angular",
-      label: "Precisión Angular",
-      initialValue: null,
-      placeholder: "Ej. ±5\"",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión angular' }]
-    },
-    {
-      type: "input",
-      name: "precision_distancia",
-      label: "Precisión Distancia",
-      initialValue: null,
-      placeholder: "Ej. ±2mm + 2ppm",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión de distancia' }]
-    },
-    {
-      type: "input",
-      name: "rango_medicion",
-      label: "Rango de Medición",
-      initialValue: null,
-      placeholder: "Ej. 1.5m - 10000m",
-      rules: [{ required: true, message: 'Por favor ingrese el rango de medición' }]
-    },
-    {
-      type: "input",
-      name: "temperatura_operacion",
-      label: "Temperatura de Operación",
-      initialValue: null,
-      placeholder: "Ej. -20°C a 50°C",
-      rules: [{ required: true, message: 'Por favor ingrese el rango de temperatura' }]
-    },
-    {
-      type: "input",
-      name: "aumento_telescopio",
-      label: "Aumento del Telescopio",
-      initialValue: null,
-      placeholder: "Ej. 30x",
-      rules: [{ required: true, message: 'Por favor ingrese el aumento' }]
-    },
-    {
-      type: "input",
-      name: "precisión_compensador",
-      label: "Precisión del Compensador",
-      initialValue: null,
-      placeholder: "Ej. ±1.5\"",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión del compensador' }]
-    },
-    {
-      type: "input",
-      name: "bateria_duracion",
-      label: "Duración Batería",
-      initialValue: null,
-      placeholder: "Ej. 8 horas",
-      rules: [{ required: true, message: 'Por favor ingrese la duración de batería' }]
-    },
-    {
-      type: "input",
-      name: "normativa_calibracion",
-      label: "Normativa de Calibración",
-      initialValue: null,
-      placeholder: "Ej. ISO 10012:2003",
-      rules: [{ required: true, message: 'Por favor ingrese la normativa' }]
+  useEffect(() => {
+    if (!isModalVisible) {
+      form.resetFields();
     }
-  ];
+  }, [isModalVisible]);
 
+  const onSuccess = async(certificateData) => {
+    console.log("Datos del certificado a guardar:", certificateData);
+    console.log("otrosdatos:",dataDetailCertificate)
+    const{fecha_calibr, fecha_certif,id_estado_certif,responsable_calibr,responsable_certif,prec_dist_gps,prec_alt_gps,prec_dist_cp_et,prec_dist_sp_et,prec_ang_hz_et,prec_ang_vert_et,prec_nivel,...restDataDetail} = dataDetailCertificate
+    const newValues = {...certificateData, ...restDataDetail}
+    // Aquí puedes hacer la lógica de guardado adicional si es necesaria
+    // O simplemente cerrar el modal tras guardar exitosamente
+    // Conversión de precio a número si es string
+    if (typeof newValues.prec_nivel === "string"){
+      newValues.prec_nivel = parseFloat(newValues.prec_nivel);
+  }
+    console.log("newValues",newValues)
+    try {
+     // Enviar datos actualizados al servidor
+     const response =await fetch(`${API_URL}/instrumento/calibraciones/certificado/${dataDetailCertificate.id_instru_calibr}`, {
+         method: 'PUT',
+         headers: {
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(newValues),
+     })
+     if (response.ok){
+      const data = await response.json()
+      console.log("data",data)
+      Modal.success({
+        title: 'Éxito',
+        content: 'Datos del certificado guardados correctamente',
+        onOk: () => setCertificateModalVisible(false)
+      });
+     } else{
+      message.error("Error al actualizar el certificado de calibración")
+     }
+     
+     } catch (error) {
+         console.log("Error en la solicitud", error)
+     } finally{
+         setLoading(false)
+     }
+    
+    
+  }
+  
   // Campos específicos para Antena GNSS (id_tipo = 2)
   const getFieldsAntenaGNSS = () => [
     {
       type: "input",
-      name: "frecuencias_soportadas",
-      label: "Frecuencias Soportadas",
+      name: "prec_dist_gps",
+      label: "Precisión distancia",
       initialValue: null,
-      placeholder: "Ej. GPS, GLONASS, Galileo",
-      rules: [{ required: true, message: 'Por favor ingrese las frecuencias' }]
+      placeholder: "Ej. XXXX",
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
     },
     {
       type: "input",
-      name: "precision_posicion",
-      label: "Precisión de Posición",
+      name: "prec_alt_gps",
+      label: "Precisión en altura",
       initialValue: null,
-      placeholder: "Ej. ±10mm",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión' }]
+      placeholder: "Ej. XXX",
+      rules: [{ required: true, message: 'Por favor ingrese la precisión en altura'}]
     },
     {
       type: "input",
-      name: "tipo_conector",
-      label: "Tipo de Conector",
+      name: "responsable_calibr",
+      label: "Responsable de Calibración",
       initialValue: null,
-      placeholder: "Ej. SMA, TNC",
-      rules: [{ required: true, message: 'Por favor ingrese el tipo de conector' }]
+      placeholder: "Ej. XXXXXX",
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
     },
     {
+      type: "date",
+      name: "fecha_calibr",
+      label: "Fecha de Calibración",
+      //initialValue: null,
+      //placeholder: "Ej. -20°C a 50°C",
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }]
+    }
+  ];
+
+  // Campos específicos para Estación Total (id_tipo = 1)
+  const getFieldsEstacionTotal = () => [
+    {
       type: "input",
-      name: "ganancia_antena",
-      label: "Ganancia de Antena",
+      name: "prec_ang_hz_et",
+      label: "Precisión angular hz",
       initialValue: null,
       placeholder: "Ej. 3.5 dBi",
-      rules: [{ required: true, message: 'Por favor ingrese la ganancia' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión horizontal' }]
     },
     {
       type: "input",
-      name: "tiempo_adquisicion",
-      label: "Tiempo de Adquisición",
+      name: "prec_ang_vert_et",
+      label: "Precisión angular vertical",
       initialValue: null,
       placeholder: "Ej. 45 segundos",
-      rules: [{ required: true, message: 'Por favor ingrese el tiempo de adquisición' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión vertical' }]
     },
     {
       type: "input",
-      name: "impedancia_salida",
-      label: "Impedancia de Salida",
+      name: "prec_dist_cp_et",
+      label: "Precisión distancia con prisma",
       initialValue: null,
       placeholder: "Ej. 50 Ohms",
-      rules: [{ required: true, message: 'Por favor ingrese la impedancia' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
     },
     {
       type: "input",
-      name: "rango_frecuencia",
-      label: "Rango de Frecuencia",
+      name: "prec_dist_sp_et",
+      label: "Precisión distancia sin prisma",
       initialValue: null,
       placeholder: "Ej. 1.2-1.6 GHz",
-      rules: [{ required: true, message: 'Por favor ingrese el rango' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
     },
     {
       type: "input",
-      name: "normativa_calibracion",
-      label: "Normativa de Calibración",
+      name: "responsable_calibr",
+      label: "Responsable de Calibración",
       initialValue: null,
-      placeholder: "Ej. IEC 61000-4-3",
-      rules: [{ required: true, message: 'Por favor ingrese la normativa' }]
+      placeholder: "Ej. XXXXXX",
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
+    },
+    {
+      type: "date",
+      name: "fecha_calibr",
+      label: "Fecha de calibración",
+      //initialValue: null,
+      //placeholder: "Ej. IEC 61000-4-3",
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }]
     }
   ];
 
@@ -175,67 +229,27 @@ const DetailCertificateInstrument = ({
   const getFieldsNivel = () => [
     {
       type: "input",
-      name: "sensibilidad_tubo",
-      label: "Sensibilidad del Tubo",
-      initialValue: null,
+      name: "prec_nivel",
+      label: "Precisión",
+      //initialValue: null,
       placeholder: "Ej. 2mm/2m",
-      rules: [{ required: true, message: 'Por favor ingrese la sensibilidad' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión' }]
     },
     {
       type: "input",
-      name: "aumento_telescopio",
-      label: "Aumento del Telescopio",
+      name: "responsable_calibr",
+      label: "Responsable de Calibración",
       initialValue: null,
-      placeholder: "Ej. 32x",
-      rules: [{ required: true, message: 'Por favor ingrese el aumento' }]
+      placeholder: "Ej. XXXXXX",
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
     },
     {
-      type: "input",
-      name: "rango_medicion",
-      label: "Rango de Medición",
-      initialValue: null,
-      placeholder: "Ej. 1.5m - 100m",
-      rules: [{ required: true, message: 'Por favor ingrese el rango' }]
-    },
-    {
-      type: "input",
-      name: "error_esfericidad",
-      label: "Error de Esfericidad",
-      initialValue: null,
-      placeholder: "Ej. ±0.08mm/100m",
-      rules: [{ required: true, message: 'Por favor ingrese el error' }]
-    },
-    {
-      type: "input",
-      name: "campo_vision",
-      label: "Campo de Visión",
-      initialValue: null,
-      placeholder: "Ej. 1°20'",
-      rules: [{ required: true, message: 'Por favor ingrese el campo de visión' }]
-    },
-    {
-      type: "input",
-      name: "distancia_minima_enfoque",
-      label: "Distancia Mínima de Enfoque",
-      initialValue: null,
-      placeholder: "Ej. 0.5m",
-      rules: [{ required: true, message: 'Por favor ingrese la distancia' }]
-    },
-    {
-      type: "input",
-      name: "tipo_compensador",
-      label: "Tipo de Compensador",
-      initialValue: null,
-      placeholder: "Ej. Automático/Manual",
-      rules: [{ required: true, message: 'Por favor ingrese el tipo' }]
-    },
-    {
-      type: "input",
-      name: "normativa_calibracion",
-      label: "Normativa de Calibración",
-      initialValue: null,
-      placeholder: "Ej. ISO 17123-2",
-      rules: [{ required: true, message: 'Por favor ingrese la normativa' }]
+      type: "date",
+      name: "fecha_calibr",
+      label: "Fecha de calibración",
+      //initialValue: null,
+      //placeholder: "",
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de calibración' }]
     }
   ];
 
@@ -245,15 +259,15 @@ const DetailCertificateInstrument = ({
       type: "input",
       name: "n_certificado",
       label: "Nº de Certificado",
-      initialValue: null,
-      placeholder: "Ej. CERT-2024-001",
-      rules: [{ required: true, message: 'Por favor ingrese el número de certificado' }]
+      disabled:true,
+      //placeholder: "Ej. CERT-2024-001",
+      //rules: [{ required: true, message: 'Por favor ingrese el número de certificado' }]
     },
     {
       type: "date",
       name: "fecha_certif",
       label: "Fecha de Certificado",
-      initialValue: null,
+      //initialValue: dataDetailCertificate.fecha_certif,
       rules: [{ required: true, message: 'Por favor seleccione la fecha' }]
     },
     {
@@ -271,9 +285,9 @@ const DetailCertificateInstrument = ({
     },
     {
       type: "input",
-      name: "responsable",
+      name: "responsable_certif",
       label: "Responsable Certificación",
-      initialValue: null,
+      //initialValue: null,
       placeholder: "Nombre del responsable",
       rules: [{ required: true, message: 'Por favor ingrese el responsable' }]
     }
@@ -301,11 +315,12 @@ const DetailCertificateInstrument = ({
       .validateFields()
       .then(values => {
         setLoading(true);
+        //onFinish(values);
         onSuccess(values);
         setLoading(false);
       })
       .catch(error => {
-        console.log("[v0] Error de validación:", error);
+        console.log("Error de validación:", error);
         message.error("Por favor complete todos los campos requeridos");
       });
   };
@@ -358,6 +373,7 @@ const DetailCertificateInstrument = ({
             name={field.name}
             label={field.label}
             rules={field.rules}
+            
             initialValue={field.initialValue}
           >
             {field.type === 'select' ? (
@@ -365,9 +381,15 @@ const DetailCertificateInstrument = ({
                 placeholder={field.placeholder}
                 options={field.options}
               />
-            ) : (
+            ) : field.type === 'date' ? (
+              <DatePicker format="DD/MM/YYYY"
+              placeholder={field.placeholder}
+              style={{width:'100%'}}
+                disabled={field.disabled}/>
+            ):(
               <Input
                 placeholder={field.placeholder}
+                disabled={field.disabled}
                 type={field.inputType || 'text'}
               />
             )}
