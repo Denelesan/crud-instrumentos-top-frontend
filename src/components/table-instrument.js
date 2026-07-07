@@ -6,26 +6,7 @@ import { generateColumns, createStatusRenderer } from '../utils/tableUtils';
 import FormCreateInstrument from './form-create-instrument';
 import API_URL from "../config/api";
 
-// Estilos para la tabla
-const tableStyles = `
-    .table-instrument .ant-table {
-        background: transparent;
-    }
-    .table-instrument .ant-table-thead > tr > th {
-        background: #f5f5f5;
-        border-bottom: 2px solid rgb(255, 254, 254);
-    }
-    .table-instrument .ant-table-tbody > tr > td {
-        border-bottom: 1px solid rgb(255, 254, 254);
-    }
-    .table-instrument .ant-table-tbody > tr:hover > td {
-        background: #fafafa;
-        border-color: #fafafa;
-    }
-    .table-instrument .ant-table-cell {
-        padding: 12px 16px;
-    }
-`;
+
 
 const TableInstrumentComponent = () => {
     const [dataSource, setDataSource] = useState([]);
@@ -71,11 +52,13 @@ const TableInstrumentComponent = () => {
                 viewKey: "id",
                 deleteKey: "id"
             };
+
             
             const cols = generateColumns(list, {
                 excludeProperties: outProperties,
                 customRenderers,
-                actionColumns
+                actionColumns,
+
             });
             
             setColumns(cols);
@@ -84,10 +67,10 @@ const TableInstrumentComponent = () => {
     }, [navigate]);
 
     const onDeleteInstrumento = async (record) => {
-        const { id } = record;
-        console.log(id);
+        //const { id } = record;
+        //console.log(id);
         try {
-            const response = await fetch(`${API_URL}/instrumentos/delete/${id}`, {
+            const response = await fetch(`${API_URL}/instrumentos/delete/${record}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -119,7 +102,7 @@ const TableInstrumentComponent = () => {
             deleteConfirmTitle="¿Estás seguro que deseas eliminar este instrumento?"
             FormComponent={FormCreateInstrument}
             formProps={{ setDataSource }}
-            customStyles={tableStyles}
+            //customStyles={tableStyles}
             tableProps={{
                 className: "table-instrument",
                 pagination: {

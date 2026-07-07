@@ -58,7 +58,7 @@ const AddInstrumentToHitoCalibration =({hitoSelected})=>{
         },[])*/
 
         useEffect(()=>{
-            fetch(`${API_URL}/api/calibration/aplica_instrumentos/${hitoSelected}`)
+            fetch(`${API_URL}/calibration/aplica_instrumentos/${hitoSelected}`)
             .then(res => res.json())
             .then(result =>{
                 const list = result

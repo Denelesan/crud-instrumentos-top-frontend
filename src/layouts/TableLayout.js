@@ -3,6 +3,27 @@ import { useState, useRef } from 'react';
 import { SearchOutlined, PlusOutlined} from '@ant-design/icons';
 import '../styles/tableLayout.css';
 
+/* Estilos para la tabla
+const tableStyles = `
+    .table-instrument .ant-table {
+        background: transparent;
+    }
+    .table-instrument .ant-table-thead > tr > th {
+        background: #f5f5f5;
+        border-bottom: 2px solid rgb(255, 254, 254);
+    }
+    .table-instrument .ant-table-tbody > tr > td {
+        border-bottom: 1px solid rgb(255, 254, 254);
+    }
+    .table-instrument .ant-table-tbody > tr:hover > td {
+        background: #fafafa;
+        border-color: #fafafa;
+    }
+    .table-instrument .ant-table-cell {
+        padding: 12px 16px;
+    }
+`;*/
+
 export function showModalConfirm(onDelete, record, deleteConfirmTitle = "¿Estás seguro que deseas eliminar este elemento?", deleteConfirmContent = "Esta acción no se puede deshacer") {
     Modal.confirm({
         title: deleteConfirmTitle,
@@ -32,7 +53,7 @@ const TableLayout = ({
     widthModal = 520,
     tableProps = {},
     showAddButton = true,
-    customStyles = "",
+    customStyles = '',
     loading = false,
     searchValue = '',
     onSearchChange = null,
@@ -43,11 +64,14 @@ const TableLayout = ({
 
     const handleCancel = () => {
         setIsFormModalOpen(false);
-       
-        
         if (formRef.current) {
-            formRef.current?.resetFormFields();
-            formRef.current?.resetCertificadoFields()
+            if(Object.keys(formRef.current).length>1){
+                formRef.current?.resetFormFields();
+                formRef.current?.resetCertificadoFields()
+
+            }else{
+                formRef.current?.resetFormFields();
+            }
             
         }
     };
@@ -109,8 +133,8 @@ const TableLayout = ({
 
             <Table 
                 size='small' 
-                columns={columns} 
-                dataSource={dataSource}
+                columns={columns}
+                dataSource={dataSource} 
                 bordered={false}
                 loading={loading}
                 rowClassName={rowClassName}

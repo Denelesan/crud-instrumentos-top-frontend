@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Modal, message } from "antd"
 import { useNavigate } from 'react-router-dom';
-import { TableLayout } from '../layouts';
-import { generateColumns, createDateRenderer } from '../utils/tableUtils';
+import { TableLayout,showModalConfirm } from '../layouts';
+import { generateColumns, createDateRenderer ,createEmpresaRenderer,createMoneyRenderer} from '../utils/tableUtils';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
 import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 import dayjs from "dayjs";
@@ -43,9 +43,11 @@ const CalibrationHitoInstrument = () => {
         .then(res => res.json())
         .then(result => { 
             const list = result;
-            
+            console.log(list)
             const customRenderers = {
-                // Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
+                "Fecha Solicitud":createDateRenderer(),
+                empresa:createEmpresaRenderer(),
+                "Precio Orden de Compra":createMoneyRenderer()// Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
                 // Puedes especificar columnas específicas si es necesario
             };
             
@@ -57,13 +59,14 @@ const CalibrationHitoInstrument = () => {
                     setHitoCalibrationSelected(id);
                     setIsAddInstrumentModalOpen(true);
                 },
+                showModalConfirm: (onDelete, id) => showModalConfirm(onDelete, id),
                 editKey: "Id Hito",
                 viewKey: "id",
                 deleteKey: "Id Hito",
                 addKey: "Id Hito",
                 showAdd: true,
                 showEdit: true,
-                showView: true,
+                showView: false,
                 showDelete: true
             };
             
@@ -71,7 +74,7 @@ const CalibrationHitoInstrument = () => {
                 customRenderers,
                 actionColumns
             });
-            console.log(list)
+            
             setColumnsHitoCalibration(cols);
             setHitoCalibrationSource(list);
         });
@@ -132,7 +135,7 @@ const CalibrationHitoInstrument = () => {
             
             if (response.ok) {
                 const data = await response.json();
-                const updateData = await fetch(`${API_URL}/api/calibration`);
+                const updateData = await fetch(`${API_URL}/calibration`);
                 const json = await updateData.json();
                 setHitoCalibrationSource(json);
                 console.log("data", json);
@@ -160,6 +163,9 @@ const CalibrationHitoInstrument = () => {
                 onAdd={showModalCreateHitoCalibration}
                 loading={loading}
                 searchPlaceholder = 'Buscar hito de calibración...'
+                tableProps={{
+                    className: "table-instrument",
+                }}
             />
             
             <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>

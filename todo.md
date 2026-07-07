@@ -2,18 +2,18 @@
 # User Stories
 
 - [X] Como usuario quiero visualizar una tabla con todos los instrumentos y accesorios.
-- [ ] Como usuario quiero visualizar una tabla con todos los hitos de verificación.
+- [X] Como usuario quiero visualizar una tabla con todos los hitos de verificación.
 - [X] Como usuario quiero visualizar una tabla con todos los hitos de calibración.
 - [X] Como usuario quiero acceder a editar todos los detalles de los accesorios e instrumentos.
 - [X] Como usuario quiero acceder a visualizar todos los detalles de los accesorios e instrumentos.
 - [X] Como usuario quiero poder agregar nuevos accesorios/instrumentos.
 - [X] Como usuario quiero poder imprimir y/o exportar en pdf los detalles de los accesorio/instrumentos.
 - [X] Como administrador quiero poder eliminar accesorios/instrumentos.
-- [ ] Como administrador quiero poder crear un Hito de verificación
+- [X] Como administrador quiero poder crear un Hito de verificación
 - [X] Como administrador quiero poder crear un Hito de calibración.
 - [X] Como administrador quiero poder eliminar un Hito de calibración.
 - [ ] Como usuario quiero poder editar información a un hito de verificación vigente.
-- [ ] Como usuario quiero poder editar información a un hito de calibración vigente.
+- [X] Como usuario quiero poder editar información a un hito de calibración vigente.
 - [ ] Como usuario quiero poder agregar instrumentos a un hito de verificación vigente.
 - [X] Como usuario quiero poder agregar instrumentos a un hito de calibración vigente.
 - [ ] Como usuario quiero poder agregar y visualizar reportes e informes de verificación en pdf.
@@ -128,12 +128,109 @@
 - [X] Rellenar campos del formulario que cuenten con información desde la tabla de "Certificado"
 - [X] Rellenar campos del formulario que cuenten con información desde la tabla de "Certificado_instrumento" según el tipo"
 - [X] Crear route PUT para guardar información desde módulo de detalle de certificado y calibración
+- [X] Generar useEffect para guardar campos en base de datos desde route creado.
+
+### 21-05-2026
+**Formulario sobre detalles de certificado**
+- [X] Resolver errores menores sobre carga de información de detalle de certificados
+
+**Tabla Principal de Verificaciones**
+- [X] Crear archivo desde un template para tabla principal de verificaciones.
+
+### 26-05-2026
+**Base de Datos Verificaciones**
+- [X] Crear nuevos campos en BD para cubrir correctamente la lógica de verificaciones
+
+### 30-05-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear vista en bd para petición de tabla de verificación
+- [X] Crear useEffect para traer información desde bd.
+- [X] Crear campos de acción.
+- [X] Crear botón para crear una nueva verificación
+
+### 06-06-2026
+**Sección de Calibración-Detalle de Instrumento**
+- [X] Crear columna de estado que informe si el certificado se encuentra vigente o no vigente, en razón de la fecha_certificado.
+
+**Tabla Principal de Verificaciones**
+- [X] Crear route para crear una nueva verificación
+
+**Tabla principal de Instrumentos**
+- [X] Al presionar el botón de crear un instrumento y no llenar nada en el formulario, y salir del modal, aparece un error. Al ingresar información también.
+
+### 07-06-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear route para realizar la petición para completar tabla de verificación.
+- [X] Crear componente para crear una nueva verificación
+
+### 13-06-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear lógica de botón de eliminación.
+- [X] Crear lógica de botón de agregación.
+
+### 14-06-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear lógica de botón de edición de hito de verificación.
+
+**Vista Edición Hito Verificaciones**
+- [X] Crear componente de edición general.
+### 23-06-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear formulario para consultar y editar campos generales.
+- [X] Crear api para llamar campos generales.
+- [X] Crear useEffect para llamar campos generales.
+
+**Vista de Instrumentos asociados a hito de verificación**
+- [X] Crear api para enlistar instrumentos de un hito de verificación.
+- [X] Crear api para eliminar un instumento de un hito de verificación.
+- [X] Crear compomente modal para visualizar instrumentos a agregar.
+- [X] Crear useEffect para enlistar instrumentos de un hito de verificación.
+- [X] Crear useEffect para eliminar instrumentos de un hito de verificación.
+
+### 25-06-2026
+**Tabla Principal de Verificaciones**
+- [X] Crear api para editar campos generales.
+- [X] Crear useEffect para editar campos generales.
+
+### 30-06-2026
+**Panel de Jornadas instrumento de Verificaciones.**
+- [X] Crear api para crear una nueva jornada de verificación.
+- [X] Crear formulario para crear una nueva jornada de verificación.
+- [X] Crear useEffect para crear una nueva jornada de verificación.
+- [X] Crear API para enlistar jornadas de verificación. 
+- [X] Crear useEffect para enlistar jornadas de verificación.
+
+**Vista de Edición Hito Verificaciones**
+- [X] Incoprorar botón para incluir informes y formularios al cerrar el hito de verificación.
+
+### 03-07-2026
+**Vista de Edición Hito Verificaciones**
+- [X] Modelar nuevas tablas para incluir archivos de hito de verificación.
+- [] Crear lógica para importar archivos.
+- [X] Crear logica para eliminar archivos de base de datos y del servidor.
+
+### 05-07-2026
+**Vista de Edición Hito Verificaciones**
+- [X] Crear tablas en bd con campos para gestionar archivos de hito de verificación.
+
+**Formulario sobre detalles de certificado**
+- [X] Resolver problema sobre falta de carga de detalles de certificado al crear el certificado y dar okey.
+
+### 06-07-2026
+**Collapse de Verificación en Hito de Verificación**
+- [] Crear itemizado de cards por cada hito de verificación con campos de interés.
 
 **Por organizar**
-**Formulario sobre detalles de certificado**
-- [ ] Generar useEffect para guardar campos en base de datos desde route creado.
+- [] Crear api para llamar campos de detalle de verificacion por instrumento
+- [] Crar useEffect para consumir campos de detalle de verificacion por instrumento.
+- [] Asignar campos a cards ya creadas.
+- [] Crear modal para ingresar datos de verificacion por instrumento.
+- [] Crear api para insertar nuevos datos de verificación por instrumento.
 
+**Formulario sobre detalles de certificado**
 - [ ] Agregar botón y lógica para guardar *.pdf* de certificado.
+- [ ] Corregir longitud de n_certificado en tablas de cada tipo de instrumento.
+
 ## Diseño
 
 - https://flowbite.com/docs/getting-started/quickstart/

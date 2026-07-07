@@ -4,6 +4,7 @@ import { TabLayout } from './layouts';
 //Componentes
 import TableInstrumentComponent from './components/table-instrument';
 import CalibrationHitoInstrument from './components/calibration-hito-instrument';
+import TableVerificaciones from './components/table-verificaciones';
 
 function HomePage (){
     const tabs = [
@@ -19,7 +20,8 @@ function HomePage (){
         },
         {
             label:"Hitos de Verificación",
-            key: '3'
+            key: '3',
+            children: <TableVerificaciones/>
         } 
     ];
         

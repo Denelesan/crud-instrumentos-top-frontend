@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { TableLayout } from "../layouts";
 import Modal from "antd/es/modal/Modal";
-import { createDateRenderer, generateColumns, excludeProperties, createGenericRenderer, changeNameProperties } from "../utils/tableUtils";
+import { createMoneyRenderer,createEmpresaRenderer, createDateRenderer, generateColumns, excludeProperties, createGenericRenderer, changeNameProperties } from "../utils/tableUtils";
 import FormCreateCalibrationCertificated from "./form-create-calibration-certificated";
 import DetailCertificateInstrument from "./detail-certificate-instrument";
 import API_URL from "../config/api";
+import { Tag } from "antd";
 
 const tableStyles = `
     .table-layout-header {
@@ -50,10 +51,13 @@ const EditViewInstrumentCalibration = ({id})=>{
             })
                 
             )
-            console.log(datosFiltrados)
+            //console.log(datosFiltrados)
             const customRenderers={
                 fecha_ingreso: createDateRenderer(),
-                fecha_entrega: createDateRenderer()
+                fecha_certif: createDateRenderer(),
+                fecha_entrega: createDateRenderer(),
+                empresa: createEmpresaRenderer(),
+                precio_calibr_instru:createMoneyRenderer()
             }
             const list = datosFiltrados
             const actionColumns ={
@@ -66,12 +70,42 @@ const EditViewInstrumentCalibration = ({id})=>{
                 editKey:"id_instru_calibr"
 
             }
+            
             const cols = generateColumns(list,{
                 excludeProperties: excludeName,
                 customRenderers,
                 changeNameKeys:name,
                 actionColumns:actionColumns
             }) 
+            cols.push({
+                title:'Estado',
+                render:(data)=>{
+                    // Si no hay fecha, manejar el caso nulo
+                    if (!data.fecha_certif) {
+                        return <Tag bordered={true} borderRadiusSM={20} color={'orange'}>Sin Fecha</Tag>;
+                    }
+                    const fechaLimite =  new Date()
+                    // 2. Reconstruir la fecha a partir del texto chileno (DD-MM-AAAA)
+                    // El split detecta guiones (-) o barras (/) automáticamente
+                    const partes = data.fecha_certif.split(/[-/]/); 
+                    const dia = parseInt(partes[0], 10);
+                    const mes = parseInt(partes[1], 10) - 1; // Se resta 1 porque enero es 0 en JavaScript
+                    const anio = parseInt(partes[2], 10);
+
+                    // 3. Crear el objeto Date real con los datos limpios
+                    const fechaCertificado = new Date(anio, mes, dia);
+                    //const fecha_cert_form = fecha_certificado.toLocaleDateString('es-ES')
+                    fechaLimite.setFullYear(fechaLimite.getFullYear()-1)
+                        if (fechaCertificado.getTime() > fechaLimite.getTime()) {
+                           
+                            return <Tag bordered={true} borderRadiusSM={20} color={'green'}>Vigente </Tag>
+                            
+                        } else {
+                            
+                            return <Tag bordered={true} borderRadiusSM={20} color={'red'}>No vigente</Tag>}
+                    }
+                       
+            })
 
             //console.log(cols)
             setColumns(cols)
@@ -110,34 +144,6 @@ const EditViewInstrumentCalibration = ({id})=>{
                 <DetailCertificateInstrument
                  isModalVisible={certificateModalVisible}
                  onCancel={() => setCertificateModalVisible(false)}
-                 
-                 /*onSuccess={async(certificateData) => {
-                   console.log("[v0] Datos del certificado a guardar:", certificateData);
-                   console.log("otrosdatos:",dataSelected)
-                   // Aquí puedes hacer la lógica de guardado adicional si es necesaria
-                   // O simplemente cerrar el modal tras guardar exitosamente
-                   try {
-                    // Enviar datos actualizados al servidor
-                    await fetch(`${API_URL}/instrumento/calibraciones/detalle/:id_instrumento/:n_certificado`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(certificateData),
-                    })
-                    
-                    } catch (error) {
-                        console.log("Error en la solicitud", error)
-                    } finally{
-                        setLoading(false)
-                    }
-                   
-                   Modal.success({
-                     title: 'Éxito',
-                     content: 'Datos del certificado guardados correctamente',
-                     onOk: () => setCertificateModalVisible(false)
-                   });
-                 }}*/
                 setCertificateModalVisible={setCertificateModalVisible}
                  dataSelected={dataSource.find(item=>item.id_instru_calibr === instruCalibrSelected)}
                  loading={loading}

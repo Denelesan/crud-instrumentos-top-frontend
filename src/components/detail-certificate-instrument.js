@@ -7,7 +7,7 @@ import { data } from "@remix-run/router";
 const DetailCertificateInstrument = ({
   isModalVisible,
   onCancel,
-  //onSuccess,
+  onSuccess,
   dataSelected,
   setCertificateModalVisible,
   loading: initialLoading
@@ -18,7 +18,7 @@ const DetailCertificateInstrument = ({
   const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState([]);
   const [dataDetailCertificate, setDataDetailCertificate] = useState([])
   
-  //console.log(dataSelected)
+  //console.log("Date Seleccionada",dataSelected)
 
   //Obtener el detalle de los certificados del instrumento ingresado a calibración
   useEffect(()=>{
@@ -89,13 +89,15 @@ const DetailCertificateInstrument = ({
     }
   }, [dataSelected]);
 
-  useEffect(() => {
+  useEffect( () => {
     if (!isModalVisible) {
-      form.resetFields();
+      setTimeout(() => {
+        form.resetFields();
+      }, 1000);      
     }
   }, [isModalVisible]);
 
-  const onSuccess = async(certificateData) => {
+  const onSuccessForm = async(certificateData) => {
     console.log("Datos del certificado a guardar:", certificateData);
     console.log("otrosdatos:",dataDetailCertificate)
     const{fecha_calibr, fecha_certif,id_estado_certif,responsable_calibr,responsable_certif,prec_dist_gps,prec_alt_gps,prec_dist_cp_et,prec_dist_sp_et,prec_ang_hz_et,prec_ang_vert_et,prec_nivel,...restDataDetail} = dataDetailCertificate
@@ -119,11 +121,12 @@ const DetailCertificateInstrument = ({
      if (response.ok){
       const data = await response.json()
       console.log("data",data)
-      Modal.success({
+      onSuccess()
+     /* Modal.success({
         title: 'Éxito',
         content: 'Datos del certificado guardados correctamente',
         onOk: () => setCertificateModalVisible(false)
-      });
+      });*/
      } else{
       message.error("Error al actualizar el certificado de calibración")
      }
@@ -316,7 +319,7 @@ const DetailCertificateInstrument = ({
       .then(values => {
         setLoading(true);
         //onFinish(values);
-        onSuccess(values);
+        onSuccessForm(values);
         setLoading(false);
       })
       .catch(error => {
@@ -326,7 +329,9 @@ const DetailCertificateInstrument = ({
   };
 
   const handleCancel = () => {
-    form.resetFields();
+    setTimeout(() => {
+      form.resetFields();
+    }, 1000);  
     onCancel();
   };
 

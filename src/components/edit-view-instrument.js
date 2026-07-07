@@ -6,6 +6,7 @@ import {ModifiedInput,ModifiedSelect} from "./fields"
 import { PageLayout, FormGeneralPanelLayout, CollapseLayout } from '../layouts'
 import EditViewInstrumentGeneral from "./edit-view-instrument-general"
 import EditViewInstrumentCalibration from "./edit-view-instrument-calibration"
+import EditViewInstrumentVerificacion from "./edit-view-instrument-verificacion"
 
 
 const {Panel}= Collapse
@@ -44,13 +45,7 @@ const EditViewInstrument = ()=>{
                 <p class="panel-subtitle">Historial de verificaciones del instrumento topográfico</p>
                 </div>,
             key:"2",
-            content:<div style={{
-                display: 'flex',
-                justifyContent: "center",
-                marginTop: "20px"
-            }}>
-                <Button type="primary" style={{width: "auto"}} htmlType="submit">Agregar Datos de Verificación</Button>
-            </div>
+            content:<EditViewInstrumentVerificacion id={id}/>
         },
         {
             header:<div>
@@ -75,6 +70,11 @@ const EditViewInstrument = ()=>{
             accordion={false}
             backButtonText="Volver a la bandeja de entrada"
             backButtonWidth="15rem"
+            style={
+                {//display: 'flex',
+                justifyContent: "center",
+                marginTop: "20px"
+            }}
         
         />
        

@@ -6,6 +6,7 @@ import EditViewInstrument from './components/edit-view-instrument';
 import EditViewHitoCalibration from './components/edit-view-calibration';
 import InstrumentsManagement from './pages/InstrumentsManagement';
 import './styles/modifiedFields.css';
+import EditViewHitoVerificacion from './components/edit-view-verificacion';
 
 function App (){
 
@@ -37,6 +38,7 @@ function App (){
                     <Route path="/detail/:id" element={<DetailViewInstrument/>} /> 
                     <Route path='/edit/:id' element={<EditViewInstrument/>}/>
                     <Route path='/calibration/edit/:id' element={<EditViewHitoCalibration/>}/>
+                    <Route path='/verificacion/edit/:id' element={<EditViewHitoVerificacion/>}/>
                 </Routes>
             </Router>
         </ConfigProvider>

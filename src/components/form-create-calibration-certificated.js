@@ -109,6 +109,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
         newValues.empresa = dataSelected.empresa;
         newValues.id_instru_calibr = dataSelected.id_instru_calibr;
         newValues.id_tipo_instru = dataSelected.id_tipo;
+        newValues.id_instrumento = dataSelected.id_instrumento;
         //newValues.id_estado_certif = getIdFromValueOrLabel(newValues.estado_certif, optionsEstadoCertificado);
 
         console.log("NewValues:", newValues)
@@ -139,6 +140,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                     if(handleUpdateInput){
                         handleUpdateInput()
                     }
+                    setDataSelected(newValues)
                     form1.resetFields();
                     form2.resetFields();
                 }
@@ -181,7 +183,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                 form={form1}
                 name="form_item_path" 
                 layout="vertical" 
-                onFinish={()=>console.log("Cerrando")} 
+                //onFinish={onFinishCertificado} 
                 initialValues={{}}>
                     <Form.Item label="Hito de Calibración" name="id_hito_calibracion" 
                     
@@ -301,6 +303,8 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                             },
                             {
                                 type:"input",
+                                prefix:"$",
+                                typeInput:"number",                                
                                 name:"precio_calibr_instru",
                                 label:"Costo",
                                 initialValue:null,
@@ -335,13 +339,13 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
         isModalVisible={detailCertificateModalVisible}
         onCancel={() => setDetailCertificateModalVisible(false)}
         onSuccess={(certificateData) => {
-          console.log("[v0] Datos del certificado a guardar:", certificateData);
+          //console.log("[v0] Datos del certificado a guardar:", certificateData);
           // Aquí puedes hacer la lógica de guardado adicional si es necesaria
           // O simplemente cerrar el modal tras guardar exitosamente
           Modal.success({
             title: 'Éxito',
             content: 'Datos del certificado guardados correctamente',
-            onOk: () => setDetailCertificateModalVisible(false)
+            onOk: () => {setDetailCertificateModalVisible(false); setIsModalConfirmVisible(false)}
           });
         }}
         dataSelected={dataSelected}

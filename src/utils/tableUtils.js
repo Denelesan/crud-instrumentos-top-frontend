@@ -1,6 +1,8 @@
-import { Tag } from "antd";
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone,DownloadOutlined } from '@ant-design/icons';
+import { Tag,Typography, } from "antd";
+import { AuditOutlined,CalendarOutlined,DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone,DownloadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
+
+const { Title, Text } = Typography;
 
 // Función para eliminar propiedades de un objeto
 export function deleteProperties(obj, properties) {
@@ -49,7 +51,29 @@ export function createDateRenderer() {
             }
         }
         
-        return <span>{String(valor)}</span>;
+        return (<Text strong> <CalendarOutlined  /> {String(valor)}</Text>);
+    };
+}
+
+// Función para generar renderizado de empresa
+export function createEmpresaRenderer(){
+    return (valor)=>{
+        return (<Text strong > <AuditOutlined /> {String(valor)}</Text>)
+    }
+}
+
+export function createMoneyRenderer() {
+    return (valor) => {
+        if (valor === null || valor === undefined || isNaN(valor)) {
+            return <span>$0</span>;
+        }
+        const formato = new Intl.NumberFormat('es-CL', {
+            style: 'currency',
+            currency: 'CLP',
+            minimumFractionDigits: 0
+        }).format(valor);
+        
+        return <Text strong> {formato}</Text>;
     };
 }
 
@@ -119,6 +143,7 @@ export function createActionColumns({
     if (showEdit || showView || showDelete || showDownload || (showAdd && onAdd)) {
         actions.push({
             title: "Action",
+            align:'center',
             render: (record) => (
                 <div style={{
                     display: "flex",
@@ -140,8 +165,9 @@ export function createActionColumns({
                     {showDelete && onDelete && (
                         <DeleteOutlined 
                             onClick={() => {
+                                
                                 if (showModalConfirm) {
-                                    showModalConfirm(onDelete, record);
+                                    showModalConfirm(onDelete, record[deleteKey]);
                                 } else {
                                     onDelete(record[deleteKey]);
                                 }
@@ -191,6 +217,7 @@ export function generateColumns(data, options = {}) {
         const col = {
             title: String(keyNew).charAt(0).toUpperCase() + String(keyNew).slice(1).replace("_"," "),
             dataIndex: key,
+            align: 'center',
             render: render
         };
         

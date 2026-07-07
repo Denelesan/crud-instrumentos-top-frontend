@@ -9,6 +9,7 @@ const ModifiedInput = ({
     style = {width:"200px"},
     disabled = false,
     placeholder,
+    typeInput,
     ...rest 
 }) => {
     return (
@@ -21,6 +22,7 @@ const ModifiedInput = ({
         >
             <Input 
                 style={style}
+                type={typeInput}
                 disabled={disabled}
                 placeholder={placeholder}
                 {...rest} 

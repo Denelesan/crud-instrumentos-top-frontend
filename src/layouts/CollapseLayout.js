@@ -16,8 +16,15 @@ const CollapseLayout = ({
     backButtonText = "Volver",
     backButtonWidth = "10rem",
     onBackClick,
-    margin = '50px'
+    margin = '50px',
+    style = {
+        display: 'flex',
+        justifyContent: "center",
+        marginTop: "20px"
+    }
 }) => {
+
+    
     return (
         <PageLayout
             titleBanner={titleBanner}
@@ -29,21 +36,20 @@ const CollapseLayout = ({
             backButtonWidth={backButtonWidth}
             onBackClick={onBackClick}
             margin={margin}
+            style={style}
+            
         >
             <Collapse 
                 accordion={accordion}
                 defaultActiveKey={defaultActiveKey}
+                
             >
                 {panels.map((panel, index) => (
                     <Panel 
                         key={String(index + 1)} 
                         header={panel.header}
                     >
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: "center",
-                            marginTop: "20px"
-                        }}>
+                        <div style={style}>
                             {panel.content}
                         </div>
                     </Panel>
