@@ -2,7 +2,7 @@ import { message } from "antd"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TableLayout, showModalConfirm } from '../layouts';
-import { generateColumns, createStatusRenderer } from '../utils/tableUtils';
+import { generateColumnsPersonalizadas, createStatusRenderer } from '../utils/tableUtils';
 import FormCreateInstrument from './form-create-instrument';
 import API_URL from "../config/api";
 
@@ -33,6 +33,44 @@ const TableInstrumentComponent = () => {
       )
     })
 
+    const columnName = [{
+        title: 'Id',
+        dataIndex: 'id'
+    },
+    {
+        title: 'Instrumento',
+        dataIndex: 'instrumento'
+    },
+    {
+        title: 'Serie',
+        dataIndex: 'serie'
+    },
+    {
+        title: 'Tipo',
+        dataIndex: 'tipo'
+        
+    },
+    {
+        title: 'Marca',
+        dataIndex: 'marca'
+        
+    },
+    {
+        title: 'Modelo',
+        dataIndex: 'modelo'
+        
+    },
+    {
+        title: 'Materialidad',
+        dataIndex: 'materialidad'
+        
+    },
+    {
+        title: 'Estado',
+        dataIndex: 'estado'
+        
+    }]
+
     useEffect(() => {
         fetch(`${API_URL}/instrumentos`)
         .then(res => res.json())
@@ -53,9 +91,9 @@ const TableInstrumentComponent = () => {
                 deleteKey: "id"
             };
 
-            
-            const cols = generateColumns(list, {
-                excludeProperties: outProperties,
+            console.log(list)
+            const cols = generateColumnsPersonalizadas(columnName, {
+               // excludeProperties: outProperties,
                 customRenderers,
                 actionColumns,
 

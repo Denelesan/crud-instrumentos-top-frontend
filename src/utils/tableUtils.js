@@ -26,7 +26,7 @@ export function changeNameProperties(obj, names){
 export function createStatusRenderer() {
     return (valor) => {
         if (valor === null || valor === undefined) {
-            return <span>No data</span>;
+            return <Text strong>  -</Text>;
         }
         
         const color = valor === "Operativo" ? "#2ecc71" : valor === "Robado" ? "red" : "orange";
@@ -38,7 +38,7 @@ export function createStatusRenderer() {
 export function createDateRenderer() {
     return (valor) => {
         if (valor === null || valor === undefined) {
-            return <span>No data</span>;
+            return <Text strong>  -</Text>;
         }
         
         if (typeof valor === 'string') {
@@ -46,7 +46,7 @@ export function createDateRenderer() {
             if (isoDateMatch) {
                 const date = dayjs(valor);
                 if (date.isValid()) {
-                    return <span>{date.format("D [de] MMMM [del] YYYY")}</span>;
+                    return <Text strong> {date.format("DD-MM-YYYY")}</Text>;
                 }
             }
         }
@@ -65,7 +65,7 @@ export function createEmpresaRenderer(){
 export function createMoneyRenderer() {
     return (valor) => {
         if (valor === null || valor === undefined || isNaN(valor)) {
-            return <span>$0</span>;
+            return <Text strong>  -</Text>;
         }
         const formato = new Intl.NumberFormat('es-CL', {
             style: 'currency',
@@ -81,7 +81,7 @@ export function createMoneyRenderer() {
 export function createGenericRenderer(firstObject, key) {
     return (valor) => {
         if (valor === null || valor === undefined) {
-            return <span>No data</span>;
+            return <Text strong> -</Text>;
         }
         
         if (typeof firstObject[key] === "object" && firstObject[key] !== null) {
@@ -100,7 +100,7 @@ export function createGenericRenderer(firstObject, key) {
             }
         }
         
-        return <span>{String(valor)}</span>;
+        return <Text strong> {String(valor)}</Text>;
     };
 }
 
@@ -217,6 +217,41 @@ export function generateColumns(data, options = {}) {
         const col = {
             title: String(keyNew).charAt(0).toUpperCase() + String(keyNew).slice(1).replace("_"," "),
             dataIndex: key,
+            align: 'center',
+            render: render
+        };
+        
+        columns.push(col);
+    }
+      // Agregar columnas de acciones si se especifican
+    if (actionColumns) {
+        columns.push(...createActionColumns(actionColumns));
+    }
+    
+    return columns;  
+    
+    
+} 
+
+// Función para generar columnas desde un objeto con titulo e index
+export function generateColumnsPersonalizadas(column, options = {}) {
+    if (!column || column.length === 0) return [];
+
+    const { 
+        customRenderers = {},        
+        actionColumns = null
+    } = options;
+
+    
+    const columns = [];
+    
+    // Generar columnas para cada propiedad
+    for (const key in column) {
+        let render = column[key].render || customRenderers[column[key].dataIndex] || createGenericRenderer(column[key].dataIndex,key);
+        
+        const col = {
+            title: column[key].title,
+            dataIndex: column[key].dataIndex,
             align: 'center',
             render: render
         };

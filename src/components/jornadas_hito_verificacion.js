@@ -3,7 +3,9 @@ import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import 'dayjs/locale/es' // para español
 import API_URL from "../config/api";
+import {createDateRenderer} from '../utils/tableUtils';
 dayjs.locale('es')
+
 
 // Estilos globales para el DatePicker
 const datePickerStyles = `
@@ -40,21 +42,7 @@ const JornadasHitoVerificacion = ({idHito, onLogUpdate}) => {
     {
         title: 'Fecha de Jornada',
         dataIndex: 'fecha_verif',
-        render: (valor) => {
-            if (valor === null || valor === undefined) {
-                return <span>No data</span>;
-            }
-            if (typeof valor === 'string') {
-                const isoDateMatch = valor.match(/^\d{4}-\d{2}-\d{2}/);
-                if (isoDateMatch) {
-                    const date = dayjs(valor);
-                    if (date.isValid()) {
-                        return <span>{date.format("D [de] MMMM [del] YYYY")}</span>;
-                    }
-                }
-            }
-            return <span>{String(valor)}</span>;
-        }
+        render: createDateRenderer()
     }]
     
     // Solicitar personal cargo
