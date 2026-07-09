@@ -168,7 +168,7 @@ const CalibrationHitoInstrument = () => {
                 }}
             />
             
-            <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
+            <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null} width={"40rem"}>
                 <AddInstrumentToHitoCalibration hitoSelected={hitoCalibrationSelected} />
             </Modal>
         </div>

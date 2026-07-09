@@ -3,6 +3,7 @@ import { useState, useEffect} from "react";
 import { useForm } from "antd/es/form/Form"
 import Modal from "antd/es/modal/Modal";
 import API_URL from "../config/api";
+import { notification } from "antd";
 
 const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
 
@@ -206,9 +207,16 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
                 const json = await updateData.json()
                 //setHitoCalibrationSource(json)
                 //console.log("data",json)
-                Modal.success({
-                    content: (`Instrumento Nº ${id} actualizado con éxito`),
-                });
+                //Modal.success({
+                //    content: (`Instrumento Nº ${id} actualizado con éxito`),
+                //});
+                notification.success({
+                    message:"Aviso",
+                    description:`Hito Nº ${id} actualizado con éxito`,
+                    duration: 3
+                    //title:"Aviso",
+                    //content:`Hito Nº ${idHito} actualizado con éxito`,
+                    });
                 setTouchedFields({}) // Resetear campos modificados
                 //resetear todos los campos del formulario
                 //form.resetFields()
@@ -319,6 +327,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
                 ]}
             onFinish={onFinish}
             onValuesChange={handleValuesChange}
+            touchedFields={touchedFields}
         />
         ) : (
             <p>Cargando detalles...</p>

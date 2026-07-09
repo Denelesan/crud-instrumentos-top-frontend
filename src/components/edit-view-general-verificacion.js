@@ -23,7 +23,7 @@ const modifiedSelectStyle = `
  * Componente para editar la información general de un hito de calibración
  * @param {string} idHito - ID del hito de verificacion a editar
  */
-const EditGeneralViewVerificacion = ({idHito, updateTrigger}) => {
+const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTouchedFields}) => {
 
     // Estados para manejar los datos y el estado del formulario
     const [dataHitoVerificacion, setDataHitoVerificacion] = useState() // Datos del hito de calibración
@@ -31,7 +31,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger}) => {
     const [estadoVerificacion, setEstadoVerificacion] = useState() // Lista de estados de Verificacion
     const [personal, setPersonal] = useState([])
     const [loading, setLoading] = useState(false) // Estado de carga durante el envío del formulario
-    const [touchedFields, setTouchedFields] = useState({}) // Campos que han sido modificados
+    //const [touchedFields, setTouchedFields] = useState({}) // Campos que han sido modificados
     const [fileList, setFileList] = useState([]); //estado de los archivos
     const [actualizarArchivos, setObtenerArchivos] = useState(true)
     

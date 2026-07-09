@@ -5,13 +5,13 @@ import AddInstrumentToHitoVerificacionFromEditView from "./add-instrumento-hito-
 import API_URL from "../config/api";
 
 
-const VerificacionInstrumentAsociation = ({idHito}) =>{
+const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setChangeDeleteInstrument,changeAddInstrument, setChangeAddInstrument}) =>{
     const [dataSource, setDataSource] = useState([])
     const [dataSourceTemporal, setDataSourceTemporal] = useState([])
     const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
     const [updateFetch, setUpdateFetch] = useState(false)
-    const [changeDeleteInstrument, setChangeDeleteInstrument] = useState([]);
-    const [changeAddInstrument, setChangeAddInstrument] = useState([]);
+    //const [changeDeleteInstrument, setChangeDeleteInstrument] = useState([]);
+    //const [changeAddInstrument, setChangeAddInstrument] = useState([]);
 
     const handleCancel = ()=>{
         setIsAddInstrumentModalOpen(false)

@@ -1,4 +1,4 @@
-import { Tag,Typography, } from "antd";
+import { Flex, Tag,Typography, } from "antd";
 import { AuditOutlined,CalendarOutlined,DeleteOutlined, EditOutlined, EyeOutlined, PlusCircleTwoTone,DownloadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
 
@@ -145,7 +145,13 @@ export function createActionColumns({
             title: "Action",
             align:'center',
             render: (record) => (
-                <div style={{
+                <div
+                    style={{
+                        width:"100%",
+                        display:"flex",
+                        justifyContent:"center"
+                    }}>
+                    <div style={{
                     display: "flex",
                     justifyContent: "space-between",
                     width: "80%"
@@ -175,6 +181,7 @@ export function createActionColumns({
                             style={{color: "red"}}
                         />
                     )}
+                </div>
                 </div>
             )
         });

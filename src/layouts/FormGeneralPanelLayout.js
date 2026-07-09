@@ -1,4 +1,4 @@
-import { Button, Form } from "antd"
+import { Button, Form, Badge } from "antd"
 import { useForm } from "antd/es/form/Form"
 import { ModifiedInput, ModifiedSelect, ModifiedDate} from "../components/fields"
 
@@ -21,6 +21,7 @@ const FormGeneralPanelLayout = ({
     fields,
     onFinish,
     onValuesChange,
+    touchedFields,
     form: formProp
 
 }) => {
@@ -39,6 +40,7 @@ const FormGeneralPanelLayout = ({
             layout={layout}
             onFinish={onFinish}
             onValuesChange={onValuesChange}
+            touchedFields={touchedFields}
         >
             <div style={style}>
                 {fields.map((field, index) => {
@@ -59,7 +61,24 @@ const FormGeneralPanelLayout = ({
                 justifyContent: "center",
                 marginTop: "20px"
             }}>
-                <Button type="primary" style={{ width: "10rem" }} loading={loading} htmlType="submit">Guardar</Button>
+                <Badge
+                    count={
+                        
+                        //fileList.length
+                        Object.keys(touchedFields).length
+                        //-fileList.length
+                        ? 
+                        //fileList.length 
+                        Object.keys(touchedFields).length
+                        //-fileList.length
+                        : null 
+                        //changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
+                    }
+                >
+                    <Button type="primary" style={{width: "10rem"}} loading={loading} htmlType="submit">Guardar</Button>
+                    </Badge>
+
+                
             </div>
         </Form>
         </div>

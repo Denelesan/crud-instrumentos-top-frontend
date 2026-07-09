@@ -56,3 +56,8 @@
 .table-layout-banner-title, .table-layout-banner-subtitle {
   cursor: pointer;
 }
+
+.ant-table-cell td{
+  display: flex;
+  justify-content: center;
+}

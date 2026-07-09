@@ -133,7 +133,7 @@ const AddInstrumentToHitoVerificacion =({hitoSelected})=>{
     return (
         <div>
             <h1>Agregar Instrumentos</h1>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} size="small" pagination={{
+            <Table tableLayout="fixed" rowSelection={rowSelection} columns={columns} dataSource={dataSource} size="small" pagination={{
                 defaultPageSize:7
             }}
             

@@ -150,14 +150,14 @@ const AddInstrumentToHitoVerificacionFromEditView =({hitoSelected, dataSourceOri
     return (
         <div>
             <h1>Agregar Instrumentos</h1>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} size="small" pagination={{
+            <Table tableLayout="fixed" rowSelection={rowSelection} columns={columns} dataSource={dataSource} size="small" pagination={{
                 defaultPageSize:7
             }}
             
             />
 
             <Button type="primary" style={{width: "100%", marginTop:"10px"}} onClick={()=>{
-                console.log("Los instrumentos seleccionados son: ", selectedRowKeys)
+                //console.log("Los instrumentos seleccionados son: ", selectedRowKeys)
                 addInstrument(selectedRowKeys) 
             }}>Agregar</Button>
         </div>
