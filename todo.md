@@ -218,7 +218,7 @@
 
 ### 06-07-2026
 **Collapse de Verificación en Hito de Verificación**
-- [] Crear itemizado de cards por cada hito de verificación con campos de interés.
+- [X] Crear itemizado de cards por cada hito de verificación con campos de interés.
 
 **Por organizar**
 - [] Crear api para llamar campos de detalle de verificacion por instrumento

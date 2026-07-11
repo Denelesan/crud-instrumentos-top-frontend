@@ -29,7 +29,7 @@ export function createStatusRenderer() {
             return <Text strong>  -</Text>;
         }
         
-        const color = valor === "Operativo" ? "#2ecc71" : valor === "Robado" ? "red" : "orange";
+        const color = valor === "Operativo" || "Verificado" || "Finalizado" ? "#2ecc71" : valor === "Robado" || "Cancelado" ? "red" : "orange";
         return <Tag bordered={true} borderRadiusSM={20} color={color}>{valor}</Tag>;
     };
 }

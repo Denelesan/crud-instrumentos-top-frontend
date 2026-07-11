@@ -96,7 +96,7 @@ const TableLayout = ({
                             placeholder={searchPlaceholder}
                             value={searchValue}
                             onChange={onSearchChange}
-                            style={{ background: 'transparent', fontSize: 16 }}
+                            style={{ background: 'transparent', fontSize: 14 }}
                         />
                     </div>
                 )}

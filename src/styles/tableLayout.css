@@ -2,8 +2,8 @@
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
-  padding: 32px 32px 24px 32px;
-  margin: 12px auto;
+  padding: 25px 32px 15px 32px;
+  margin: 8px auto;
   max-width: 1300px;
   min-width: fit-content;
 }
@@ -12,14 +12,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 15px;
 }
 
 .table-layout-search {
   background: #f5f6fa;
   border-radius: 12px;
   border: 1px solid #e5e6eb;
-  padding: 8px 16px;
+  padding: 5px 16px;
   display: flex;
   align-items: center;
   width: 320px;
@@ -37,9 +37,9 @@
 .table-layout-add-btn {
   border-radius: 8px !important;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   padding: 0 20px;
-  height: 40px;
+  height: 35px;
 }
 
 .table-instrument .ant-table {
@@ -51,13 +51,13 @@
   background: #f5f6fa !important;
   color: #222;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
   border-bottom: 2px solid #f0f0f0;
 }
 
 .table-instrument .ant-table-tbody > tr > td {
   border-bottom: 1px solid #f0f0f0;
-  font-size: 15px;
+  font-size: 1px;
 }
 
 .table-instrument .ant-table-tbody > tr.robado-row > td {
@@ -66,7 +66,7 @@
 
 .table-instrument .ant-table-tbody > tr > td .ant-tag {
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 12px;
   padding: 0 12px;
 }
 
@@ -96,7 +96,7 @@
   width: 100vw;
   background: #5b4fff;
   color: #fff;
-  padding: 32px 0 18px 0;
+  padding: 20px 0 18px 0;
   margin-bottom: 0;
   position: relative;
   left: 50%;
@@ -106,19 +106,19 @@
 }
 .table-layout-banner-content {
   max-width: 1200px;
-  margin: 0 auto;
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 32px;
 }
 .table-layout-banner-title {
-  font-size: 2.2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0;
 }
 .table-layout-banner-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   margin-top: 4px;
   opacity: 0.95;
@@ -141,3 +141,7 @@
 .table-layout-banner-actions button:hover {
   background: rgba(255,255,255,0.22);
 } 
+
+.ant-typography strong{
+  font-size: 12px;
+}

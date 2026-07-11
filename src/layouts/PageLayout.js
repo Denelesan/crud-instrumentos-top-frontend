@@ -44,13 +44,13 @@ const PageLayout = ({
                 display: 'flex',
                 flexDirection: 'Column',
                 justifyContent: "center",
-                marginTop: "0px"
+                marginTop: "1px"
             }}>
-            <p style={
+            {/*<p style={
                 {color:"grey"}
                 }>
                 {subtitle}
-            </p>
+            </p>*/}
                 {children}
                 
                 {showBackButton && (

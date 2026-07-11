@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Modal, message } from "antd"
 import { useNavigate } from 'react-router-dom';
 import { TableLayout,showModalConfirm } from '../layouts';
-import { generateColumns, createDateRenderer ,createEmpresaRenderer,createMoneyRenderer} from '../utils/tableUtils';
+import { generateColumns, createDateRenderer ,createStatusRenderer,createEmpresaRenderer,createMoneyRenderer} from '../utils/tableUtils';
 import FormCreateHitoCalibration from "./form-create-hito-calibration";
 import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 import dayjs from "dayjs";
@@ -47,7 +47,9 @@ const CalibrationHitoInstrument = () => {
             const customRenderers = {
                 "Fecha Solicitud":createDateRenderer(),
                 empresa:createEmpresaRenderer(),
-                "Precio Orden de Compra":createMoneyRenderer()// Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
+                "Precio Orden de Compra":createMoneyRenderer(),
+                
+                "Estado Hito": createStatusRenderer()// Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
                 // Puedes especificar columnas específicas si es necesario
             };
             

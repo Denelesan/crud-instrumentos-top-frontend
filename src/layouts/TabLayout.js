@@ -1,5 +1,6 @@
 import { Tabs } from 'antd';
 import PageLayout from './PageLayout';
+import { AndroidOutlined, AppleOutlined } from '@ant-design/icons';
 
 const TabLayout = ({ 
     titleBanner,
@@ -9,8 +10,9 @@ const TabLayout = ({
     tabs = [], 
     defaultActiveKey = '1',
     type = 'card',
+    icon,
     showBackButton = false,
-    margin = '10px'
+    margin = '30px'
 }) => {
     const tabItems = tabs.map(tab => ({
         label: tab.label,
@@ -29,8 +31,10 @@ const TabLayout = ({
         >
             <Tabs
                 type={type}
+                icon= <AppleOutlined/>
                 defaultActiveKey={defaultActiveKey}
                 items={tabItems}
+                size='small'
             />
         </PageLayout>
     );

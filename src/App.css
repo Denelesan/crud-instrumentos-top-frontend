@@ -61,3 +61,9 @@
   display: flex;
   justify-content: center;
 }
+
+.tab-name-card{
+  font-size: 13px;
+  font-weight: 600;
+
+}

@@ -1,9 +1,9 @@
-import { message } from "antd"
+import { message,Tag } from "antd"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TableLayout, showModalConfirm } from '../layouts';
 import Modal from "antd/es/modal/Modal";
-import { generateColumns, createStatusRenderer } from '../utils/tableUtils';
+import { generateColumns, createStatusRenderer,generateColumnsPersonalizadas } from '../utils/tableUtils';
 import API_URL from "../config/api";
 import FormCreateVerificacion from "./form-create-verificacion";
 import AddInstrumentToHitoVerificacion from "./add-intrument-verificacion";
@@ -18,6 +18,25 @@ const TableVerificaciones = () =>{
     const [loading, setLoading] = useState(false);
     
     const navigate = useNavigate();
+
+    const columnName = [{
+        title: 'Id',
+        dataIndex: 'id_verificacion'
+    },
+    {
+        title: 'Responsable',
+        dataIndex: 'responsable'
+    },
+    {
+        title: 'Estado',
+        dataIndex: 'estado_verif'
+    },
+    {
+        title: 'Trimestre',
+        dataIndex: 'trim_anio',
+        render:(valor)=>(<Tag bordered={true} borderRadiusSM={20} color="geekblue">{valor}</Tag>)
+        
+    }]
 
     const onSearchChange = (e)=>{
       setSearchValue(e.target.value)
@@ -40,7 +59,9 @@ const TableVerificaciones = () =>{
         .then(result => { 
             const list = result;
             
+            
             const customRenderers = {
+                estado_verif: createStatusRenderer()
                 // Aplicar renderizador de fechas a todas las columnas que puedan contener fechas
                 // Puedes especificar columnas específicas si es necesario
             };
@@ -64,11 +85,12 @@ const TableVerificaciones = () =>{
                 showDelete: true
             };
             
-            const cols = generateColumns(list, {
+            const cols = generateColumnsPersonalizadas(columnName, {
                 customRenderers,
                 actionColumns
             });
-            //console.log(list)
+            console.log(list)
+            console.log(columnName)
             setColumnsHitoVerificacion(cols);
             setHitoVerificacionSource(list);
         });
