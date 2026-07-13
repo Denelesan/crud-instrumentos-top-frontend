@@ -204,6 +204,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                     <FormGeneralPanelLayout
                     form={form2}
                     loading={loading}
+                    
                     style={{
                         display: 'grid',
                         justifyContent: 'center',

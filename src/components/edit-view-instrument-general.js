@@ -243,6 +243,7 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
             loading={loading}
             fields={//Campos:
                  [
+                    
                     {
                         type:"input",
                         name:"id",

@@ -1,6 +1,7 @@
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
+const { Title, Text } = Typography;
 const PageLayout = ({
     titleBanner,
     subtitleBanner,
@@ -39,7 +40,13 @@ const PageLayout = ({
             </div>
         </div>
         <div style={{ margin }}>
-            <h3>{title}</h3>
+            <Title level={2}
+            style={{
+                //color:"#fff",
+                display:'flex',
+                justifyContent:'center',
+                margin:0
+            }}>{title}</Title>
             <div style={{
                 display: 'flex',
                 flexDirection: 'Column',
@@ -60,8 +67,9 @@ const PageLayout = ({
                         marginTop: "20px"
                     }}>
                         <Button 
-                            type="primary" 
-                            style={{width: backButtonWidth}} 
+                            //type="primary" 
+                            color='#1677ff'
+                            style={{width: backButtonWidth, background:'#1677ff', color:"white"}} 
                             onClick={handleBack}
                         >
                             {backButtonText}

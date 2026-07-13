@@ -6,6 +6,8 @@ import { useState } from "react";
 import { CollapseLayout, PageLayout } from '../layouts';
 import VerificacionInstrumentAsociation from "./verificacion-instrumento-asociation";
 import DocumentacionVerificacion from "./documentacion-verificacion";
+import CollapseLayout2 from "../layouts/CollapseLayout2";
+import { ToolOutlined } from "@ant-design/icons";
 
 const EditViewHitoVerificacion = ()=>{
     const {id} = useParams()
@@ -39,6 +41,9 @@ const EditViewHitoVerificacion = ()=>{
     const panels = [
         {
             header: "Información general",
+            description:"Datos generales del hito de verificación",
+            icon:<ToolOutlined/>,
+            lastUpdate:"Actualizado hace 3 horas",
             content: <EditGeneralViewVerificacion
                 idHito={id} 
                 updateTrigger={updateTrigger} 
@@ -51,10 +56,18 @@ const EditViewHitoVerificacion = ()=>{
         },*/
         {
             header: "Jornadas de Verificación",
+            description:"Registros de jornadas realizadas para cumplir con este hito de verificación",
+            icon:<ToolOutlined/>,
+            count:"2 jornadas registradas",
+            lastUpdate:"Ùltima jornada hace 6 meses",
             content: <JornadasHitoVerificacion idHito={id} onLogUpdate={handleLogUpdate}/>
         },
         {
             header: "Instrumentos asociados",
+            description:"Instrumentos asociados a este hito de verificación",
+            icon:<ToolOutlined/>,
+            count:"24 instrumentos asociados",
+            lastUpdate:"Actualizado hace 3 horas",
             content: <VerificacionInstrumentAsociation idHito={id}
             changeDeleteInstrument={changeDeleteInstrument} setChangeDeleteInstrument={setChangeDeleteInstrument}
             changeAddInstrument={changeAddInstrument} setChangeAddInstrument={setChangeAddInstrument}/>
@@ -62,12 +75,12 @@ const EditViewHitoVerificacion = ()=>{
     ];
 
     return (
-            <CollapseLayout
+            <CollapseLayout2
             titleBanner="Sistema de Gestión"
             subtitleBanner="Instrumentos y Accesorios Topográficos"
             title={`Edición de Hito de Verificación Nº${id}`}
             panels={panels}
-            defaultActiveKey={['1','2','3']}
+            defaultActiveKey={[]}
             accordion={false}
             backButtonText="Volver a la bandeja de entrada"
             backButtonWidth="15rem"

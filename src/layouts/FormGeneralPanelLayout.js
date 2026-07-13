@@ -21,7 +21,7 @@ const FormGeneralPanelLayout = ({
     fields,
     onFinish,
     onValuesChange,
-    touchedFields,
+    touchedFields = {},
     form: formProp
 
 }) => {
