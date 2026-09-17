@@ -9,6 +9,11 @@ import {
     Divider,
     Tooltip
 } from "antd";
+import dayjs from "dayjs";
+import 'dayjs/locale/es' // para español
+import FormUpdateVerificacionDatos from "../components/form-update-verificacion-datos";
+import { useState, useRef, useEffect } from "react";
+import Modal from "antd/es/modal/Modal";
 
 import {
     CalendarOutlined,
@@ -18,6 +23,7 @@ import {
     DownloadOutlined,
     FilePdfOutlined
 } from "@ant-design/icons";
+dayjs.locale('es')
 
 const { Title, Text } = Typography;
 
@@ -25,18 +31,26 @@ const getTagColor = (estado) => {
 
     switch (estado) {
 
-        case "Excelente":
+        case "Sin problemas":
         case "Funcional":
         case "Actualizado":
             return "success";
+        
+        case "Baja":
+            return "blue";
 
-        case "Bueno":
+        case "Reparacion":
+        case "Mantencion":
+        case "Alta":
             return "gold";
 
-        case "Pendiente":
+        case "Revisión":
+        case "Calibracion":
+        case "Media":
             return "orange";
 
-        case "Deficiente":
+        case "Baja del equipo":
+        case "Crítica":
             return "red";
 
         default:
@@ -45,8 +59,26 @@ const getTagColor = (estado) => {
 
 };
 
-const VerificacionCard = ({ item }) => {
+const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpenModalFormUpdateVerificacion }) => {
+    
+    const [hitoSelected, setHitoSelected] = useState()
+    const formRef = useRef(null);
 
+    const handleCancel = () => {
+        setOpenModalFormUpdateVerificacion(false)
+        setHitoSelected()
+        if (formRef.current) {
+            if(Object.keys(formRef.current).length>1){
+                formRef.current?.resetFormFields();
+                formRef.current?.resetCertificadoFields()
+
+            }else{
+                formRef.current?.resetFormFields();
+            }
+            
+        }
+    };
+   
     return (
 
         <Card
@@ -66,7 +98,7 @@ const VerificacionCard = ({ item }) => {
 
                     <Title level={4} style={{marginBottom:8}}>
 
-                        {item.tipo_verificacion}
+                       Hito #{item.id_verificacion} de verificación | {item.estado_verif}
 
                     </Title>
 
@@ -74,7 +106,7 @@ const VerificacionCard = ({ item }) => {
 
                         <Text type="secondary">
 
-                            <CalendarOutlined /> {item.fecha}
+                            <CalendarOutlined /> {item.fecha_fin_verif}
 
                         </Text>
 
@@ -92,23 +124,32 @@ const VerificacionCard = ({ item }) => {
 
                     <Space>
 
-                        <Tooltip title="Ver detalle">
-
-                            <Button
-                                shape="circle"
-                                icon={<EyeOutlined />}
-                            />
-
-                        </Tooltip>
-
-                        <Tooltip title="Editar">
+                        <Tooltip title="Editar"
+                        >
 
                             <Button
                                 shape="circle"
                                 icon={<EditOutlined />}
+                                onClick={()=>(
+                                    
+                                    setOpenModalFormUpdateVerificacion(true),
+                                    setHitoSelected(item))}
                             />
-
-                        </Tooltip>
+                         </Tooltip>
+                        {hitoSelected &&
+                        <Modal
+                            open={openModalFormUpdateVerificacion}
+                            onCancel={handleCancel}
+                            width={700}
+                            footer={null}>
+                            <FormUpdateVerificacionDatos
+                            itemSelected = {hitoSelected}
+                            setOpenModalFormUpdateVerificacion={setOpenModalFormUpdateVerificacion}
+                            handleCancel={handleCancel}  
+                            ref={formRef} 
+                            />
+                        </Modal>}
+                       
 
                         <Tooltip title="Descargar informe">
 
@@ -137,9 +178,9 @@ const VerificacionCard = ({ item }) => {
 
                     <br/>
 
-                    <Tag color={getTagColor(item.estado_fisico)}>
+                    <Tag color={getTagColor(item.resultado_fisico)}>
 
-                        {item.estado_fisico}
+                        {item.resultado_fisico}
 
                     </Tag>
 
@@ -151,9 +192,9 @@ const VerificacionCard = ({ item }) => {
 
                     <br/>
 
-                    <Tag color={getTagColor(item.estado_operativo)}>
+                    <Tag color={getTagColor(item.resultado_operativo)}>
 
-                        {item.estado_operativo}
+                        {item.resultado_operativo}
 
                     </Tag>
 
@@ -165,9 +206,9 @@ const VerificacionCard = ({ item }) => {
 
                     <br/>
 
-                    <Tag color={getTagColor(item.estado_digital)}>
+                    <Tag color={getTagColor(item.resultado_digital)}>
 
-                        {item.estado_digital}
+                        {item.resultado_digital}
 
                     </Tag>
 
@@ -187,11 +228,101 @@ const VerificacionCard = ({ item }) => {
 
             <p style={{marginTop:8}}>
 
-                {item.observaciones}
+                {item.obs_result}
 
             </p>
 
             <Divider />
+
+            {/* ==========================================
+                    LISTADO DE TAREAS
+                ========================================== */}
+            <Text strong>
+
+            Tareas
+
+            </Text>
+
+            {tareas.length > 0 ? (
+
+            <Space
+                direction="vertical"
+                style={{
+                    width: "100%"
+                }}
+            >
+
+            {tareas.map((tarea) => (
+            <div
+            key={tarea.id}
+            style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 15px",
+            //borderBottom: "1px solid #f0f0f0",
+            }}
+            >
+            <div
+            style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            flex: 1,
+            }}
+            >
+            <span
+            style={{
+            fontSize: "18px",
+            lineHeight: 1,
+            }}
+            >
+            •
+            </span>
+
+            <span>
+            {tarea.titulo}
+            </span>
+            </div>
+
+            <Space>
+            <Tag
+            color={getTagColor(tarea.criticidad)}
+            >
+            {tarea.criticidad}
+            </Tag>
+
+            <span>
+            {tarea.asignado_tarea}
+
+            </span>
+
+            <Tag
+            color={getTagColor(tarea.estado_tarea)}
+            >
+                {tarea.estado_tarea}
+            </Tag>
+            </Space>
+            </div>
+            ))}
+
+            </Space>
+
+            ) : (
+
+            <div
+                style={{
+                    textAlign: "center",
+                    padding: "25px",
+                    color: "#999"
+                }}
+            >
+                No hay tareas asociadas.
+            </div>
+
+            )}
+            <Divider />
+
 
             {/* DOCUMENTOS */}
 
@@ -201,7 +332,7 @@ const VerificacionCard = ({ item }) => {
 
                 <Text>
 
-                    {item.documentos} documento(s) asociado(s)
+                    {item.cant_archivos} documento(s) asociado(s)
 
                 </Text>
 

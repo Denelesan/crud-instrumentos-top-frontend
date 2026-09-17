@@ -5,7 +5,7 @@ import Modal from "antd/es/modal/Modal";
 import API_URL from "../config/api";
 import { notification } from "antd";
 
-const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
+const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields, setUpdateTrigger}) => {
 
     const [dataDetailInstrument, setDataDetailInstrument] = useState()
     const [form] = useForm()
@@ -212,12 +212,14 @@ const EditViewInstrumentGeneral = ({id, touchedFields, setTouchedFields}) => {
                 //});
                 notification.success({
                     message:"Aviso",
-                    description:`Hito Nº ${id} actualizado con éxito`,
+                    description:`Instrumento Nº ${id} actualizado con éxito`,
                     duration: 3
                     //title:"Aviso",
                     //content:`Hito Nº ${idHito} actualizado con éxito`,
                     });
                 setTouchedFields({}) // Resetear campos modificados
+
+                setUpdateTrigger(prev => prev + 1)
                 //resetear todos los campos del formulario
                 //form.resetFields()
             } else {

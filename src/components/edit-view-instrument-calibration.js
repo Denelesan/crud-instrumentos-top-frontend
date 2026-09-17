@@ -17,7 +17,7 @@ const tableStyles = `
           
 `;
 
-const EditViewInstrumentCalibration = ({id})=>{
+const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
     const [columns, setColumns] = useState([])
     const [dataSource, setDataSource] = useState([])
     const [certificateModalVisible, setCertificateModalVisible] = useState(false)
@@ -149,7 +149,7 @@ const EditViewInstrumentCalibration = ({id})=>{
             deleteConfirmTitle = "¿Estás seguro que deseas eliminar este elemento?"
             deleteConfirmContent = "Esta acción no se puede deshacer"
             FormComponent = {FormCreateCalibrationCertificated}
-            formProps = {{id_instrumento:id, handleUpdateInput, inputNewData}}
+            formProps = {{id_instrumento:id, handleUpdateInput, inputNewData,setUpdateTrigger}}
             widthModal = {600}
             tableProps = {''}
             showAddButton = {true}

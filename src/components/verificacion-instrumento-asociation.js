@@ -5,7 +5,7 @@ import AddInstrumentToHitoVerificacionFromEditView from "./add-instrumento-hito-
 import API_URL from "../config/api";
 
 
-const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setChangeDeleteInstrument,changeAddInstrument, setChangeAddInstrument}) =>{
+const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setChangeDeleteInstrument,changeAddInstrument, setChangeAddInstrument,onLogUpdate}) =>{
     const [dataSource, setDataSource] = useState([])
     const [dataSourceTemporal, setDataSourceTemporal] = useState([])
     const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
@@ -146,10 +146,14 @@ const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setCha
 
                 //const result = await response.json()
                 //console.log(result.message)
+                if(onLogUpdate){
+                    onLogUpdate()
+                }
                 message.success(`Los cambios se guardaron con éxito`);
                 //setDataSourceTemporal(dataSourceTemporal)
                 //setDataSource(dataSourceTemporal)
                 setUpdateFetch(true)
+                
             }
             catch (error){
                 console.log("Error al guardar cambios", error)

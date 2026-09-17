@@ -5,7 +5,7 @@ import AddInstrumentToHitoCalibrationFromEditView from "./add-instrumento-hito-c
 import API_URL from "../config/api";
 
 
-const CalibrationInstrumentAsociation = ({idHito}) =>{
+const CalibrationInstrumentAsociation = ({idHito,onLogUpdate}) =>{
     const [dataSource, setDataSource] = useState([])
     const [dataSourceTemporal, setDataSourceTemporal] = useState([])
     const [isAddInstrumentModalOpen, setIsAddInstrumentModalOpen] = useState(false)
@@ -117,7 +117,7 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
         const instrumentosEliminados = dataSource.filter(inst=>
             !dataSourceTemporal.some(tempInst => tempInst.id ===inst.id)
         ).map(inst=>inst.id)
-        console.log("Instrumentos eliminados:", instrumentosEliminados); // Depuración
+        //console.log("Instrumentos eliminados:", instrumentosEliminados); // Depuración
         if (changeDeleteInstrument.length>0 || changeAddInstrument.length > 0 ){
             try{
                 if (changeDeleteInstrument.length>0){
@@ -150,6 +150,9 @@ const CalibrationInstrumentAsociation = ({idHito}) =>{
                 //setDataSourceTemporal(dataSourceTemporal)
                 //setDataSource(dataSourceTemporal)
                 setUpdateFetch(true)
+                if(onLogUpdate){
+                    onLogUpdate()
+                }
             }
             catch (error){
                 console.log("Error al guardar cambios", error)

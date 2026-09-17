@@ -10,7 +10,8 @@ const DetailCertificateInstrument = ({
   onSuccess,
   dataSelected,
   setCertificateModalVisible,
-  loading: initialLoading
+  loading: initialLoading,
+  setUpdateTrigger
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(initialLoading || false);
@@ -122,6 +123,7 @@ const DetailCertificateInstrument = ({
       const data = await response.json()
       console.log("data",data)
       onSuccess()
+      
      /* Modal.success({
         title: 'Éxito',
         content: 'Datos del certificado guardados correctamente',

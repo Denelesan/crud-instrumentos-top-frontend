@@ -12,11 +12,13 @@
 - [X] Como administrador quiero poder crear un Hito de verificación
 - [X] Como administrador quiero poder crear un Hito de calibración.
 - [X] Como administrador quiero poder eliminar un Hito de calibración.
-- [ ] Como usuario quiero poder editar información a un hito de verificación vigente.
+- [X] Como usuario quiero poder editar información a un hito de verificación vigente.
 - [X] Como usuario quiero poder editar información a un hito de calibración vigente.
-- [ ] Como usuario quiero poder agregar instrumentos a un hito de verificación vigente.
+- [X] Como usuario quiero poder agregar instrumentos a un hito de verificación vigente.
 - [X] Como usuario quiero poder agregar instrumentos a un hito de calibración vigente.
-- [ ] Como usuario quiero poder agregar y visualizar reportes e informes de verificación en pdf.
+- [X] Como usuario quiero poder agregar reportes e informes de verificación en pdf.
+- [ ] Como usuario quiero poder visualizar reportes e informes de verificación en pdf.
+- [X] Como usuario quiero poder descargar reportes e informes de verificación en pdf.
 - [ ] Como usuario quiero poder agregar, descargar y visualizar certificados de calibración.
 
 
@@ -220,13 +222,60 @@
 **Collapse de Verificación en Hito de Verificación**
 - [X] Crear itemizado de cards por cada hito de verificación con campos de interés.
 
-**Por organizar**
-- [] Crear api para llamar campos de detalle de verificacion por instrumento
-- [] Crar useEffect para consumir campos de detalle de verificacion por instrumento.
-- [] Asignar campos a cards ya creadas.
-- [] Crear modal para ingresar datos de verificacion por instrumento.
-- [] Crear api para insertar nuevos datos de verificación por instrumento.
+### 18-07-2026
+**Collapse de Verificación en Hito de Verificación**
+- [X] Crear api para llamar campos de detalle de verificacion por instrumento
+- [X] Crar useEffect para consumir campos de detalle de verificacion por instrumento.
+- [X] Asignar campos a cards ya creadas.
+- [X] Crear modal para ingresar datos de verificacion por instrumento.
+- [X] Crear api para insertar nuevos datos de verificación por instrumento.
 
+### 26-07-2026
+**Vista de Edición Hito Verificaciones**
+- [X] Resolver problema de error al guardar fecha nula en edición de campos generales de verificación.
+
+**Collapse de Verificación en Hito de Verificación**
+-[X] Actualizar resultados de hitos de verificación a instrumentos
+
+### 09-08-2026
+**Base de Datos**
+- [X] Generar consulta y vista para información de cantidad y actualización de registros para modulo instrumentos.
+**Instrumentos General**
+- [X] Implementar contadores en modulo de instrumentos
+
+### 12-08-2026
+- [X] Generar consulta y vista para información de cantidad y actualización de registros para modulo calibraciones.
+- [X] Implementar contadores en modulo de calibraciones
+
+### 15-08-2026
+- [X] Generar consulta y vista para información de cantidad y actualización de registros para modulo verificaciones.
+- [X] Implementar contadores en modulo de verificaciones
+
+### 25-08-2026
+**Visualización**
+- [X] Terminar registro de verificaciones.
+
+### 28-08-2026
+**Visualizaciones**
+- [X] Terminar registro de calibraciones.
+
+### 04-09-2026
+- [X] Diseñar estructura de base de datos de tareas
+
+### 12-09-2026
+- [X] Agregar tareas nuevas desde el módulo de verificación de instrumentos.
+- [X] Enlistar tareas de un instrumento en las cartas del hito de verificación.
+
+### 14-09-2026
+- [X] Agregar lista de tareas en formulario para actualizar resultados de verificación.
+- [X] Agregar tareas a bd desde formulario para actualizar resultados de verificación.
+- [X] Agregar tareas temporales en formulario para actualizar resultados de verificación.
+
+### 15-09-2026
+- [X] Se mejora gestión de eliminación temporal de tareas. Modifica estilo y agrega botón de restaurar.
+
+**Por organizar**
+- [ ] Que al editar la calibración de un instrumento, aparezcan todos los campos.
 **Formulario sobre detalles de certificado**
 - [ ] Agregar botón y lógica para guardar *.pdf* de certificado.
 - [ ] Corregir longitud de n_certificado en tablas de cada tipo de instrumento.

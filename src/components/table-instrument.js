@@ -91,7 +91,7 @@ const TableInstrumentComponent = () => {
                 deleteKey: "id"
             };
 
-            console.log(list)
+            //console.log(list)
             const cols = generateColumnsPersonalizadas(columnName, {
                // excludeProperties: outProperties,
                 customRenderers,

@@ -1,6 +1,6 @@
 import { Button, Form, Badge } from "antd"
 import { useForm } from "antd/es/form/Form"
-import { ModifiedInput, ModifiedSelect, ModifiedDate} from "../components/fields"
+import { ModifiedInput, ModifiedSelect, ModifiedDate,ModifiedTextArea} from "../components/fields"
 
 
 
@@ -19,6 +19,7 @@ const FormGeneralPanelLayout = ({
     },
     loading,
     fields,
+    saveButton = "True",
     onFinish,
     onValuesChange,
     touchedFields = {},
@@ -28,11 +29,11 @@ const FormGeneralPanelLayout = ({
     const [formInternal] = useForm();
     const form = formProp || formInternal;  // Usa el prop si existe
     //const [form] = useForm()
-    
-
+   
     return (
         <div style={{
-            width: "100%"
+            width: "100%",            
+            
         }}>
         <Form
             form={form}
@@ -41,21 +42,44 @@ const FormGeneralPanelLayout = ({
             onFinish={onFinish}
             onValuesChange={onValuesChange}
             touchedFields={touchedFields}
+            saveButton={saveButton}
         >
             <div style={style}>
                 {fields.map((field, index) => {
-                    if (field.type === "input") {
-                        return <ModifiedInput key={index} {...field} />;
-                    }
-                    if (field.type === "select") {
-                        return <ModifiedSelect key={index} {...field} />;
-                    }
-                    if (field.type === "date") {
-                        return <ModifiedDate key={index} {...field} />;
-                    }
-                    return null; // por si aparece un tipo desconocido
+                    const itemStyle = {
+                        gridColumn: field.fullWidth
+                            ? "1 / -1"
+                            : field.colSpan
+                                ? `span ${field.colSpan}`
+                                : undefined
+                    };
+                    return (
+                        <div
+                            key={index}
+                            style={itemStyle}
+                        >
+                            {field.type === "input" && (
+                                <ModifiedInput {...field} />
+                            )}
+            
+                            {field.type === "select" && (
+                                <ModifiedSelect {...field} />
+                            )}
+            
+                            {field.type === "date" && (
+                                <ModifiedDate {...field} />
+                            )}
+            
+                            {field.type === "textarea" && (
+                                <ModifiedTextArea {...field} />
+                            )}
+                            
+                        </div>
+                    );
+                                        
                     })}
             </div>
+            {saveButton && (
             <div style={{
                 display: 'flex',
                 justifyContent: "center",
@@ -79,7 +103,7 @@ const FormGeneralPanelLayout = ({
                     </Badge>
 
                 
-            </div>
+            </div>)}
         </Form>
         </div>
     )

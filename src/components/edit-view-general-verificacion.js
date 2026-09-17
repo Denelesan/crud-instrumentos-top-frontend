@@ -23,7 +23,7 @@ const modifiedSelectStyle = `
  * Componente para editar la información general de un hito de calibración
  * @param {string} idHito - ID del hito de verificacion a editar
  */
-const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTouchedFields}) => {
+const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogUpdate, setTouchedFields}) => {
 
     // Estados para manejar los datos y el estado del formulario
     const [dataHitoVerificacion, setDataHitoVerificacion] = useState() // Datos del hito de calibración
@@ -180,9 +180,9 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
         
         
         // Manejo de fecha nula
-       /* if (newValues.fecha_solicitud === "" || newValues.fecha_solicitud === undefined){
-            newValues.fecha_solicitud = null;
-        }*/
+        if (!newValues.fecha_fin_verif) {
+            newValues.fecha_fin_verif = null;
+        }
 
         // Conversión de nombre de responsable a ID
         if (newValues.id_responsable && typeof newValues.id_responsable === 'string') {
@@ -200,10 +200,15 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
             }
         }
 
-        Object.keys(newValues).forEach(key=>{
-            formData.append(key,newValues[key]);
+        //Dado que estoy enviando archivos, es necesario crear un objeto de formData
+        Object.entries(newValues).forEach(([key, value]) => {
+            formData.append(
+                key,
+                value === null || value === undefined
+                    ? ""
+                    : value
+            );
         });
-        
         
         fileList.forEach(file=>{
             formData.append(
@@ -212,12 +217,13 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
             );
         });
 
-        //console.log(formData)
+        console.log(formData)
 
         if(
-            newValues.id_estado_verif===2
+            (newValues.id_estado_verif===2 || newValues.fecha_fin_verif)
             &&
             fileList.length===0
+            
             )
             {
              /*message.error(
@@ -228,7 +234,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
                 //description:`Hito Nº ${idHito} actualizado con éxito`,
                 
                 title:"Aviso",
-                content:"Para completar el Hito de Verificación debe adjuntar documentación asociada a la labor realizada",
+                content:"Para completar el Hito de Verificación o entregar una fecha de finalización debe adjuntar documentación asociada a la labor realizada",
                 
                 });
              setLoading(false)
@@ -276,6 +282,10 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
                     modal.destroy();
                 }, 5000); // 5 segundos
                 */
+               //Notificamos al componente padre que hubo una actualización exitosa. En esta notificación se ejecuta la función que gatilla el cambio del estado para ejecutar el useEffect de actualización de la vista general.
+               if(onLogUpdate){
+                onLogUpdate()
+            }
                 notification.success({
                     message:"Aviso",
                     description:`Hito Nº ${idHito} actualizado con éxito`,
@@ -390,6 +400,20 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields, setTo
                             boxShadow: touchedFields.trim_anio ? '0 0 0 3px rgba(24, 144, 255, 0.5)' : undefined
                         }}
                     />
+                </Form.Item>
+                <Form.Item 
+                    label="Fecha Finalización"
+                    name="fecha_fin_verif" 
+                    initialValue={dataHitoVerificacion["fecha_fin_verif"]?dayjs(dataHitoVerificacion["fecha_fin_verif"], "YYYY-MM-DD"):""}
+                >
+                    <DatePicker disabled={false}
+                        //{!dayjs(dataHitoCalibration["Fecha Solicitud"]).isValid()} 
+                        style={{
+                            ...styleInput,
+                            borderColor: touchedFields.trim_anio ? '#1890ff' : undefined,
+                            boxShadow: touchedFields.trim_anio ? '0 0 0 3px rgba(24, 144, 255, 0.5)' : undefined
+                        }}/>
+                    
                 </Form.Item>
                 <Form.Item
                     label="Documentos asociados"

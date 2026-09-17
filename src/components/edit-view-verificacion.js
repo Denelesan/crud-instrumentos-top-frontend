@@ -2,12 +2,15 @@ import { Collapse, Button, Modal} from "antd"
 import { useNavigate, useParams } from "react-router-dom"
 import EditGeneralViewVerificacion from "./edit-view-general-verificacion";
 import JornadasHitoVerificacion from "./jornadas_hito_verificacion";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { CollapseLayout, PageLayout } from '../layouts';
 import VerificacionInstrumentAsociation from "./verificacion-instrumento-asociation";
 import DocumentacionVerificacion from "./documentacion-verificacion";
 import CollapseLayout2 from "../layouts/CollapseLayout2";
 import { ToolOutlined } from "@ant-design/icons";
+
+import { timeAgo } from "../utils/tableUtils";
+import API_URL from "../config/api";
 
 const EditViewHitoVerificacion = ()=>{
     const {id} = useParams()
@@ -18,6 +21,7 @@ const EditViewHitoVerificacion = ()=>{
     const [changeAddInstrument, setChangeAddInstrument] = useState([]);
     //const {Panel}= Collapse
     const [updateTrigger, setUpdateTrigger] = useState(0)
+    const [infoVerificacion, setInfoVerificacion] = useState([])
 
     // Función para manejar los cambios en los avances
     const handleLogUpdate = ()=>{
@@ -38,15 +42,28 @@ const EditViewHitoVerificacion = ()=>{
         }
     }
 
+    useEffect(()=>{
+        fetch(`${API_URL}/verificacion/info/${id}`)
+        .then(res => res.json())
+        .then(response=>{
+            
+            setInfoVerificacion(response[0])
+            console.log(response[0])
+            
+            
+        })
+    },[updateTrigger])
+
     const panels = [
         {
             header: "Información general",
             description:"Datos generales del hito de verificación",
             icon:<ToolOutlined/>,
-            lastUpdate:"Actualizado hace 3 horas",
+            lastUpdate:`Actualizado ${infoVerificacion ? timeAgo(infoVerificacion.fecha_actualizacion):"Sin información"}`,
             content: <EditGeneralViewVerificacion
                 idHito={id} 
                 updateTrigger={updateTrigger} 
+                onLogUpdate={handleLogUpdate}
                 touchedFields={touchedFields} setTouchedFields={setTouchedFields}
             />
         },/*
@@ -58,19 +75,20 @@ const EditViewHitoVerificacion = ()=>{
             header: "Jornadas de Verificación",
             description:"Registros de jornadas realizadas para cumplir con este hito de verificación",
             icon:<ToolOutlined/>,
-            count:"2 jornadas registradas",
-            lastUpdate:"Ùltima jornada hace 6 meses",
+            count:infoVerificacion.cant_jornadas?infoVerificacion.cant_jornadas==1?`${infoVerificacion.cant_jornadas} jornada registrada`:infoVerificacion.cant_jornadas==0?"":`${infoVerificacion.cant_jornadas} jornadas registradas`:"",
+            lastUpdate:infoVerificacion.ultima_jornada?`Última jornada ${timeAgo(infoVerificacion.ultima_jornada)}`
+            : "Sin jornadas realizadas",
             content: <JornadasHitoVerificacion idHito={id} onLogUpdate={handleLogUpdate}/>
         },
         {
             header: "Instrumentos asociados",
             description:"Instrumentos asociados a este hito de verificación",
             icon:<ToolOutlined/>,
-            count:"24 instrumentos asociados",
-            lastUpdate:"Actualizado hace 3 horas",
+            count:infoVerificacion.cant_instrumentos?infoVerificacion.cant_instrumentos==1?`${infoVerificacion.cant_instrumentos} instrumento asociado`:infoVerificacion.cant_instrumentos==0?"":`${infoVerificacion.cant_instrumentos} instrumentos asociados`:"",
+            lastUpdate:`Actualizado ${infoVerificacion ? timeAgo(infoVerificacion.actualizacion_instrumento):"Sin información"}`,
             content: <VerificacionInstrumentAsociation idHito={id}
             changeDeleteInstrument={changeDeleteInstrument} setChangeDeleteInstrument={setChangeDeleteInstrument}
-            changeAddInstrument={changeAddInstrument} setChangeAddInstrument={setChangeAddInstrument}/>
+            changeAddInstrument={changeAddInstrument} setChangeAddInstrument={setChangeAddInstrument} onLogUpdate={handleLogUpdate}/>
         }
     ];
 

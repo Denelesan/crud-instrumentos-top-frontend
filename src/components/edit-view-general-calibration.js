@@ -14,7 +14,7 @@ const modifiedSelectStyle = `
  * Componente para editar la información general de un hito de calibración
  * @param {string} idHito - ID del hito de calibración a editar
  */
-const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
+const EditGeneralViewCalibration = ({idHito, updateTrigger,onLogUpdate}) => {
 
     // Estados para manejar los datos y el estado del formulario
     const [dataHitoCalibration, setDataHitoCalibration] = useState() // Datos del hito de calibración
@@ -102,7 +102,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
     // Función que se ejecuta al enviar el formulario
     const onFinish= async (values)=>{
         setLoading(true)
-        console.log("values", values)
+        //console.log("values", values)
         const {IdHito,...newValues} = values
         
         // Manejo de fecha nula
@@ -122,7 +122,7 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
         if (typeof newValues.precio_oc === "string"){
             newValues.precio_oc = parseFloat(newValues.precio_oc);
         }
-        console.log("NewValues", newValues)
+        //console.log("NewValues", newValues)
         try {
             // Enviar datos actualizados al servidor
             const response = await fetch(`${API_URL}/calibration/${idHito}`, {
@@ -143,6 +143,9 @@ const EditGeneralViewCalibration = ({idHito, updateTrigger}) => {
                 setTouchedFields({}) // Resetear campos modificados
                 //resetear todos los campos del formulario
                 //form.resetFields()
+                if(onLogUpdate){
+                    onLogUpdate()
+                }
             } else{
                 message.error("Error al actualizar el Hito de Calibración")
             }

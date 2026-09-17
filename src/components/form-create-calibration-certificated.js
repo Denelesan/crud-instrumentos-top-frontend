@@ -18,7 +18,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
     const [form1] = Form.useForm();
     const [form2] = Form.useForm();
     //console.log(props)
-    const {id_instrumento, handleUpdateInput, inputNewData} = props
+    const {id_instrumento, handleUpdateInput, inputNewData,setUpdateTrigger} = props
     //console.log(id_instrumento)
     const [hitoSelected, setHitoSelected] = useState()
     const [loading, setLoading] = useState(false)
@@ -140,6 +140,7 @@ const FormCreateCalibrationCertificated = forwardRef((props, ref) => {
                     if(handleUpdateInput){
                         handleUpdateInput()
                     }
+                    setUpdateTrigger(prev => prev + 1)
                     setDataSelected(newValues)
                     form1.resetFields();
                     form2.resetFields();
