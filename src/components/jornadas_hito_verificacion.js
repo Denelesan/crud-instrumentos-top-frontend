@@ -203,7 +203,7 @@ const JornadasHitoVerificacion = ({idHito, onLogUpdate}) => {
                     marginTop: '1px',
                     marginBottom:'15px'
                 }}>
-                    <Button type="primary" htmlType="submit">Agregar Jornada de Verificación</Button>
+                    <Button type="primary" style={{background:'#0b3d63'}} htmlType="submit">Agregar Jornada de Verificación</Button>
                 </div>
             </Form>
             <div style={{

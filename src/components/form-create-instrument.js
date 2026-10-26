@@ -85,6 +85,9 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
         
         try {
             const response = await fetch(`${API_URL}/instrumentos`, {
+                
+                    credentials: 'include',
+                  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +97,9 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
             
                 if (response.ok){
                     const data = await response.json()
-                    const updateData = await fetch(`${API_URL}/instrumentos`);
+                    const updateData = await fetch(`${API_URL}/instrumentos`,{
+                        credentials: 'include',
+                      });
                     const json = await updateData.json()
                     setDataSource(json)
                     message.success(`Nuevo instrumento creado con éxito: ${data.instrumento}`);

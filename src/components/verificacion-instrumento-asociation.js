@@ -182,7 +182,8 @@ const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setCha
  
             <Button type="primary" style={{
                 marginBottom: "20px",
-                width: "auto"}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
+                width: "auto",
+                background:'#0b3d63'}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
             </div>
             <Modal width={600} open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null}>
                 <AddInstrumentToHitoVerificacionFromEditView hitoSelected={idHito} dataSourceOriginal={dataSource} dataTemporal={dataSourceTemporal} setDataSourceTemporal={setDataSourceTemporal}/>
@@ -202,7 +203,7 @@ const VerificacionInstrumentAsociation = ({idHito,changeDeleteInstrument, setCha
                         changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
                     }
                 >
-                <Button type="primary" style={{width: "auto"}} htmlType="submit" onClick={()=>showModalConfirm(guardarCambios)}>Guardar Cambios</Button>
+                <Button type="primary" style={{width: "auto", background:'#0b3d63'}} htmlType="submit" onClick={()=>showModalConfirm(guardarCambios)}>Guardar Cambios</Button>
                 </Badge>
                 
             </div>

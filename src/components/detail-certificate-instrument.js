@@ -1,8 +1,23 @@
-import { Modal, Form, message, Input, Select, DatePicker } from "antd";
+import { Modal, Form, message,
+  notification, Input, Select, DatePicker,Upload, Button, Badge} from "antd";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import API_URL from "../config/api";
 import { data } from "@remix-run/router";
+import { InboxOutlined,UploadOutlined,FilePdfOutlined,
+  FileWordOutlined,
+  FileExcelOutlined,
+  FileImageOutlined,
+  FileZipOutlined,
+  FileUnknownOutlined } from "@ant-design/icons";
+const { Dragger } = Upload;
+
+// Estilo CSS para el Select cuando ha sido modificado
+const modifiedSelectStyle = `
+    .modified-select .ant-select-selector {
+        border-color: #1890ff !important;
+    }
+`;
 
 const DetailCertificateInstrument = ({
   isModalVisible,
@@ -18,8 +33,35 @@ const DetailCertificateInstrument = ({
   const [tipoInstrumento, setTipoInstrumento] = useState(null);
   const [optionsEstadoCertificado, setoptionsEstadoCertificado] = useState([]);
   const [dataDetailCertificate, setDataDetailCertificate] = useState([])
+  const [fileList, setFileList] = useState([]); //estado de los archivos
+  const [actualizarArchivos, setObtenerArchivos] = useState(true)
+  const [touchedFields, setTouchedFields] = useState({}) // Campos que han sido modificados
+
+ 
+
+  const [messageApi, contextHolder] = message.useMessage();
   
   //console.log("Date Seleccionada",dataSelected)
+
+  const obtenerArchivos = ()=>{
+    if (actualizarArchivos){
+        setObtenerArchivos(false)
+    }else{
+        setObtenerArchivos(true)
+    }
+}
+
+// Función para manejar cambios en los campos del formulario
+const handleValuesChange = (changedValues, allValues) => {
+  const newTouchedFields = { ...touchedFields };
+  //console.log("changedValues", changedValues)
+  Object.keys(changedValues).forEach(field => {
+      newTouchedFields[field] = true;
+  });
+  setTouchedFields(newTouchedFields);
+  //console.log("TOUCH",touchedFields)
+  
+};
 
   //Obtener el detalle de los certificados del instrumento ingresado a calibración
   useEffect(()=>{
@@ -31,7 +73,7 @@ const DetailCertificateInstrument = ({
     }
   
     setDataDetailCertificate(null); // limpia datos viejos mientras carga nuevo
-   
+   //console.log("DATA DETAL", dataDetailCertificate)
     fetch(`${API_URL}/instrumento/calibraciones/detalle/${dataSelected.id_instrumento}/${dataSelected.n_certificado}`)
     .then(response=> response.json())
     .then(data=>{ 
@@ -71,6 +113,8 @@ const DetailCertificateInstrument = ({
 
   // Cargar opciones de estado certificado al montar el componente
   useEffect(() => {
+    
+
     fetch(`${API_URL}/certificado_estado`)
       .then(response => response.json())
       .then(data => {
@@ -98,11 +142,78 @@ const DetailCertificateInstrument = ({
     }
   }, [isModalVisible]);
 
+  //Soicitar listado de archivos
+  useEffect(()=>{
+    if (!isModalVisible) return;
+
+    if (!dataSelected?.id_instrumento || !dataSelected?.n_certificado) {
+      setFileList(null);
+      return;
+    }
+    setFileList(null); // limpia datos viejos mientras carga nuevo
+    fetch(`${API_URL}/calibracion/${dataSelected.n_certificado}/archivos`)
+    .then(res=>res.json())
+    .then(data=>{
+        setFileList(
+            data.map(file=>({
+            uid:file.id_archivo,
+            name:file.nombre_original,
+            status:'done',
+            type:file.tipo,
+            url: `${API_URL}/calibracion/archivo/${file.id_archivo}`
+        }))
+        ) 
+    })
+    //console.log("FileList",fileList)
+    },[isModalVisible, actualizarArchivos])
+
+
+  //Funcion para ejecutar la eliminación del archivo:
+
+  const eliminarArchivo = async (id_archivo) => {
+    try {
+
+        const response = await fetch(
+            `${API_URL}/calibracion/archivo/${id_archivo}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        if (!response.ok)
+            throw new Error();
+
+        //message.success("Archivo eliminado");
+        notification.success({
+            message:"Aviso",
+            description:`El archivo ha sido eliminado`,
+            duration: 3
+            //title:"Aviso",
+            //content:`Hito Nº ${idHito} actualizado con éxito`,
+            });
+
+        // Volver a consultar archivos
+        obtenerArchivos();
+        delete touchedFields.archivos
+        setTouchedFields(touchedFields)
+        
+        
+
+    } catch {
+
+        message.error("No fue posible eliminar el archivo");
+
+    }
+
+};
+
   const onSuccessForm = async(certificateData) => {
     console.log("Datos del certificado a guardar:", certificateData);
     console.log("otrosdatos:",dataDetailCertificate)
     const{fecha_calibr, fecha_certif,id_estado_certif,responsable_calibr,responsable_certif,prec_dist_gps,prec_alt_gps,prec_dist_cp_et,prec_dist_sp_et,prec_ang_hz_et,prec_ang_vert_et,prec_nivel,...restDataDetail} = dataDetailCertificate
     const newValues = {...certificateData, ...restDataDetail}
+    const formData = new FormData();
+        
     // Aquí puedes hacer la lógica de guardado adicional si es necesaria
     // O simplemente cerrar el modal tras guardar exitosamente
     // Conversión de precio a número si es string
@@ -110,6 +221,49 @@ const DetailCertificateInstrument = ({
       newValues.prec_nivel = parseFloat(newValues.prec_nivel);
   }
     console.log("newValues",newValues)
+
+    //Dado que estoy enviando archivos, es necesario crear un objeto de formData
+    Object.entries(newValues).forEach(([key, value]) => {
+      formData.append(
+          key,
+          value === null || value === undefined
+              ? ""
+              : value
+      );
+  });
+  
+  fileList.forEach(file=>{
+      formData.append(
+          "archivos",
+          file
+      );
+      formData.append("n_certificado", dataDetailCertificate.n_certificado)
+  });
+
+  console.log(formData)
+
+  if(
+      
+      fileList.length===0
+      
+      
+      )
+      {
+        
+       /*message.error(
+       "Debe adjuntar documentación"
+       )*/
+       Modal.error({
+          //message:"Aviso",
+          //description:`Hito Nº ${idHito} actualizado con éxito`,
+          
+          title:"Aviso",
+          content:"Para completar el certificado de calibración debe adjuntar el certificado emitido",
+          
+          });
+       setLoading(false)
+       return;
+      }
     try {
      // Enviar datos actualizados al servidor
      const response =await fetch(`${API_URL}/instrumento/calibraciones/certificado/${dataDetailCertificate.id_instru_calibr}`, {
@@ -119,10 +273,25 @@ const DetailCertificateInstrument = ({
          },
          body: JSON.stringify(newValues),
      })
-     if (response.ok){
+
+     const responseArchivo = await fetch(`${API_URL}/calibraciones/archivos/${dataDetailCertificate.n_certificado}`, {
+      method: 'PUT',
+      body:formData,
+  })
+
+     if (response.ok && responseArchivo.ok){
       const data = await response.json()
       console.log("data",data)
-      onSuccess()
+      //onSuccessForm()
+      notification.success({
+        message:"Aviso",
+        description:`Resultados de la calibración guardados correctamente`,
+        duration: 3
+        //title:"Aviso",
+        //content:`Hito Nº ${idHito} actualizado con éxito`,
+        });
+        setTouchedFields({}) // Resetear campos modificados
+        obtenerArchivos();
       
      /* Modal.success({
         title: 'Éxito',
@@ -150,7 +319,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión distancia",
       initialValue: null,
       placeholder: "Ej. XXXX",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }],
+      style:{borderColor: touchedFields.prec_dist_gps ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_dist_gps ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -158,7 +330,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión en altura",
       initialValue: null,
       placeholder: "Ej. XXX",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión en altura'}]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión en altura'}],
+      style:{borderColor: touchedFields.prec_alt_gps ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_alt_gps ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -166,7 +341,10 @@ const DetailCertificateInstrument = ({
       label: "Responsable de Calibración",
       initialValue: null,
       placeholder: "Ej. XXXXXX",
-      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }],
+      style:{borderColor: touchedFields.responsable_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.responsable_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "date",
@@ -174,7 +352,10 @@ const DetailCertificateInstrument = ({
       label: "Fecha de Calibración",
       //initialValue: null,
       //placeholder: "Ej. -20°C a 50°C",
-      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }]
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }],
+      style:{borderColor: touchedFields.fecha_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.fecha_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px', width:'100%'}
     }
   ];
 
@@ -186,7 +367,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión angular hz",
       initialValue: null,
       placeholder: "Ej. 3.5 dBi",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión horizontal' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión horizontal' }],
+      style:{borderColor: touchedFields.prec_ang_hz_et ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_ang_hz_et ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -194,7 +378,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión angular vertical",
       initialValue: null,
       placeholder: "Ej. 45 segundos",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión vertical' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión vertical' }],
+      style:{borderColor: touchedFields.prec_ang_vert_et ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_ang_vert_et ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -202,7 +389,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión distancia con prisma",
       initialValue: null,
       placeholder: "Ej. 50 Ohms",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }],
+      style:{borderColor: touchedFields.prec_dist_cp_et ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_dist_cp_et ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -210,7 +400,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión distancia sin prisma",
       initialValue: null,
       placeholder: "Ej. 1.2-1.6 GHz",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión de la distancia' }],
+      style:{borderColor: touchedFields.prec_dist_sp_et ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_dist_sp_et ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -218,7 +411,10 @@ const DetailCertificateInstrument = ({
       label: "Responsable de Calibración",
       initialValue: null,
       placeholder: "Ej. XXXXXX",
-      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }],
+      style:{borderColor: touchedFields.responsable_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.responsable_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "date",
@@ -226,7 +422,10 @@ const DetailCertificateInstrument = ({
       label: "Fecha de calibración",
       //initialValue: null,
       //placeholder: "Ej. IEC 61000-4-3",
-      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }]
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de la calibración' }],
+      style:{borderColor: touchedFields.fecha_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.fecha_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px', width:'100%'}
     }
   ];
 
@@ -238,7 +437,10 @@ const DetailCertificateInstrument = ({
       label: "Precisión",
       //initialValue: null,
       placeholder: "Ej. 2mm/2m",
-      rules: [{ required: true, message: 'Por favor ingrese la precisión' }]
+      rules: [{ required: true, message: 'Por favor ingrese la precisión' }],
+      style:{borderColor: touchedFields.prec_nivel ? '#1890ff' : undefined,
+      boxShadow: touchedFields.prec_nivel ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -246,7 +448,10 @@ const DetailCertificateInstrument = ({
       label: "Responsable de Calibración",
       initialValue: null,
       placeholder: "Ej. XXXXXX",
-      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }]
+      rules: [{ required: false, message: 'Por favor ingrese el responsable de la calibración' }],
+      style:{borderColor: touchedFields.responsable_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.responsable_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "date",
@@ -254,7 +459,10 @@ const DetailCertificateInstrument = ({
       label: "Fecha de calibración",
       //initialValue: null,
       //placeholder: "",
-      rules: [{ required: true, message: 'Por favor ingrese la fecha de calibración' }]
+      rules: [{ required: true, message: 'Por favor ingrese la fecha de calibración' }],
+      style:{borderColor: touchedFields.fecha_calibr ? '#1890ff' : undefined,
+      boxShadow: touchedFields.fecha_calibr ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px', width:'100%'}
     }
   ];
 
@@ -273,7 +481,10 @@ const DetailCertificateInstrument = ({
       name: "fecha_certif",
       label: "Fecha de Certificado",
       //initialValue: dataDetailCertificate.fecha_certif,
-      rules: [{ required: true, message: 'Por favor seleccione la fecha' }]
+      rules: [{ required: true, message: 'Por favor seleccione la fecha' }],
+      style:{borderColor: touchedFields.fecha_certif ? '#1890ff' : undefined,
+      boxShadow: touchedFields.fecha_certif ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px', width:'100%'}
     },
     {
       type: "select",
@@ -286,7 +497,10 @@ const DetailCertificateInstrument = ({
         label: "label",
         value: "value"
       },
-      rules: [{ required: true, message: 'Por favor seleccione el estado' }]
+      rules: [{ required: true, message: 'Por favor seleccione el estado' }],
+      style:{borderColor: touchedFields.id_estado_certif ? '#1890ff' : undefined,
+      boxShadow: touchedFields.id_estado_certif ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     },
     {
       type: "input",
@@ -294,7 +508,10 @@ const DetailCertificateInstrument = ({
       label: "Responsable Certificación",
       //initialValue: null,
       placeholder: "Nombre del responsable",
-      rules: [{ required: true, message: 'Por favor ingrese el responsable' }]
+      rules: [{ required: true, message: 'Por favor ingrese el responsable' }],
+      style:{borderColor: touchedFields.responsable_certif ? '#1890ff' : undefined,
+      boxShadow: touchedFields.responsable_certif ? '0 0 0 2px rgba(24, 144, 255, 1)' : undefined,
+      borderRadius:'5px'}
     }
   ];
 
@@ -325,8 +542,8 @@ const DetailCertificateInstrument = ({
         setLoading(false);
       })
       .catch(error => {
-        console.log("Error de validación:", error);
-        message.error("Por favor complete todos los campos requeridos");
+        //console.log("Error de validación:", error);
+        //message.error("Por favor complete todos los campos requeridos");
       });
   };
 
@@ -335,6 +552,8 @@ const DetailCertificateInstrument = ({
       form.resetFields();
     }, 1000);  
     onCancel();
+    setFileList([])
+    setTouchedFields([])
   };
 
   const getTipoInstrumentoLabel = () => {
@@ -360,11 +579,37 @@ const DetailCertificateInstrument = ({
       cancelText="Cancelar"
       width={900}
       className="certificate-detail-modal"
-      bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
+      footer={[
+        <Button
+            key="cancel"
+            onClick={handleCancel}
+        >
+            Cancelar
+        </Button>,
+
+        <Badge
+            key="save"
+            count={
+                        
+              Object.keys(touchedFields || {}).length
+              //changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
+          }
+            offset={[-5, 5]}
+        >
+            <Button
+                type="primary"
+                style={{background:'#0b3d63'}}
+                onClick={handleOk}
+            >
+                Guardar
+            </Button>
+        </Badge>
+    ]}
     >
       <Form
         form={form}
         layout="vertical"
+        onValuesChange={handleValuesChange}
         style={{
           display: 'grid',
           justifyContent: 'center',
@@ -380,6 +625,7 @@ const DetailCertificateInstrument = ({
             name={field.name}
             label={field.label}
             rules={field.rules}
+            //style={field.style}
             
             initialValue={field.initialValue}
           >
@@ -387,22 +633,162 @@ const DetailCertificateInstrument = ({
               <Select
                 placeholder={field.placeholder}
                 options={field.options}
+                style={field.style}
               />
             ) : field.type === 'date' ? (
               <DatePicker format="DD/MM/YYYY"
               placeholder={field.placeholder}
-              style={{width:'100%'}}
+              style={field.style}
                 disabled={field.disabled}/>
             ):(
               <Input
                 placeholder={field.placeholder}
                 disabled={field.disabled}
                 type={field.inputType || 'text'}
+                style={field.style}
               />
             )}
           </Form.Item>
         ))}
+        <Form.Item
+                    label={<span><span style={{"color":"red"}}>* </span>Certificado de Calibración</span>}
+                    name="archivos"
+                   
+                    
+                >
+                  <>{contextHolder}
+                    <Upload
+                    
+                        iconRender={(file)=>{
+                            const extension = file.name
+                                ?.split(".")
+                                .pop()
+                                ?.toLowerCase();
+                    
+                            switch(extension){
+                    
+                                case "pdf":
+                                    return <FilePdfOutlined style={{color:"#cf1322"}} />;
+                    
+                                case "doc":
+                    
+                                case "docx":
+                                    return <FileWordOutlined style={{color:"#1677ff"}} />;
+                    
+                                case "xls":
+                    
+                                case "xlsx":
+                                    return <FileExcelOutlined style={{color:"#52c41a"}} />;
+                    
+                                case "png":
+                    
+                                case "jpg":
+                    
+                                case "jpeg":
+                                    return <FileImageOutlined />;
+                    
+                                case "zip":
+                                    return <FileZipOutlined />;
+                    
+                                default:
+                                    return <FileUnknownOutlined />;
+                            }
+                    
+                        }}
+                       //iconRender={()=>{return <FilePdfOutlined style={{color:"red"}} />}}
+                        
+                        fileList={fileList}
+                        //rules={{required:true,message: 'Por favor ingrese el Certificado de Calibración'}}
+                        /*onChange={(info)=>{
+
+                            setFileList(info.fileList)
+                        
+                        }}*/
+                        
+                        onPreview={(file)=>{
+
+                            window.open(file.url);
+                    
+                        }}
+                        beforeUpload={(file)=>{
+                            setFileList(prev => [...prev, file]);
+
+                            setTouchedFields(prev => ({
+                              ...prev,
+                              archivos: true
+                          }));
+
+                            messageApi.success(
+                              `Archivo "${file.name}" cargado satisfactoriamente`
+                          );
+                            return false;
+                        }}
+                        onRemove={(file)=>{
+                              setTouchedFields(prev => ({
+                                ...prev,
+                                archivos: true
+                            }));
+                            
+                            Modal.confirm({
+
+                                title:"Eliminar documento",
+                                
+                                content:"¿Desea eliminar este documento?",
+                                
+                                onOk(){
+                                    setFileList(prev => 
+                                        prev.filter(item => item.uid !== file.uid)
+                                    );
+
+                                    
+                                    //console.log(file)
+                                    if (file.url){
+                                        eliminarArchivo(file.uid)
+                                    } else {
+                                        setTouchedFields(prev => {
+                                            const nuevo = { ...prev };
+                                            delete nuevo.archivos;
+                                            return nuevo;
+                                        });
+                                        notification.success({
+                                            message:"Aviso",
+                                            description:`El archivo ha sido eliminado`,
+                                            duration: 3
+                                            //title:"Aviso",
+                                            //content:`Hito Nº ${idHito} actualizado con éxito`,
+                                            });
+                                    }
+                                    
+                                    //eliminarDocumento(file.id_archivo);
+                                
+                                },
+                                onCancel(){
+                                  setTouchedFields(prev => {
+                                    const nuevo = { ...prev };
+                                    delete nuevo.archivos;
+                                    return nuevo;
+                                });
+                                }
+                                
+                                })
+                        }}
+                    >
+
+                        
+                        <Button type="primary" style={{background:'#0b3d63'}}icon={<UploadOutlined />}>
+                        Upload
+                        </Button>
+                        
+
+                        <p className="ant-upload-hint">
+                            
+                        </p>
+
+                    </Upload>
+                    </>
+                </Form.Item>
       </Form>
+      
     </Modal>
   );
 };

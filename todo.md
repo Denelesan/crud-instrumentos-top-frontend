@@ -273,12 +273,73 @@
 
 ### 15-09-2026
 - [X] Se mejora gestión de eliminación temporal de tareas. Modifica estilo y agrega botón de restaurar.
+### 21-09-2026
+- [X] Se corrigen estilos por completados en card de actualizacion de verificacion.
+- [X] Se incluye propuesta de comentario cuanto tarea se encuentra completada. Mejorar.
+
+### 22-09-2026
+- [X] Se agrega cantidad de verificaciones pendientes (Badge) en botón de agregar verificación.
+- [X] Se implementa guardado a BD de tarea completada desde actualización de verificación.
+
+### 23-09-2026
+- [X] Enlistar correctamente tareas y comentario de completado en vista de visualización.
+- [X] ubicar en sector izquierdo botones de edición e impresión en vista de visualización,
+
+### 26-09-2026
+- [X] Se agrega badge de contador a botón de agregar calibración/certificado.
+- [X] Corregir longitud de n_certificado en tablas de certificados de cada tipo de instrumento.
+
+### 28-09-2026
+- [X] Se agrega botón sin funcionalidad para cargar certificado de calibración en detalle de calibración.
+- [X] Se agrega medianamente cambio de estilos al modificar campos en detalle de calibración.
+
+### 03-10-2026
+- [X] Se realiza toda la lógica para guardar certificados de calibración desde el detalle de certificados.
+- [X] Se agrega Badge a botóng guardar del detalle de certificados.
+
+### 06-10-2026
+- [X] Se corrige problema con el listado de archivos en los detalles del certificado.
+- [X] Se muestra notificacion cuando no hay archivo para visualizar o descargar.
+
+### 10-10-2026
+- [X] Dar un color cuando hayan o no archivos para visualizar o descargar en el listado de certificados de calibración.
+
+### 12-10-2026
+**Para gestionar sesiones de usuario**
+- [X] Crear la tabla instrumentos.usuarios y definir cómo crear la primera cuenta administradora de forma segura.
+- [X] Implementar login, logout y persistencia de sesión en el backend.
+- [X] Crear la pantalla de login en React con Ant Design.
+
+### 13-10-2026
+**Para gestionar sesiones de usuario**
+- [X] Implementar lógica después del login
+- [X] Crear los middleware de autenticación y autorización.
+- [X] Incorporar el usuario actual y su rol en el estado global de la aplicación.
+
+### 14-10-2026
+- [X] Crear la lógica para crear usuario
+
+### 15-10-2026
+- [X] Proteger todas las rutas de eliminación existentes.
+- [X] Adaptar createActionColumns para mostrar u ocultar las acciones según el rol.
+
+### 17-10-2026
+- [X] Aplicar los middleware a cada una de las apis.
+
+### 21-10-2026
+- [X] Crear una sección de administración de usuarios: alta, modificación de rol y desactivación.
+- [X] Probar las operaciones con los tres roles, incluyendo llamadas directas al backend.
+- [X] Mejorar banner en posición y aplicando imagen.
+
+### 24-10-2026
+- [X] Mejorar diseño de login.
+
+### 25-10-2026
+- [X] Se arregla problema con nombres largos de personal
 
 **Por organizar**
 - [ ] Que al editar la calibración de un instrumento, aparezcan todos los campos.
-**Formulario sobre detalles de certificado**
-- [ ] Agregar botón y lógica para guardar *.pdf* de certificado.
-- [ ] Corregir longitud de n_certificado en tablas de cada tipo de instrumento.
+
 
 ## Diseño
 

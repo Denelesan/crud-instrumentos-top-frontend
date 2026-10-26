@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
+
+
 // Función para eliminar propiedades de un objeto
 export function deleteProperties(obj, properties) {
     properties.forEach(prop => {
@@ -30,10 +32,11 @@ export function createStatusRenderer() {
         }
         
         const color = valor === "Operativo" ||
-        valor ==="Verificado" ||
+        valor ==="Terminado" ||
         valor === "Finalizado" ? "#2ecc71" : valor === "Robado" || 
-        valor ==="Cancelado" ? "red" : "orange";
-        return <Tag bordered={true} borderRadiusSM={20} color={color}>{valor}</Tag>;
+        valor ==="Cancelado" ? "red" : 
+        valor === "De baja" ? "default" : "orange";
+        return <Tag bordered={true} borderRadiusSM={20} variant='solid' color={color}>{valor}</Tag>;
     };
 }
 
@@ -109,6 +112,7 @@ export function createGenericRenderer(firstObject, key) {
 
 // Función para generar columnas de acciones básicas
 export function createActionColumns({ 
+    
     onEdit, 
     onView, 
     onDelete, 
@@ -125,8 +129,18 @@ export function createActionColumns({
     showView = true,
     showDelete = true,
     showDownload = true,
+    isDisableEdit = false,
+    isDisableView = false,
+    isDisableDownload = false
 }) {
+      
     const actions = [];
+  
+    const isDisabled = (condition, record) => {
+        return typeof condition === "function"
+            ? condition(record)
+            : condition;
+    };
     
     /*if (showAdd && onAdd) {
         actions.push({
@@ -163,13 +177,13 @@ export function createActionColumns({
                         <PlusCircleTwoTone onClick={() => onAdd(record[addKey])} />
                     )}
                     {showEdit && onEdit && (
-                        <EditOutlined onClick={() => onEdit(record[editKey])} />
+                        <EditOutlined style={{color:isDisableEdit?'#bfbfbf':'#1890ff'}}  onClick={!isDisableEdit?() => onEdit(record[editKey]):null} />
                     )}
                     {showView && onView && (
-                        <EyeOutlined onClick={() => onView(record[viewKey])} />
+                        <EyeOutlined style={{color:isDisabled(isDisableView, record)?'#bfbfbf':'#1890ff'}} onClick={!isDisabled(isDisableView, record)?() => onView(record[viewKey]):null} />
                     )}
                     {showDownload && onDownload && (
-                        <DownloadOutlined onClick={() => onDownload(record[downloadKey])} />
+                        <DownloadOutlined style={{color:isDisabled(isDisableDownload, record)?'#bfbfbf':'#1890ff'}} onClick={!isDisabled(isDisableDownload, record)?() => onDownload(record[downloadKey]):null} />
                     )}
                     {showDelete && onDelete && (
                         <DeleteOutlined 

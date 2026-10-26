@@ -1,4 +1,4 @@
-import { Button, Modal, Table, Input } from "antd";
+import { Button, Modal, Table, Input, Badge } from "antd";
 import { useState, useRef } from 'react';
 import { SearchOutlined, PlusOutlined} from '@ant-design/icons';
 import '../styles/tableLayout.css';
@@ -42,6 +42,7 @@ const TableLayout = ({
     fontSizeButton = '', //16px
     heightButton = '', //40px
     paddingButton = '', //0 20px
+    pendientes,
     columns = [],
     dataSource = [],
     onAdd,
@@ -81,6 +82,9 @@ const TableLayout = ({
         if (record.estado && typeof record.estado === 'string' && record.estado.toLowerCase() === 'robado') {
             return 'robado-row';
         }
+        if (record.estado && typeof record.estado === 'string' && record.estado.toLowerCase() === 'de baja') {
+            return 'de-baja-row';
+        }
         return '';
     };
 
@@ -101,11 +105,17 @@ const TableLayout = ({
                     </div>
                 )}
                 {showAddButton && (
+                    
+                <Badge
+                    count={pendientes}
+                >
                     <Button 
                         className="table-layout-add-btn"
                         onClick={onAdd ? onAdd : () => setIsFormModalOpen(true)} 
                         type='primary'
-                        style={{ fontSize: fontSizeButton,
+                        style={{ 
+                            background:'#0b3d63',
+                            fontSize: fontSizeButton,
                             padding: paddingButton,
                             height: heightButton,
                          }}
@@ -113,6 +123,7 @@ const TableLayout = ({
                     >
                         <PlusOutlined />{addButtonText}
                     </Button>
+                    </Badge>
                 )}
             </div>
 

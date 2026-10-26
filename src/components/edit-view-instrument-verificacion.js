@@ -1,4 +1,4 @@
-import { Button, Modal } from "antd"
+import { Button, Modal, Badge } from "antd"
 import { PlusOutlined } from "@ant-design/icons";
 import VerificacionCard from "../layouts/VerificacionCard";
 import { useState, useRef, useEffect } from "react";
@@ -39,6 +39,7 @@ const EditViewInstrumentVerificacion = ({id,setUpdateTrigger}) => {
     const [openModalFormUpdateVerificacion, setOpenModalFormUpdateVerificacion] = useState(false);
     const [datosVerificaciones, setDatosVerificaciones] = useState([])
     const [tareas, setTareas] = useState([])
+    const [totalVerificacionesPendientes, setTotalVerificacionesPendientes] = useState()
     const formRef = useRef(null);
     //console.log(id)
 
@@ -46,10 +47,14 @@ const EditViewInstrumentVerificacion = ({id,setUpdateTrigger}) => {
         fetch(`${API_URL}/instrumento/verificaciones/${id}`)
         .then(res => res.json())
         .then(response=>{
+            
             let dataFilter = response.filter(item=>
-                item.estado_verif === "Verificado" && (item.resultado_fisico || item.resultado_digital || item.resultado_operativo)
+                item.id_estado_verif === 2 && (item.resultado_fisico || item.resultado_digital || item.resultado_operativo)
             )
+            console.log(response.length)
+            let count = response.length-dataFilter.length
             setDatosVerificaciones(dataFilter)
+            setTotalVerificacionesPendientes(count)
             
             
         })
@@ -90,14 +95,19 @@ const EditViewInstrumentVerificacion = ({id,setUpdateTrigger}) => {
             }}       
         >
      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+     <Badge
+                                count={totalVerificacionesPendientes}
+                            >
         <Button 
             type="primary" 
             icon={<PlusOutlined />} 
             htmlType="submit"
             onClick={()=>setOpenModalFormVerificacion(true)}
+            style={{background:'#0b3d63'}}
         >
             Agregar Resultados de Verificación
         </Button>
+        </Badge>
     </div>
        
             <div

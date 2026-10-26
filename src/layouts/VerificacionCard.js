@@ -7,7 +7,8 @@ import {
     Button,
     Space,
     Divider,
-    Tooltip
+    Tooltip,
+    Checkbox
 } from "antd";
 import dayjs from "dayjs";
 import 'dayjs/locale/es' // para español
@@ -34,6 +35,7 @@ const getTagColor = (estado) => {
         case "Sin problemas":
         case "Funcional":
         case "Actualizado":
+        case "Completada":
             return "success";
         
         case "Baja":
@@ -51,6 +53,7 @@ const getTagColor = (estado) => {
 
         case "Baja del equipo":
         case "Crítica":
+        case "Pendiente":
             return "red";
 
         default:
@@ -94,31 +97,60 @@ const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpe
 
             <Row justify="space-between">
 
-                <Col>
+            <Col>
 
-                    <Title level={4} style={{marginBottom:8}}>
+                {/* Identificación del hito */}
+                <Title
+                    level={4}
+                    style={{
+                        marginBottom: 6
+                    }}
+                >
+                    Hito #{item.id_verificacion} de verificación
+                </Title>
+                
 
-                       Hito #{item.id_verificacion} de verificación | {item.estado_verif}
+                {/* Resultado de la verificación */}
+                <div
+                    style={{
+                        marginBottom: 10
+                    }}
+                >
+                    <Text
+                        type="secondary"
+                        style={{
+                            fontSize: 13
+                        }}
+                    >
+                        Resultado de la verificación
+                    </Text>
 
-                    </Title>
+                    <div
+                        style={{
+                            fontSize: 18,
+                            fontWeight: 600,
+                            color: "#1677ff",
+                            marginTop: 2
+                        }}
+                    >
+                        {item.resultado_general || "Sin resultado"}
+                    </div>
+                </div>
 
-                    <Space size={20}>
+                {/* Información secundaria */}
+                <Space size={20}>
 
-                        <Text type="secondary">
+                    <Text type="secondary">
+                        <CalendarOutlined /> {item.fecha_fin_verif}
+                    </Text>
 
-                            <CalendarOutlined /> {item.fecha_fin_verif}
+                    <Text type="secondary">
+                        <UserOutlined /> {item.responsable}
+                    </Text>
 
-                        </Text>
+                </Space>
 
-                        <Text type="secondary">
-
-                            <UserOutlined /> {item.responsable}
-
-                        </Text>
-
-                    </Space>
-
-                </Col>
+                </Col>                
 
                 <Col>
 
@@ -246,67 +278,152 @@ const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpe
             {tareas.length > 0 ? (
 
             <Space
-                direction="vertical"
-                style={{
-                    width: "100%"
-                }}
+            direction="vertical"
+            style={{
+                width: "100%"
+            }}
             >
 
             {tareas.map((tarea) => (
-            <div
-            key={tarea.id}
-            style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "10px 15px",
-            //borderBottom: "1px solid #f0f0f0",
-            }}
-            >
-            <div
-            style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            flex: 1,
-            }}
-            >
-            <span
-            style={{
-            fontSize: "18px",
-            lineHeight: 1,
-            }}
-            >
-            •
-            </span>
 
-            <span>
-            {tarea.titulo}
-            </span>
-            </div>
+                <div
+                    key={tarea.id}
+                    style={{
+                        padding: "10px 15px",
+                        borderBottom: "1px solid #f0f0f0",
+                    }}
+                >
 
-            <Space>
-            <Tag
-            color={getTagColor(tarea.criticidad)}
-            >
-            {tarea.criticidad}
-            </Tag>
+                    {/* INFORMACIÓN PRINCIPAL DE LA TAREA */}
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
 
-            <span>
-            {tarea.asignado_tarea}
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                                flex: 1,
+                            }}
+                        >
 
-            </span>
+                            <Checkbox
+                                disabled={true}
+                                checked={tarea.id_estado_tarea === 3}
+                            />
 
-            <Tag
-            color={getTagColor(tarea.estado_tarea)}
-            >
-                {tarea.estado_tarea}
-            </Tag>
-            </Space>
-            </div>
+                            <span>
+                                {tarea.titulo}
+                            </span>
+
+                        </div>
+
+                        <Space>
+
+                            <Tag
+                                color={getTagColor(tarea.criticidad)}
+                            >
+                                {tarea.criticidad}
+                            </Tag>
+
+                            <span>
+                                {tarea.asignado_tarea}
+                            </span>
+
+                            <Tag
+                                color={getTagColor(tarea.estado_tarea)}
+                            >
+                                {tarea.estado_tarea}
+                            </Tag>
+
+                        </Space>
+
+                    </div>
+
+
+                    {/* INFORMACIÓN DE COMPLETADO */}
+                    {tarea.id_estado_tarea === 3 && (
+
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                marginLeft: "34px",
+                                padding: "7px 10px",
+                                backgroundColor: "#fafafa",
+                                borderLeft: "2px solid #d9d9d9",
+                                color: "#8c8c8c",
+                                fontSize: "12px",
+                            }}
+                        >
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: "20px",
+                                    flexWrap: "wrap",
+                                }}
+                            >
+
+                                <span>
+                                    <strong
+                                        style={{
+                                            color: "#595959"
+                                        }}
+                                    >
+                                        Completado por:
+                                    </strong>{" "}
+                                    {tarea.completado_por}
+                                </span>
+
+                                <span>
+                                    <strong
+                                        style={{
+                                            color: "#595959"
+                                        }}
+                                    >
+                                        Fecha:
+                                    </strong>{" "}
+                                    {dayjs(tarea.fecha_completada).format('DD/MM/YYYY')}
+                                </span>
+
+                            </div>
+
+                            {tarea.comentario_completado && (
+
+                                <div
+                                    style={{
+                                        marginTop: "4px",
+                                    }}
+                                >
+                                    <strong
+                                        style={{
+                                            color: "#595959"
+                                        }}
+                                    >
+                                        Comentario:
+                                    </strong>{" "}
+                                    {tarea.comentario_completado}
+                                </div>
+
+                            )}
+
+                        </div>
+
+                    )}
+
+                </div>
+
             ))}
 
             </Space>
+            
+
+            
 
             ) : (
 

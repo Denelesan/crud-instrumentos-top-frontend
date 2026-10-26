@@ -5,6 +5,8 @@ import { TableLayout, showModalConfirm } from '../layouts';
 import { generateColumnsPersonalizadas, createStatusRenderer } from '../utils/tableUtils';
 import FormCreateInstrument from './form-create-instrument';
 import API_URL from "../config/api";
+import { useAuth } from '../components/context/AuthContext';
+import { tienePermiso } from '../components/context/permisos';
 
 
 
@@ -15,7 +17,8 @@ const TableInstrumentComponent = () => {
     const navigate = useNavigate();
 
     const outProperties = ["obs_estado", "aplica_verif", "aplica_calib", "nombre_responsable", "ubicacion", "cargo", "seccion"];
-
+    // Dentro del componente:
+    const { usuario } = useAuth();
     const onSearchChange = (e)=>{
       setSearchValue(e.target.value)
     }
@@ -72,9 +75,26 @@ const TableInstrumentComponent = () => {
     }]
 
     useEffect(() => {
-        fetch(`${API_URL}/instrumentos`)
-        .then(res => res.json())
-        .then(result => { 
+        fetch(`${API_URL}/instrumentos`,{
+            credentials: 'include',
+          })
+        .then(res => {
+            if (res.status === 401) {
+                // La sesión ya no es válida.
+                setDataSource([]);
+                return;
+              }
+          
+              if (!res.ok) {
+                throw new Error('Error al consultar los instrumentos');
+              }
+          
+              return res.json();
+        })
+        .then(result => {
+            if (!Array.isArray(result)) {
+                throw new Error('La API no devolvió una lista de instrumentos');
+              } 
             const list = result;
             
             const customRenderers = {
@@ -88,7 +108,9 @@ const TableInstrumentComponent = () => {
                 showModalConfirm: (onDelete, record) => showModalConfirm(onDelete, record),
                 editKey: "id",
                 viewKey: "id",
-                deleteKey: "id"
+                deleteKey: "id",
+                showDelete:tienePermiso(usuario?.rol, 'eliminar'),
+                showEdit:tienePermiso(usuario?.rol, 'editar'),
             };
 
             //console.log(list)
@@ -109,29 +131,56 @@ const TableInstrumentComponent = () => {
         //console.log(id);
         try {
             const response = await fetch(`${API_URL}/instrumentos/delete/${record}`, {
+                credentials: 'include',                  
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            
-            if (response.ok) {
-                const data = await response.json();
-                const updateData = await fetch(`${API_URL}/instrumentos`);
-                const json = await updateData.json();
-                setDataSource(json);
-                message.success(`El instrumento se ha eliminado con éxito: ${data.instrumento}`);
-            } else {
-                console.error("Error al eliminar el instrumento");
+
+            const data = await response.json();
+            // Gestionar errores devueltos por Express
+            if (!response.ok) {
+                message.error(
+                data.message || 'No fue posible eliminar el instrumento.'
+                );
+                return;
             }
+            
+            
+                const updateData = await fetch(`${API_URL}/instrumentos`,{
+                    credentials: 'include',
+                  });
+                  
+                  if (!updateData.ok) {
+                    throw new Error('El instrumento se eliminó, pero no fue posible actualizar la tabla.');
+                  }
+
+                const json = await updateData.json();
+
+                if (!Array.isArray(json)) {
+                    throw new Error('La API no devolvió una lista válida de instrumentos.');
+                  }
+
+                setDataSource(json);
+                message.success(`El instrumento se ha eliminado con éxito: ${record}`);
+            
+
+            
         } catch (error) {
             console.log("Error en la solicitud", error);
+
+            message.error(
+                error.message || 'Ocurrió un error al intentar eliminar el instrumento.'
+              );
         } 
     };
 
     return (
+        <div>
         <TableLayout
             addButtonText="Agregar un instrumento"
+            showAddButton={tienePermiso(usuario?.rol, 'crear')}
             columns={columns}
             dataSource={filteredData}
             searchValue={searchValue}
@@ -150,6 +199,7 @@ const TableInstrumentComponent = () => {
                 }
             }}
         />
+        </div>
     );
 };
 

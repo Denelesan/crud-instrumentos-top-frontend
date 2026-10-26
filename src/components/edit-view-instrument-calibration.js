@@ -5,7 +5,10 @@ import { createMoneyRenderer,createEmpresaRenderer, createDateRenderer, generate
 import FormCreateCalibrationCertificated from "./form-create-calibration-certificated";
 import DetailCertificateInstrument from "./detail-certificate-instrument";
 import API_URL from "../config/api";
-import { Tag } from "antd";
+import { Tag,Empty,notification, message} from "antd";
+import { useAuth } from '../components/context/AuthContext';
+import { tienePermiso } from '../components/context/permisos';
+
 
 const tableStyles = `
     .table-layout-header {
@@ -24,6 +27,20 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
     const [loading, setLoading] = useState(false)
     const [instruCalibrSelected, setInstruCalibrSelected] = useState(null)
     const [inputNewData, setInputNewData] = useState(0)
+    const [totalCertificacionesPendientes, setTotalCertificacionesPendientes] = useState()
+    const [fileList, setFileList] = useState([])
+    const [archivoPreview, setArchivoPreview] = useState(null);
+    
+    const [openPreview, setOpenPreview] = useState(false);
+
+    const handlePreview = (archivo) => {
+
+    setArchivoPreview(archivo);
+    setOpenPreview(true);
+
+    };
+
+    //const { message, notification } = App.useApp();
 
     const columnName = [{
         title: 'Fecha XXX Ingreso',
@@ -84,17 +101,85 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
         setInputNewData(prev=>prev + 1)
     }
 
+  //Soicitar listado de archivos
+  useEffect(()=>{
+    fetch(`${API_URL}/instrumentos/${id}/archivos`)
+    .then(res=>res.json())
+    .then(data=>{
+        //console.log(data)
+        setFileList(
+            data
+        ) 
+    })
+    },[inputNewData])
+
+    //Funcion que busque el archivo de la calibracion eleccionada
+    const handleDownloadCertificado = async (cod_certificado) => {
+
+        try {
+    
+            const response = await fetch(
+                `${API_URL}/calibracion/${cod_certificado}/archivos/zip`
+            );
+    
+            if (response.ok) {            
+                                
+                
+            // Convertimos la respuesta en Blob
+            const blob = await response.blob();
+    
+            // Creamos una URL temporal
+            const url = window.URL.createObjectURL(blob);
+    
+            // Creamos un enlace temporal
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `calibracion_${cod_certificado}.zip`;
+    
+            // Ejecutamos la descarga
+            document.body.appendChild(link);
+            link.click();
+    
+            // Limpiamos
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        }
+            if (!response.ok) {
+                
+                //throw new Error("No fue posible generar el archivo ZIP");
+                
+            }
+    
+        } catch (error) {
+            notification.info({
+                message:"Aviso",
+                description:`No existe un archivo asociado`,
+                duration: 1.5
+                //title:"Aviso",
+                //content:`Hito Nº ${idHito} actualizado con éxito`,
+                });
+    
+            console.error("Error al descargar archivos:", error);
+    
+        }
+    };
+
+
     useEffect(()=>{
         fetch(`${API_URL}/instrumento/calibraciones/${id}`)
         .then(res => res.json())
         .then(respuesta => {
             const datosFiltrados1 = respuesta.filter(
-                item => isNaN(item.fecha_ingreso)
+                item => item.fecha_ingreso && item.fecha_certif
             )
+            setTotalCertificacionesPendientes(Object.keys(respuesta.filter(
+                item => item.fecha_ingreso == null
+            )).length)
             const datosFiltrados = datosFiltrados1.map(item=>({
                 ...item,
                 fecha_ingreso: item.fecha_ingreso? new Date(item.fecha_ingreso).toLocaleDateString('es-CL'): null,
                 fecha_certif : item.fecha_certif? new Date(item.fecha_certif).toLocaleDateString('es-CL'):null,
+                tieneArchivos : item.tiene_archivos
             })
                 
             )
@@ -107,14 +192,98 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
                 precio_calibr_instru:createMoneyRenderer()
             }
             const list = datosFiltrados
+            setDataSource(list)
             const actionColumns ={
 
-                onView: (id)=>console.log(id),
-                onDownload: (id)=>console.log(id),
+                onView: async (id) => {
+                    console.log(dataSource)
+
+                    const data = dataSource.length > 0?dataSource.find(
+                        item => item.id_instru_calibr === id):list.find(
+                        item => item.id_instru_calibr === id
+                    );
+                    
+                
+                    if (!data) {
+                        notification.info({
+                            message: "Aviso",
+                            description: "No existe información para visualizar",
+                            duration: 1.5
+                        });
+                
+                        return;
+                    }
+                
+                    const cod_certificado = data.n_certificado;
+                
+                    try {
+                
+                        const response = await fetch(
+                            `${API_URL}/calibracion/${cod_certificado}/archivos`
+                        );
+                
+                        if (!response.ok) {
+                            throw new Error("No fue posible consultar los archivos");
+                        }
+                
+                        const archivos = await response.json();
+                
+                        console.log("Archivos encontrados:", archivos);
+                
+                        const firstArchivo = archivos?.[0];
+                
+                        if (firstArchivo) {
+                
+                            handlePreview(firstArchivo);
+                
+                        } else {
+                
+                            notification.info({
+                                message: "Aviso",
+                                description: "No existe un archivo asociado",
+                                duration: 1.5
+                            });
+                
+                        }
+                
+                    } catch (error) {
+                
+                        console.error("Error al consultar archivos:", error);
+                
+                        notification.info({
+                            message: "Aviso",
+                            description: "No existe un archivo asociado",
+                            duration: 1.5
+                        });
+                
+                    }
+                },
+                onDownload: (id)=>{
+                    const allData = dataSource.length > 0?dataSource.find(item=>item.id_instru_calibr === id):list.find(item=>item.id_instru_calibr === id)
+                    
+                    if(allData){
+                        const cod_certificado = allData.n_certificado
+                        handleDownloadCertificado(cod_certificado)
+                    }else{
+                        notification.info({
+                            message:"Aviso",
+                            description:`No existe un archivo asociado`,
+                            duration: 1.5,
+                            title:"Aviso"
+                            //content:`Hito Nº ${idHito} actualizado con éxito`,
+                            });
+                    }
+                    //console.log(cod_certificado)
+                    
+                },
                 onEdit: (id_instru_calibr)=>{setCertificateModalVisible(true);setInstruCalibrSelected(id_instru_calibr)},
                 viewKey: "id_instru_calibr",
                 downloadKey: "id_instru_calibr",
-                editKey:"id_instru_calibr"
+                editKey:"id_instru_calibr",
+                isDisableEdit : false,
+                isDisableView : (record)=>!record.tieneArchivos,
+                isDisableDownload : (record)=>!record.tieneArchivos,
+                
 
             }
             
@@ -128,11 +297,11 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
 
             //console.log(cols)
             setColumns(cols)
-            setDataSource(list)
+           
         })
 
 
-    },[inputNewData])
+    },[inputNewData, certificateModalVisible])
 
 
     return (
@@ -142,6 +311,7 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
             fontSizeButton = '12px'
             heightButton = '30px'
             paddingButton = '0 10px'
+            pendientes  = {totalCertificacionesPendientes}
             columns = {columns}
             dataSource = {dataSource}
             onEdit
@@ -169,6 +339,52 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
                />    
             )
         }
+        {/*MODAL PARA VISUALIZAR ARCHIVIOS
+                */}
+                <Modal
+                    title={archivoPreview?.nombre_original}
+                    open={openPreview}
+                    onCancel={() => {
+                        setOpenPreview(false);
+                        setArchivoPreview(null);
+                    }}
+                    footer={null}
+                    width={1000}
+                    centered
+                >
+                    {archivoPreview?.tipo?.startsWith("image/") ? (
+
+                        <img
+                            src={`${API_URL}/documentacion/archivo/${archivoPreview.id_archivo}/visualizar`}
+                            alt={archivoPreview.nombre_original}
+                            style={{
+                                width: "100%",
+                                maxHeight: "70vh",
+                                objectFit: "contain"
+                            }}
+                        />
+
+                    ) : archivoPreview?.tipo === "application/pdf" ? (
+
+                        <iframe
+                            src={`${API_URL}/documentacion/archivo/${archivoPreview.id_archivo}/visualizar`}
+                            title={archivoPreview.nombre_original}
+                            style={{
+                                width: "100%",
+                                height: "70vh",
+                                border: "none"
+                            }}
+                        />
+
+                    ) : (
+
+                        <Empty
+                            description="Este tipo de archivo no puede visualizarse directamente"
+                        />
+
+                    )}
+
+                </Modal>
        </div> 
     )
 }

@@ -8,6 +8,8 @@ import AddInstrumentToHitoCalibration from "./add-instrumento-hito-calibration";
 import dayjs from "dayjs";
 import 'dayjs/locale/es' // para español
 import Item from "antd/es/list/Item";
+import { useAuth } from '../components/context/AuthContext';
+import { tienePermiso } from '../components/context/permisos';
 import API_URL from "../config/api";
 dayjs.locale('es')
 
@@ -22,7 +24,7 @@ const CalibrationHitoInstrument = () => {
     const [loading, setLoading] = useState(false);
     
     const navigate = useNavigate();
-
+    const { usuario } = useAuth();
     const onSearchChange = (e)=>{
       setSearchValue(e.target.value)
     }
@@ -53,7 +55,7 @@ const CalibrationHitoInstrument = () => {
                 // Puedes especificar columnas específicas si es necesario
             };
             
-            const actionColumns = {
+            const actionColumns = tienePermiso(usuario?.rol, 'editar')?{
                 onEdit: (id) => navigate(`/calibration/edit/${id}`),
                 onView: (id) => navigate(`/detail/${id}`),
                 onDelete: (id) => onDeleteHitoCalibration(id),
@@ -66,11 +68,11 @@ const CalibrationHitoInstrument = () => {
                 viewKey: "id",
                 deleteKey: "Id Hito",
                 addKey: "Id Hito",
-                showAdd: true,
-                showEdit: true,
+                showAdd: tienePermiso(usuario?.rol, 'editar'),
+                showEdit:tienePermiso(usuario?.rol, 'editar'),
                 showView: false,
-                showDelete: true
-            };
+                showDelete:tienePermiso(usuario?.rol, 'eliminar'),
+            }:null;
             
             const cols = generateColumns(list, {
                 customRenderers,
@@ -156,6 +158,7 @@ const CalibrationHitoInstrument = () => {
         <div>
             <TableLayout
                 addButtonText="Agregar un Hito de Calibración"
+                showAddButton={tienePermiso(usuario?.rol, 'crear')}
                 columns={columnsHitoCalibration}
                 dataSource={dataFiltered}
                 onSearchChange={onSearchChange}

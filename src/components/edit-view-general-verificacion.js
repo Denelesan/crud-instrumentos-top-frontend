@@ -116,6 +116,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogU
         width: 'auto'
     }
 
+    //Soicitar listado de archivos
     useEffect(()=>{
         fetch(`${API_URL}/verificacion/${idHito}/archivos`)
         .then(res=>res.json())
@@ -319,9 +320,9 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogU
             <Form 
             form={form}
             name="form_item_path" 
-                layout="vertical"
-                onFinish={onFinish}
-                onValuesChange={handleValuesChange}
+            layout="vertical"
+            onFinish={onFinish}
+            onValuesChange={handleValuesChange}
                 
                 //disabled= "false"
                 >
@@ -420,6 +421,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogU
                     name="archivos"
                 >
                     <Upload
+                        
                         iconRender={(file)=>{
                             const extension = file.name
                                 ?.split(".")
@@ -510,7 +512,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogU
                     >
 
                         
-                        <Button type="primary" icon={<UploadOutlined />}>
+                        <Button type="primary" style={{background:'#0b3d63'}} icon={<UploadOutlined />}>
                         Upload
                         </Button>
                         
@@ -543,7 +545,7 @@ const EditGeneralViewVerificacion = ({idHito, updateTrigger,touchedFields,onLogU
                         //changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
                     }
                 >
-                    <Button type="primary" style={{width: "10rem"}} loading={loading} htmlType="submit">Guardar</Button>
+                    <Button type="primary" style={{width: "10rem", background:'#0b3d63'}} loading={loading} htmlType="submit">Guardar</Button>
                     </Badge>
                 </div>
                 

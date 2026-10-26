@@ -99,7 +99,7 @@ const FormGeneralPanelLayout = ({
                         //changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
                     }
                 >
-                    <Button type="primary" style={{width: "10rem"}} loading={loading} htmlType="submit">Guardar</Button>
+                    <Button type="primary" style={{width: "10rem", background:'#0b3d63'}} loading={loading} htmlType="submit">Guardar</Button>
                     </Badge>
 
                 

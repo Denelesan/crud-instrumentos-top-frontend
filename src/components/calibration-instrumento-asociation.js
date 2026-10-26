@@ -180,6 +180,7 @@ const CalibrationInstrumentAsociation = ({idHito,onLogUpdate}) =>{
                 width: "auto"}}>
  
             <Button type="primary" style={{
+                background:'#0b3d63',
                 marginBottom: "20px",
                 width: "auto"}} htmlType="submit" onClick={()=>setIsAddInstrumentModalOpen(true)}>Agregar Instrumento</Button>
             </div>
@@ -201,7 +202,7 @@ const CalibrationInstrumentAsociation = ({idHito,onLogUpdate}) =>{
                         changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null
                     }
                 >
-                <Button type="primary" style={{width: "auto"}} htmlType="submit" onClick={()=>showModalConfirm(guardarCambios)}>Guardar Cambios</Button>
+                <Button type="primary" style={{width: "auto",background:'#0b3d63'}} htmlType="submit" onClick={()=>showModalConfirm(guardarCambios)}>Guardar Cambios</Button>
                 </Badge>
                 
             </div>

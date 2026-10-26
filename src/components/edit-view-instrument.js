@@ -67,7 +67,7 @@ const EditViewInstrument = ()=>{
                 />
         },
         {
-            header:" Verificaciones",
+            header:" Verificaciones Terminadas",
             description:"Historial de verificaciones del instrumento topográfico",
             count:infoInstrumentos.cant_verificaciones?infoInstrumentos.cant_verificaciones==1?`${infoInstrumentos.cant_verificaciones} verificación registrada`:infoInstrumentos.cant_verificaciones==0?"":`${infoInstrumentos.cant_verificaciones} verificaciones registradas`:"",
             key:"2",

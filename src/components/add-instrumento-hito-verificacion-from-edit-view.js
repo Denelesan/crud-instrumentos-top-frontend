@@ -156,7 +156,7 @@ const AddInstrumentToHitoVerificacionFromEditView =({hitoSelected, dataSourceOri
             
             />
 
-            <Button type="primary" style={{width: "100%", marginTop:"10px"}} onClick={()=>{
+            <Button type="primary" style={{width: "100%", marginTop:"10px", background:'#0b3d63'}} onClick={()=>{
                 //console.log("Los instrumentos seleccionados son: ", selectedRowKeys)
                 addInstrument(selectedRowKeys) 
             }}>Agregar</Button>

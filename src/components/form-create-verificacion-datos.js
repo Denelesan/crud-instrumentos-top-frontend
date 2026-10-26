@@ -127,7 +127,7 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
         .then(res => res.json())
         .then(response=>{
             const dataRowFiltered = response.filter(
-                item => item.resultado_fisico == null && item.estado_verif === "Verificado"
+                item => item.resultado_fisico == null && item.id_estado_verif === 2
             )
             
             setDataFiltered(dataRowFiltered)
@@ -567,6 +567,7 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
 
                         <Button
                             type="primary"
+                            style={{background:'#0b3d63'}}
                             onClick={() =>
                                 setMostrarFormTarea(true)
                             }
@@ -711,6 +712,7 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
                             <Button
                                 type="primary"
                                 onClick={agregarTarea}
+                                style={{background:'#0b3d63'}}
                             >
                                 Agregar tarea
                             </Button>
@@ -750,6 +752,8 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
             justifyContent: "space-between",
             padding: "10px 15px",
             borderBottom: "1px solid #f0f0f0",
+            backgroundColor:"#FFF3CD" ,
+            borderRadius:"10px"
         }}
     >
         <div
@@ -760,14 +764,12 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
                 flex: 1,
             }}
         >
-            <span
-                style={{
-                    fontSize: "18px",
-                    lineHeight: 1,
-                }}
-            >
-                •
-            </span>
+            <Checkbox
+                        //checked={tarea.completada}
+                        disabled={true}
+                                            
+                        >
+                    </Checkbox>
 
             <span>
                 {tarea.titulo}
@@ -852,7 +854,8 @@ const FormCreateVerificacionDatos = forwardRef((props, ref) => {
                 <Button
                     type="primary"
                     style={{
-                        width: "10rem"
+                        width: "10rem",
+                        background:'#0b3d63'
                     }}
                     loading={loading}
                     htmlType="submit"

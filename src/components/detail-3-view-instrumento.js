@@ -50,6 +50,9 @@ import {
 
 import dayjs from "dayjs";
 
+import { useAuth } from '../components/context/AuthContext';
+import { tienePermiso } from '../components/context/permisos';
+
 import API_URL from "../config/api"
 
 const { Title, Text, Paragraph } = Typography;
@@ -246,7 +249,7 @@ const getStatusColor = (status) => {
 
         case "Pendiente":
         case "Revisión":
-            return "orange";
+            return "#60A5FA";
 
         case "Robado":
         case "Cancelado":
@@ -298,6 +301,8 @@ const FichaInstrumento = ({
     const [archivoPreview, setArchivoPreview] = useState(null);
     
     const [openPreview, setOpenPreview] = useState(false);
+
+    const { usuario } = useAuth();
 
     const handlePreview = (archivo) => {
 
@@ -353,6 +358,11 @@ const FichaInstrumento = ({
                     });
 
                 }
+                if (response.status === 401) {
+                    // La sesión ya no es válida.
+                    // AuthContext o un manejador común debe cerrar la sesión local.
+                    return;
+                  }
 
 
                 /*
@@ -371,7 +381,7 @@ const FichaInstrumento = ({
                         await responseVerificaciones.json();
 
                     const dataFilter = await dataRow.filter(item=>
-                            item.estado_verif === "Verificado" ///&& (item.resultado_fisico || item.resultado_digital || item.resultado_operativo)
+                            item.id_estado_verif === 2 ///&& (item.resultado_fisico || item.resultado_digital || item.resultado_operativo)
                         )
                         console.log(dataFilter)
                     if (Array.isArray(dataFilter)) {
@@ -406,16 +416,16 @@ const FichaInstrumento = ({
 
                 const responseTareas =
                     await fetch(
-                        `${API_URL}/instrumento/${id}/tareas`
+                        `${API_URL}/tareas/${id}`
                     );
 
                 if (responseTareas.ok) {
-
-                    const data =
+                    
+                    const dataTask =
                         await responseTareas.json();
-
-                    if (Array.isArray(data)) {
-                        setTareas(data);
+                        console.log("TAREAS", dataTask)
+                    if (Array.isArray(dataTask)) {
+                        setTareas(dataTask);
                     }
                 }
 
@@ -477,11 +487,15 @@ const FichaInstrumento = ({
         },
 
         header: {
-            background:
-                "linear-gradient(135deg, #1677ff 0%, #0958d9 100%)",
-            color: "#fff",
-            padding: "32px 42px",
-            boxShadow: "0 4px 18px rgba(0,0,0,.08)"
+            //background:
+                //"linear-gradient(135deg, #1677ff 0%, #0958d9 100%)",
+            //color: "#fff",
+            position: 'sticky',
+            top:0, 
+            zIndex: 100,
+            overflow: 'hidden',
+            padding: "10px 42px",
+            boxShadow: "0 4px 18px rgba(0,0,0,.3)"
         },
 
         content: {
@@ -690,6 +704,16 @@ const FichaInstrumento = ({
             ================================================= */}
 
             <div style={styles.header}>
+            <img src='/Banner1.jpg' alt="Fondo Banner"
+                style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover', // Evita que la imagen se deforme
+                //zIndex: -999         // La mantiene en la capa base
+                }}/>
 
                 <div
                     style={{
@@ -718,10 +742,22 @@ const FichaInstrumento = ({
                         </Space>
 
 
-                        <Space
-                            align="center"
-                            size={16}
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%",
+                            }}
                         >
+                             {/* CONTENIDO IZQUIERDO */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 16,
+                                }}
+                            >
                             <Button
                             icon={<ArrowLeftOutlined />}
                             onClick={()=>navigate("/")}
@@ -737,30 +773,36 @@ const FichaInstrumento = ({
                             <Avatar
                                 size={64}
                                 icon={<ToolOutlined />}
-                                style={{
+                                style={{ backgroundColor: '#f56a00', verticalAlign: 'middle' }}
+                                /*style={{
                                     background:
                                         "rgba(255,255,255,.18)"
-                                }}
+                                }}*/
                             />
 
                             <div>
 
                                 <Text
                                     style={{
+                                        position:"absolute",
                                         color:
                                             "rgba(255,255,255,.75)",
-                                        fontSize: 13
+                                        fontSize: 13,
+                                        zIndex: 999  
                                     }}
                                 >
                                     FICHA DE INSTRUMENTO
                                 </Text>
 
                                 <Title
-                                    level={2}
+                                    level={3}
                                     style={{
+                                        position:"relative",
+                                        //fontSize: 12,
                                         color: "#fff",
                                         margin:
-                                            "2px 0 4px"
+                                            "14px 0 4px",
+                                        zIndex: 999 
                                     }}
                                 >
                                     {instrumento.instrumento}
@@ -793,16 +835,22 @@ const FichaInstrumento = ({
                                 </Space>
 
                             </div>
+                            </div>
+                            
+                            {/* BOTONES DERECHA */}
                             <div>
                         <Space>
-
+                          {tienePermiso(usuario?.rol, 'editar')?             
                             <Button
                                 icon={<EditOutlined />}
                                 type="primary"
-                                onClick={() => onEdit?.(instrumento)}
+                                style={{
+                                    background:'#0b3d63'
+                                }}
+                                onClick={() => navigate(`/edit/${instrumento.id}`)}
                             >
                                 Editar Instrumento
-                            </Button>
+                            </Button>:null}
 
 
                             <Button
@@ -815,7 +863,7 @@ const FichaInstrumento = ({
                             </Space>
                         </div>
 
-                        </Space>
+                        </div>
                         
                                         
                     </Space>
@@ -872,7 +920,7 @@ const FichaInstrumento = ({
                                     <CheckCircleOutlined />
                                 }
                             />
-
+                            {verificaciones.length>0?
                             <Text
                                 type="secondary"
                                 style={{
@@ -883,7 +931,14 @@ const FichaInstrumento = ({
                                 {relativeDate(
                                     instrumento.ultima_verificacion
                                 )}
-                            </Text>
+                            </Text>:<Text
+                                type="secondary"
+                                style={{
+                                    fontSize: 12
+                                }}
+                            >
+                                Sin verificaciones a la fecha
+                            </Text>}
 
                         </Card>
 
@@ -905,7 +960,7 @@ const FichaInstrumento = ({
                                     <SafetyCertificateOutlined />
                                 }
                             />
-
+                        {calibraciones.length>0?
                             <Text
                                 type="secondary"
                                 style={{
@@ -916,7 +971,14 @@ const FichaInstrumento = ({
                                 {relativeDate(
                                     instrumento.ultima_calibracion
                                 )}
-                            </Text>
+                            </Text>:<Text
+                                type="secondary"
+                                style={{
+                                    fontSize: 12
+                                }}
+                            >
+                                Sin calibraciones a la fecha
+                            </Text>}
 
                         </Card>
 
@@ -1146,6 +1208,7 @@ const FichaInstrumento = ({
 
                                 <Avatar
                                     size={52}
+                                    style={{ backgroundColor: '#00a2ae', verticalAlign: 'middle' }}
                                     icon={
                                         <UserOutlined />
                                     }
@@ -1623,7 +1686,7 @@ const FichaInstrumento = ({
                     {archivoPreview?.tipo?.startsWith("image/") ? (
 
                         <img
-                            src={`${API_URL}/verificacion/archivo/${archivoPreview.id_archivo}`}
+                            src={`${API_URL}/documentacion/archivo/${archivoPreview.id_archivo}/visualizar`}
                             alt={archivoPreview.nombre_original}
                             style={{
                                 width: "100%",
@@ -1635,7 +1698,7 @@ const FichaInstrumento = ({
                     ) : archivoPreview?.tipo === "application/pdf" ? (
 
                         <iframe
-                            src={`${API_URL}/verificacion/archivo/${archivoPreview.id_archivo}/visualizar`}
+                            src={`${API_URL}/documentacion/archivo/${archivoPreview.id_archivo}/visualizar`}
                             title={archivoPreview.nombre_original}
                             style={{
                                 width: "100%",
@@ -1680,8 +1743,8 @@ const FichaInstrumento = ({
                             count={
                                 tareas.filter(
                                     tarea =>
-                                        tarea.estado ===
-                                        "Pendiente"
+                                        tarea.id_estado_tarea ===
+                                        1
                                 ).length
                             }
                         >
@@ -1697,76 +1760,116 @@ const FichaInstrumento = ({
 
                     {tareas.length > 0 ? (
 
-                        <Timeline>
+                <Timeline>
 
-                            {tareas.map(tarea => (
+                {tareas.map(tarea => (
 
-                                <Timeline.Item
+                    <Timeline.Item
+                        key={tarea.id_tarea}
+                        color={
+                            tarea.estado_tarea === "Completada"
+                                ? "green"
+                                : "#60A5FA"
+                        }
+                    >
 
-                                    key={tarea.id}
+                        <Space
+                            direction="vertical"
+                            size={3}
+                        >
 
-                                    color={
-                                        tarea.estado ===
-                                        "Completada"
-                                            ? "green"
-                                            : "blue"
-                                    }
+                            {/* TAREA */}
+                            <Text strong>
+                                {tarea.titulo}
+                            </Text>
 
+
+                            {/* ESTADO Y FECHA DE CREACIÓN */}
+                            <Space size={8}>
+
+                                <Tag
+                                    color={getStatusColor(
+                                        tarea.estado_tarea
+                                    )}
+                                    
+                                >
+                                    {tarea.estado_tarea}
+                                </Tag>
+
+                                <Text
+                                    type="secondary"
+                                    style={{
+                                        fontSize: 12
+                                    }}
+                                >
+                                    Creada el{" "}
+                                    {formatDate(
+                                        tarea.fecha_creacion
+                                    )}
+                                </Text>
+
+                            </Space>
+
+
+                            {/* RESPONSABLE */}
+                            <Text
+                                type="secondary"
+                                style={{
+                                    fontSize: 13
+                                }}
+                            >
+                                Responsable: {tarea.asignado_tarea}
+                            </Text>
+
+
+                            {/* INFORMACIÓN DE COMPLETADO */}
+                            {tarea.estado_tarea === "Completada" && (
+
+                                <div
+                                    style={{
+                                        marginTop: 4,
+                                        padding: "6px 10px",
+                                        background: "#fafafa",
+                                        borderLeft: "2px solid #d9d9d9",
+                                        fontSize: 12,
+                                        color: "#8c8c8c"
+                                    }}
                                 >
 
-                                    <Space
-                                        direction="vertical"
-                                        size={2}
-                                    >
-
-                                        <Text strong>
-                                            {
-                                                tarea.titulo
-                                            }
-                                        </Text>
-
-                                        <Space>
-
-                                            <Tag
-                                                color={
-                                                    getStatusColor(
-                                                        tarea.estado
-                                                    )
-                                                }
-                                            >
-                                                {
-                                                    tarea.estado
-                                                }
-                                            </Tag>
-
-                                            <Text
-                                                type="secondary"
-                                            >
-                                                {
-                                                    formatDate(
-                                                        tarea.fecha
-                                                    )
-                                                }
-                                            </Text>
-
-                                        </Space>
-
-                                        <Text
-                                            type="secondary"
+                                    <div>
+                                        Completada el{" "}
+                                        <strong
+                                            style={{
+                                                color: "#595959"
+                                            }}
                                         >
-                                            Responsable:{" "}
-                                            {
-                                                tarea.responsable
-                                            }
-                                        </Text>
+                                            {formatDate(
+                                                tarea.fecha_completada
+                                            )}
+                                        </strong>
+                                    </div>
 
-                                    </Space>
+                                    {tarea.comentario_completado && (
+                                        <div
+                                            style={{
+                                                marginTop: 3
+                                            }}
+                                        >
+                                            {tarea.comentario_completado}
+                                        </div>
+                                    )}
 
-                                </Timeline.Item>
+                                </div>
 
-                            ))}
+                            )}
 
-                        </Timeline>
+                        </Space>
+
+                    </Timeline.Item>
+
+                ))}
+
+                </Timeline>
 
                     ) : (
 

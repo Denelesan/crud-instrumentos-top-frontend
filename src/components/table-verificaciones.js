@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TableLayout, showModalConfirm } from '../layouts';
 import Modal from "antd/es/modal/Modal";
-import { generateColumns, createStatusRenderer,generateColumnsPersonalizadas } from '../utils/tableUtils';
+import { generateColumns, createStatusRenderer,generateColumnsPersonalizadas, createDateRenderer } from '../utils/tableUtils';
 import API_URL from "../config/api";
 import FormCreateVerificacion from "./form-create-verificacion";
 import AddInstrumentToHitoVerificacion from "./add-intrument-verificacion";
+import { useAuth } from '../components/context/AuthContext';
+import { tienePermiso } from '../components/context/permisos';
 
 
 const TableVerificaciones = () =>{
@@ -18,7 +20,7 @@ const TableVerificaciones = () =>{
     const [loading, setLoading] = useState(false);
     
     const navigate = useNavigate();
-
+    const { usuario } = useAuth();
     const columnName = [{
         title: 'Id',
         dataIndex: 'id_verificacion'
@@ -35,6 +37,12 @@ const TableVerificaciones = () =>{
         title: 'Trimestre',
         dataIndex: 'trim_anio',
         render:(valor)=>(<Tag bordered={true} borderRadiusSM={20} color="geekblue">{valor}</Tag>)
+        
+    },
+    {
+        title: 'Fecha',
+        dataIndex: 'fecha_ini_verif',
+        render:createDateRenderer()
         
     }]
 
@@ -66,7 +74,7 @@ const TableVerificaciones = () =>{
                 // Puedes especificar columnas específicas si es necesario
             };
             
-            const actionColumns = {
+            const actionColumns = tienePermiso(usuario?.rol, 'editar')?{
                 onEdit: (id) => navigate(`/verificacion/edit/${id}`),
                 //onView: (id) => navigate(`/detail/${id}`),
                 onDelete: (id) => onDeleteHitoVerificacion(id),
@@ -79,11 +87,11 @@ const TableVerificaciones = () =>{
                 //viewKey: "id",
                 deleteKey: "id_verificacion",
                 addKey: "id_verificacion",
-                showAdd: true,
-                showEdit: true,
+                showAdd: tienePermiso(usuario?.rol, 'editar'),
+                showEdit:tienePermiso(usuario?.rol, 'editar'),
                 showView: true,
-                showDelete: true
-            };
+                showDelete:tienePermiso(usuario?.rol, 'eliminar'),
+            }:null;
             
             const cols = generateColumnsPersonalizadas(columnName, {
                 customRenderers,
@@ -128,6 +136,7 @@ const TableVerificaciones = () =>{
     <div>
         <TableLayout
             addButtonText="Agregar un Hito de Verificación"
+            showAddButton={tienePermiso(usuario?.rol, 'crear')}
             columns={columnsHitoVerificacion}
             dataSource={dataFiltered}
             searchValue={searchValue}
@@ -145,9 +154,6 @@ const TableVerificaciones = () =>{
         <Modal open={isAddInstrumentModalOpen} onCancel={handleCancel} footer={null} width={"40rem"}>
                 <AddInstrumentToHitoVerificacion hitoSelected={hitoVerificacionSelected} />
             </Modal>
-
-
-
         
     </div>
  )   

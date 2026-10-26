@@ -1,6 +1,6 @@
 import { forwardRef, useState,useImperativeHandle, useEffect  } from "react";
 import { AntDesignOutlined,RollbackOutlined } from '@ant-design/icons';
-import { Button, Form, Select,message,notification, Checkbox, Card,Input,Space,Tag,Badge,Popconfirm,Tooltip} from "antd";
+import { Button, DatePicker,Form, Select,message,notification, Checkbox, Card,Input,Space,Tag,Badge,Popconfirm,Tooltip} from "antd";
 //import { useForm} from "antd/es/form/Form";
 import FormGeneralPanelLayout from "../layouts/FormGeneralPanelLayout";
 import Modal from "antd/es/modal/Modal";
@@ -10,6 +10,8 @@ import {getIdFromValueOrLabel} from "../utils/tableUtils";
 import { ModifiedInput, ModifiedSelect, ModifiedDate,ModifiedTextArea} from "../components/fields"
 
 import API_URL from "../config/api";
+
+import dayjs from "dayjs";
 
 const styleInput = {
     width: '100%'
@@ -34,6 +36,16 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
     const [optionsEstadoTarea, setOptionEstadoTarea] = useState()
     const [personal, setPersonal] = useState([])
     const [tareasEliminar, setTareasEliminar] = useState([])
+    const [modalCompletarTarea, setModalCompletarTarea] = useState(false);
+    const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
+    const [tareasCompletadas, setTareasCompletadas] = useState([]);
+
+    const [datosCompletado, setDatosCompletado] = useState({
+        comentario: "",
+        fecha_completada: dayjs(),
+        id_completado_por: null,
+        id_estado_tarea: 3
+    });
     //const [formTarea] = Form.useForm();
     const [tareaForm, setTareaForm] = useState({
         titulo: "",
@@ -43,6 +55,12 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
         id_estado_tarea: 1,
         
     });
+    //Para revisar tareas cada vez que se actualicen
+    /*useEffect(() => {
+        console.log("TAREAS ACTUALIZADAS:", tareas);
+
+        console.log("TAREAS COMPLETADAS:", tareasCompletadas);
+    }, [tareas,tareasCompletadas]);*/
 
     //Para enlistar tareas asociadas al instrumento y al hito de verificacion
     useEffect(()=>{
@@ -50,7 +68,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
         .then(res => res.json())
         .then(response=>{
             let tareasFilter = response.filter(tarea=>tarea.id_verificacion ===itemSelected.id_verificacion)
-            console.log("tareasfilter", tareasFilter)
+            //console.log("tareasfilter", tareasFilter)
             setTareas(tareasFilter)       
         })
     },[handleUpdateHito])
@@ -186,7 +204,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
             id_creado_por : getIdFromValueOrLabel(dataFiltered[0].responsable, personal)
         }));
         
-        console.log("NewValues:", newValues)
+        //console.log("NewValues:", newValues)
 
         try {               
            
@@ -209,11 +227,34 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                 })
                 //console.log("updateSolicitud:", updateSolicitud)
 
-                if (updateSolicitud.ok && addTasks.ok){
+                const deleteTask = await fetch(`${API_URL}/tareas/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tareasAEliminar: tareasEliminar
+                    })
+                })
+
+                //  Actualizar tareas completadas
+                
+                const completeTask = await fetch(`${API_URL}/tareas/completar`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            tareas: tareasCompletadas
+                        })
+                    });
+                
+
+                if (updateSolicitud.ok && addTasks.ok && deleteTask.ok && completeTask.ok){
                     
                     notification.success({
                         message:"Aviso",
-                        description:`Resultados de la verificación guardados correctamente`,
+                        description:`Resultados de la verificación actualizados correctamente`,
                         duration: 3
                         //title:"Aviso",
                         //content:`Hito Nº ${idHito} actualizado con éxito`,
@@ -225,7 +266,9 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                     }
                     setTouchedFields({}) // Resetear campos modificados
                     setTareasTemporales([])
-
+                    setTareasEliminar([])
+                    setTareasCompletadas([])
+                    
                    // setTimeout(()=>(handleCancel()),1000)
                    
                     //form1.resetFields();
@@ -313,7 +356,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
     
         notification.success({
             message: "Aviso",
-            description: "Tarea agregada"
+            description: "Tarea agregada temporalmente"
         });
     
     };
@@ -342,7 +385,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
         setTareasTemporales(prev => prev.filter(tareaTemporal => tareaTemporal.id !== id));
     };
 
-    const cambiarEstadoTarea = (id, checked) => {
+    /*const cambiarEstadoTarea = (id, checked) => {
 
         setTareas(prev =>
             prev.map(tarea =>
@@ -351,6 +394,86 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                     : tarea
             )
         );
+    };*/
+
+    const cambiarEstadoTarea = (id, checked) => {
+
+        if (!checked) {
+    
+            setTareas(prev =>
+                prev.map(tarea =>
+                    tarea.id_tarea === id
+                        ? { ...tarea, completada: false }
+                        : tarea
+                )
+            );
+
+            setTareasCompletadas(prev => prev.filter(tareaCompletada=> tareaCompletada.id_tarea !== id));
+            
+    
+            return;
+        }
+    
+        const tarea = tareas.find(
+            tarea => tarea.id_tarea === id
+        );
+    
+        setTareaSeleccionada(tarea);
+    
+        setDatosCompletado({
+            comentario: "",
+            fecha_completada: dayjs(),
+            id_completado_por: tarea.id_responsable,
+            id_estado_tarea:3
+        });
+    
+        setModalCompletarTarea(true);
+    };
+
+    const confirmarCompletadoTarea = () => {
+
+        if (!datosCompletado.comentario.trim()) {
+            message.warning("Debe ingresar un comentario");
+            return;
+        }
+    
+        if (!datosCompletado.fecha_completada) {
+            message.warning("Debe indicar la fecha de completado");
+            return;
+        }
+    
+        if (!datosCompletado.id_completado_por) {
+            message.warning("Debe indicar quién completó la tarea");
+            return;
+        }
+
+        setTareas(prev =>
+            prev.map(tarea =>
+                tarea.id_tarea === tareaSeleccionada.id_tarea
+                    ? {
+                        ...tarea,
+                        completada: true,
+                    }
+                    : tarea
+            )
+        );
+    
+        setTareasCompletadas(prev =>
+                        [...prev,
+                        {completada: true,
+                            id_tarea:tareaSeleccionada.id_tarea,
+                        comentario_completado:
+                            datosCompletado.comentario,
+                        fecha_completada:
+                            datosCompletado.fecha_completada,
+                            id_completado_por:
+                            datosCompletado.id_completado_por,
+                            id_estado_tarea:3}]
+                    
+        );
+        
+        setModalCompletarTarea(false);
+        setTareaSeleccionada(null);
     };
 
     const restaurarTarea = (id) => {
@@ -573,7 +696,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                         style={{
                             marginBottom: 20,
                             background: "#fafafa",
-                            backgroundColor:"red"
+                            
                             
                         }}
                         
@@ -648,7 +771,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
 
 
                             <Form.Item
-                                label="Responsable"
+                                label="Asginada a"
                             >
 
                                 <Select
@@ -661,7 +784,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                                             value
                                         )
                                     }
-                                    placeholder="Seleccione responsable"
+                                    placeholder="Seleccione asignado"
                                     options={personal}
                                 />
 
@@ -735,13 +858,14 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                         borderBottom: "1px solid #f0f0f0",
                         backgroundColor: tareasEliminar.includes(tarea.id_tarea)
                         ? "#fff2f0"
-                        : "transparent",
+                        : tarea.completada===true?"#FFF3CD":"transparent",
                         borderRadius:"10px"
 
                     }}
                 >
                     <Checkbox
-                                            checked={tarea.completada}
+                                            checked={tarea.id_estado_tarea === 3?true:tarea.completada}
+                                            disabled={tareasEliminar.includes(tarea.id_tarea)?true:false}
                                             onChange={e =>
                                                 cambiarEstadoTarea(
                                                     tarea.id_tarea,
@@ -752,7 +876,7 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                                             <span
                                                 style={{
                                                     textDecoration:
-                                                        tarea.completada
+                                                        tarea.completada ||tarea.id_estado_tarea === 3 
                                                             ? "line-through"
                                                             : "none"
                                                 }}
@@ -780,7 +904,14 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                             {tarea.asignado_tarea}
                         </span>
             
-                        <Tag>
+                        <Tag 
+                            color={
+                                tarea.estado_tarea === "Pendiente"
+                                    ? "red"
+                                        : tarea.estado_tarea === "Completada"
+                                            ? "green"
+                                            : "gold"
+                            }>
                             {tarea.estado_tarea}
                         </Tag>
                         {tareasEliminar.includes(tarea.id_tarea) ? (
@@ -823,6 +954,88 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                 </div>
             ))}
             {/* ==========================================
+                   MODAL DE COMPLETADO DE TAREAS
+                ========================================== */}
+
+            <Modal
+                title="Completar tarea"
+                open={modalCompletarTarea}
+                onCancel={() => {
+                    setModalCompletarTarea(false);
+                    setTareaSeleccionada(null);
+                }}
+                onOk={confirmarCompletadoTarea}
+                okText="Completar tarea"
+                cancelText="Cancelar"
+            >
+                <Space
+                    direction="vertical"
+                    size="middle"
+                    style={{ width: "100%" }}
+                >
+
+                    <div>
+                        <strong>Tarea</strong>
+                        <div style={{ marginTop: 4 }}>
+                            {tareaSeleccionada?.titulo}
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong>Comentario</strong>
+
+                        <Input.TextArea
+                            rows={3}
+                            placeholder="Ingrese un comentario sobre la tarea realizada"
+                            value={datosCompletado.comentario}
+                            onChange={e =>
+                                setDatosCompletado(prev => ({
+                                    ...prev,
+                                    comentario: e.target.value
+                                }))
+                            }
+                            
+                        />
+                    </div>
+
+                    <div>
+                        <strong>Fecha de completado</strong>
+
+                        <DatePicker
+                            style={{ width: "100%" }}
+                            format="DD/MM/YYYY"
+                            value={datosCompletado.fecha_completada}
+                            onChange={value =>
+                                setDatosCompletado(prev => ({
+                                    ...prev,
+                                    fecha_completada: value
+                                }))
+                            }
+                        />
+                    </div>
+
+                    <div>
+                        <strong>Completado por</strong>
+
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder="Seleccione quién completó la tarea"
+                            value={
+                                datosCompletado.id_completado_por
+                            }
+                            onChange={value =>
+                                setDatosCompletado(prev => ({
+                                    ...prev,
+                                    id_completado_por: value
+                                }))
+                            }
+                            options={personal}
+                        />
+                    </div>
+
+                </Space>
+            </Modal>
+            {/* ==========================================
                     LISTADO DE TAREAS TEMPORALES
                 ========================================== */}
             {tareasTemporales.map((tareaTemporal) => (
@@ -834,32 +1047,32 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                         justifyContent: "space-between",
                         padding: "10px 15px 10px 1px",
                         borderBottom: "1px solid #f0f0f0",
+                        backgroundColor:"#FFF3CD" ,
+                        borderRadius:"10px"
+                        
                     }}
                 >
                     <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                            flex: 1,
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: "35px",
-                                lineHeight: 1,
-                            }}
+                style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                flex: 1,
+                }}
+                >
+                    <Checkbox
+                        //checked={tarea.completada}
+                        disabled={true}
+                                            
                         >
-                            •
-                        </span>
-
+                    </Checkbox>
                         <span style={{
-                            color:"grey"
+                            color:"#856404"
                         }}>
                             {tareaTemporal.titulo}
                         </span>
-                    </div>
-
+                    
+                        </div>
                     <Space>
                         <Tag
                             
@@ -869,7 +1082,10 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                             )?.label}
                         </Tag>
 
-                        <span style={{fontSize:12,color:"grey"}}>
+                        <span style={{
+                            fontSize:12,
+                            color:"#856404"
+                            }}>
                             {personal.find(
                                 persona => persona.value === tareaTemporal.id_responsable
                             )?.label}
@@ -936,11 +1152,11 @@ const FormUpdateVerificacionDatos = forwardRef((props, ref) => {
                                 count={
                                     
                                     //fileList.length
-                                    Object.keys(tareasTemporales).length || Object.keys(touchedFields).length || Object.keys(tareasEliminar)
+                                    Object.keys(tareasTemporales).length || Object.keys(touchedFields).length || Object.keys(tareasEliminar) || Object.keys(tareasCompletadas)
                                     //-fileList.length
                                     ? 
                                     //fileList.length 
-                                    Object.keys(tareasTemporales).length + Object.keys(touchedFields).length + Object.keys(tareasEliminar).length
+                                    Object.keys(tareasTemporales).length + Object.keys(touchedFields).length + Object.keys(tareasEliminar).length + Object.keys(tareasCompletadas).length
                                     //-fileList.length
                                     : null 
                                     //changeAddInstrument.length + changeDeleteInstrument.length ? changeAddInstrument.length + changeDeleteInstrument.length : null

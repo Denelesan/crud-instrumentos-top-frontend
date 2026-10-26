@@ -158,7 +158,7 @@ const CollapseLayout2 = ({
                                         {panel.count !== undefined && (
                                             <Badge
                                                 count={panel.count}
-                                                color="#1677ff"
+                                                color='#0b3d63'//"#1677ff"
                                             />
                                         )}
                             
