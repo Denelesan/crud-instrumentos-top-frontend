@@ -62,7 +62,7 @@ const getTagColor = (estado) => {
 
 };
 
-const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpenModalFormUpdateVerificacion }) => {
+const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpenModalFormUpdateVerificacion,disabledButton,handleDownloadVerificacion }) => {
     
     const [hitoSelected, setHitoSelected] = useState()
     const formRef = useRef(null);
@@ -179,6 +179,7 @@ const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpe
                             setOpenModalFormUpdateVerificacion={setOpenModalFormUpdateVerificacion}
                             handleCancel={handleCancel}  
                             ref={formRef} 
+                           
                             />
                         </Modal>}
                        
@@ -188,6 +189,8 @@ const VerificacionCard = ({ item, tareas, openModalFormUpdateVerificacion,setOpe
                             <Button
                                 shape="circle"
                                 icon={<DownloadOutlined />}
+                                disabled={disabledButton}
+                                onClick={handleDownloadVerificacion}
                             />
 
                         </Tooltip>

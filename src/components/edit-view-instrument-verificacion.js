@@ -1,4 +1,4 @@
-import { Button, Modal, Badge } from "antd"
+import { Button, Modal, Badge,notification } from "antd"
 import { PlusOutlined } from "@ant-design/icons";
 import VerificacionCard from "../layouts/VerificacionCard";
 import { useState, useRef, useEffect } from "react";
@@ -71,6 +71,62 @@ const EditViewInstrumentVerificacion = ({id,setUpdateTrigger}) => {
         })
     },[openModalFormVerificacion,openModalFormUpdateVerificacion])
 
+    //Funcion que busque los archivos del hito de verificacion seleccionado
+    const handleDownloadVerificacion = async (id_verificacion) => {
+
+        try {
+    
+            const response = await fetch(
+                `${API_URL}/verificacion/${id_verificacion}/archivos/zip`,
+                {
+                  method: 'GET',
+                  credentials: 'include'
+                }
+            );
+    
+            if (response.ok) {            
+                                
+                
+            // Convertimos la respuesta en Blob
+            const blob = await response.blob();
+    
+            // Creamos una URL temporal
+            const url = window.URL.createObjectURL(blob);
+    
+            // Creamos un enlace temporal
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `archivos_hito_verificacion_${id_verificacion}.zip`;
+    
+            // Ejecutamos la descarga
+            document.body.appendChild(link);
+            link.click();
+    
+            // Limpiamos
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        }
+            if (!response.ok) {
+                
+                const error = await response.json();
+                throw new Error(error.message || 'Error al descargar los archivos');
+                
+            }
+    
+        } catch (error) {
+            notification.info({
+                message:"Aviso",
+                description:`No existe un archivo asociado`,
+                duration: 1.5
+                //title:"Aviso",
+                //content:`Hito Nº ${idHito} actualizado con éxito`,
+                });
+    
+            console.error("Error al descargar archivos:", error);
+    
+        }
+    };
+
     const handleCancel = () => {
         setOpenModalFormVerificacion(false);
        
@@ -132,6 +188,8 @@ const EditViewInstrumentVerificacion = ({id,setUpdateTrigger}) => {
                         tareas={tareas.filter(tarea=>tarea.id_verificacion ===item.id_verificacion)}
                         setOpenModalFormUpdateVerificacion={setOpenModalFormUpdateVerificacion}
                         openModalFormUpdateVerificacion={openModalFormUpdateVerificacion}
+                        disabledButton={item.cant_archivos==="0"?true:false}
+                        handleDownloadVerificacion={()=>handleDownloadVerificacion(item.id_verificacion)}
                         //handleCancel={handleCancel}
                     />
 

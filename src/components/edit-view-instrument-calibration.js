@@ -43,7 +43,7 @@ const EditViewInstrumentCalibration = ({id,setUpdateTrigger})=>{
     //const { message, notification } = App.useApp();
 
     const columnName = [{
-        title: 'Fecha XXX Ingreso',
+        title: 'Fecha Ingreso',
         dataIndex: 'fecha_ingreso'
     },
     {
