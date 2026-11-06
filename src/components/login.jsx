@@ -14,12 +14,13 @@ import {
 import {
   UserOutlined,
   LockOutlined,
-  SafetyCertificateOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 import { useAuth } from './context/AuthContext.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API_URL from '../config/api';
 import {APP} from '../layouts/App.js'
+import Icon from '@ant-design/icons';
 
 const COLORES = {
   primario: '#0b3d63',
@@ -141,11 +142,17 @@ function Login() {
     }
   };
 
+ 
   return (
     <div style={estilos.pagina}>
       {esEscritorio && (
         <aside style={estilos.panel}>
-          <SafetyCertificateOutlined style={{ fontSize: 48, color: COLORES.acento, marginBottom: 24 }} />
+          {//<SafetyCertificateOutlined style={{ fontSize: 48, color: COLORES.acento, marginBottom: 24 }} />
+          }
+          <Icon 
+            component={() => <img src="/favicon.svg" alt="Logo" style={{ width: '1em', height: '1em' }} />} 
+            style={{ fontSize: 60, marginBottom: 24 }} 
+          />
           <Typography.Title level={2} style={{ color: '#fff', margin: 0 }}>
             Instrumentos Topográficos
           </Typography.Title>
@@ -163,7 +170,12 @@ function Login() {
         <Card style={estilos.card} variant="borderless">
           <div style={{ textAlign: 'center', marginBottom: 28 }}>
             <div style={estilos.iconoBadge}>
-              <SafetyCertificateOutlined />
+              {//<SafetyCertificateOutlined />
+              }
+              <Icon 
+            component={() => <img src="/favicon.svg" alt="Logo" style={{ width: '1em', height: '1em' }} />} 
+            style={{ fontSize: 60, marginBottom: 0 }} 
+          />
             </div>
             <Typography.Title level={3} style={{ margin: 0, color: COLORES.primario }}>
               Iniciar sesión

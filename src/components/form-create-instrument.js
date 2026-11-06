@@ -195,7 +195,7 @@ const FormCreateInstrument = forwardRef((props, ref) =>{
                     <Input/>
                 </Form.Item>
                 
-                <Button type="primary" htmlType="submit" loading={loading} style={{width: '100%'}}>
+                <Button type="primary" htmlType="submit" loading={loading} style={{width: '100%',background:'#0b3d63'}}>
                     Crear Instrumento
                 </Button>
             </Form>

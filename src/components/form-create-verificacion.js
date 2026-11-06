@@ -132,7 +132,7 @@ const FormCreateVerificacion = forwardRef((props, ref) =>{
                                 
                 </Form.Item>
                 
-                <Button type="primary" htmlType="submit" loading={loading} style={{width: '100%'}}>
+                <Button type="primary" htmlType="submit" loading={loading} style={{width: '100%',background:'#0b3d63'}}>
                     Crear Hito de Verificación
                 </Button>
             </Form>

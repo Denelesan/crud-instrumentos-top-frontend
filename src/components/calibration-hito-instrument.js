@@ -116,9 +116,15 @@ const CalibrationHitoInstrument = () => {
         Modal.confirm({
             title: '¿Estás seguro que deseas crear un nuevo Hito de Calibración',
             content: 'Luego de crear el hito de calibración, deberás indexar los instrumentos asociados',
-            okText: 'Crear',
-            okType: 'primary',
+            okText: 'Crear',                    
             cancelText: 'Cancelar',
+            okButtonProps: {
+                style: {
+                    backgroundColor:'#0b3d63'                  
+                },
+                type: 'primary',
+                danger: true, // Estilo peligro predefinido de AntD
+                },
             onOk() {
                 createHitoCalibration();
             },
