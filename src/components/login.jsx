@@ -154,10 +154,10 @@ function Login() {
             style={{ fontSize: 60, marginBottom: 24 }} 
           />
           <Typography.Title level={2} style={{ color: '#fff', margin: 0 }}>
-            Instrumentos Topográficos
+            Sistema TIM
           </Typography.Title>
           <Typography.Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, marginTop: 16 }}>
-            Sistema de gestión, control y trazabilidad de instrumentos de medición.
+            Sistema de gestión, control y Trazabilidad de Instrumentos de Medición.
           </Typography.Paragraph>
           <Divider style={{ borderColor: 'rgba(255,255,255,0.2)', margin: '32px 0' }} />
           <Typography.Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13 }}>
