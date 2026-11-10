@@ -157,7 +157,7 @@ function Login() {
             Sistema TIM
           </Typography.Title>
           <Typography.Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, marginTop: 16 }}>
-            Sistema de gestión, control y Trazabilidad de Instrumentos de Medición.
+            Sistema de Trazabilidad de Instrumentos de Medición.
           </Typography.Paragraph>
           <Divider style={{ borderColor: 'rgba(255,255,255,0.2)', margin: '32px 0' }} />
           <Typography.Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13 }}>
